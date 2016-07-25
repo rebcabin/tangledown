@@ -227,7 +227,7 @@ Tangledown is a little compiler, a silly compiler. We could go  highfalutin' and
 
 We'll just use global variables and array indices and side effects, but in a tasteful way.
 
-The function `accumulate` starts at line `i`, then figures out whether a tag's first non-blank line is triple backtick, in which case it _won't_ snip four spaces from the beginning of every line, and finally keeps going until it sees then end of the tag. This function is meant to accumulate the contents of `noweb` or `tangle` tags.
+The function `accumulate` starts at line `i`, then figures out whether a tag's first non-blank line is triple backtick, in which case it _won't_ snip four spaces from the beginning of every line, and finally keeps going until it sees the end of the tag. This function is meant to accumulate the contents of `noweb` or `tangle` tags.
 
 <noweb name="accumulate-function">
 
