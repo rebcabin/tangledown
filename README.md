@@ -195,9 +195,9 @@ In the first pass over the file, we'll just save the noweb and tangle contents i
 
 Turns out there are two ways to write literal blocks in MOU's flavor of
 Markdown: 
+
 1. indented by four spaces and 
-2. surrounded by triple backticks and _not_
-indented. 
+2. surrounded by triple backticks and _not_ indented. 
 
 We need to handle both ways. 
 
