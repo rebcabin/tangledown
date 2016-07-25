@@ -128,7 +128,7 @@ The following regular expressions match tags that may appear anywhere on a line.
 
 ### Test the recognizers
 
-The following code has two `block` tags that refer to the `noweb` tags of the regular expressions defined above. After Tangledown substitutes the contents of the `noweb` tags, the code becomes valid Python and you can run it. I lightly tested this with Python 2.7.11. When you run it, it proves that we can regognize all the various kinds of tags. Notice the special treatment for block ends, which will usually be on the same lines as their block tags, but not necessarily so. Also notice that it only operates on tangledown.md, so we need to fix that later.
+The following code has two `block` tags that refer to the `noweb` tags of the regular expressions defined above. After Tangledown substitutes the contents of the `noweb` tags, the code becomes valid Python and you can run it. I lightly tested this with Python 2.7.11. When you run it, it proves that we can regognize all the various kinds of tags. Notice the special treatment for block ends, which will usually be on the same lines as their block tags, but not necessarily so. Also notice that it only operates on one specific file, this here document you're reading right now, namely, tangledown.md, so we need to fix that later.
 
 <noweb name="openers">
 
