@@ -295,7 +295,7 @@ Iterate over all the `tangle` tag contents and expand the
 We're doing the happy cases first, and
 will get to error handling someday, maybe.
 
-#### There is a block tag
+#### There is a `block` tag
 
 First, we need to detect that some list of lines contains a `block` tag. That
 means we must keep running the expander on that list.
