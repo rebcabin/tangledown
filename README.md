@@ -180,7 +180,7 @@ Tangledown operates in two passes, once over the file and a second time over the
 
 ### First Pass: Saving Noweb and Tangle Blocks
 
-In the first pass over the file, we'll just save the noweb and tangle contents into dictionaries, without expanding nested block tags.
+In the first pass over the file, we'll just save the noweb and tangle contents into dictionaries, without expanding nested `block` tags.
 
 #### global dictionaries
 
@@ -194,8 +194,12 @@ In the first pass over the file, we'll just save the noweb and tangle contents i
 #### Oh no! There are two ways
 
 Turns out there are two ways to write literal blocks in MOU's flavor of
-Markdown: indented by four spaces and surrounded by triple backticks and _not_
-indented. We need to handle both ways. 
+Markdown: 
+1. indented by four spaces and 
+2. surrounded by triple backticks and _not_
+indented. 
+
+We need to handle both ways. 
 
 We use the same trick of a harmless group around one of the backticks in the
 regular expression that recognizes triple backticks so that this regex is safe
