@@ -47,7 +47,7 @@ class TestSomething (unittest.TestCase):
 
 </noweb>
 
-Leave the blank line after the opening `<noweb...>` tag and another blank line before the ending `</noweb>` tag, unless you don't want to render the code like code. Here's a non-rendered `noweb` block --- no blank lines surrounding the contents of the noweb tag:
+Leave the blank line after the opening `<noweb...>` tag and another blank line before the ending `</noweb>` tag, unless you don't want to render the code like code. Here's a non-rendered `noweb` block --- no blank lines surrounding the contents of the `noweb` tag:
 
 <noweb name="another_little_test">
     def test_something_else (self):
@@ -61,7 +61,7 @@ Not too pretty, but it's important to know what happens when you don't leave bla
 With or without the blank lines, MOU won't render the tags themselves.
 MOU only renders the material between the opening and closing tags, called the _contents_ of the tags.
 
-But this here Tangledown compiler _doesn't_ ignore the tags. Tangledown is a Python script that sucks up the contents of the `noweb` tag pairs and sticks them into a dictionary with the keys `my_little_tests` or `another_little_test`, at least for the samples above. 
+But this here Tangledown compiler _doesn't_ ignore the tags. Tangledown is a Python script that sucks up the contents of the `noweb` tags and sticks them into a dictionary with the keys `my_little_tests` or `another_little_test`, at least for the samples above. 
 
 In general, the key for a noweb block is the string value of the `name` attribute of the `noweb` tag. Later, Tangledown will blow those lines back out wherever it sees a `block` tag with the same name. 
 
@@ -93,9 +93,9 @@ renders like this
 
 Because the `block` tag is inside a top-level `tangle` or `noweb` tag, MOU will render the `block` tag verbatim to the documentation. This is good for humans, who will think "AHA!, this bit of code --- this `block` --- refers to some other code --- in a `noweb` tag with the same name --- that I should read in another place and time. This here beautifully written document I'm reading right now is making it easy for me to understand the big picture because it's breaking things up like this. Thank you, kindly, author!" 
 
-In fact, that's exactly what you want for humans: talk about something in a place where you don't necessarily implement it.  But compilers need the block _right here and now_. Tangledown will substitute the contents of a block for the block tag in a tangle block somewhere else when writing files to the disk for you. The substitution process is hidden, behind the scenes, and only needed when it's time to create files on your hard drive. 
+In fact, that's exactly what you want for humans: talk about something in a place where you don't necessarily implement it.  But compilers need the block _right here and now_. Tangledown will substitute the contents of a block for the `block` tag in a tangle block somewhere else when writing files to the disk for you. The substitution process is hidden, behind the scenes, and only needed when it's time to create files on your hard drive. 
 
-You don't need any contents in a block tag, but you're welcome to put some in, say for some commentary. Tangledown will eat and ignore any contents in a `block` tag.
+You don't need any contents in a `block` tag, but you're welcome to put some in, say for some commentary. Tangledown will eat and ignore any contents in a `block` tag.
 
 ## BOOTSTRAPPING Step-by-Step
 
