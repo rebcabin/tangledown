@@ -313,9 +313,9 @@ def there_is_a_block_tag (lines):
 
 </noweb>
 
-#### Eat a block tag ####
+#### Eat a `block` tag ####
 
-If there is a block tag, we must eat it:
+If there is a `block` tag, we must eat it:
 
 <noweb name="eatBlockTag">
 
@@ -334,8 +334,8 @@ def eat_block_tag (i, lines):
 #### The Expander ####
 
 The following function does one round of block expansion. The caller must check
-whether any block tags remain, and keep running the expander until there are no
-more block tags. Our functional-programming conscience might be apalled, but, see, we don't have to be recursive _all the time_. Sometimes it's just easier to iterate.
+whether any `block` tags remain, and keep running the expander until there are no
+more `block` tags. Our functional-programming conscience might be apalled, but, see, we don't have to be recursive _all the time_. Sometimes it's just easier to iterate.
 
 <noweb name="expandBlocks">
 
