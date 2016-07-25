@@ -23,7 +23,7 @@ If we need something _more_ powerful than Markdown, say to produce publishable P
 
 ## EXPLOIT: Markdown Ignores Mysterious Tags
 
-Let's exploit the fact that at least some markdown renderers, like Github's and like [MOU](http://25.io/mou/) ignore HTML / XML tags that they don't recognize. We can name blocks of code with `noweb` tags, like this:
+Let's exploit the fact that at least some markdown renderers, like Github's and like [MOU](http://25.io/mou/), ignore HTML / XML tags that they don't recognize. We can name blocks of code with `noweb` tags, like this:
 
     <noweb name="my_little_tests">
 
@@ -47,7 +47,7 @@ class TestSomething (unittest.TestCase):
 
 </noweb>
 
-Leave the blank line after the opening `<noweb...>` tag and another blank like before the ending `</noweb>` tag, unless you don't want to render the code like code. Here's a non-rendered `noweb` block --- no blank lines surrounding the contents of the noweb tag:
+Leave the blank line after the opening `<noweb...>` tag and another blank line before the ending `</noweb>` tag, unless you don't want to render the code like code. Here's a non-rendered `noweb` block --- no blank lines surrounding the contents of the noweb tag:
 
 <noweb name="another_little_test">
     def test_something_else (self):
