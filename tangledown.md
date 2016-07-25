@@ -23,7 +23,7 @@ If we need something _more_ powerful than Markdown, say to produce publishable P
 
 ## EXPLOIT: Markdown Ignores Mysterious Tags
 
-Let's exploit the fact that at some markdown renderers like Github's and like [MOU](http://25.io/mou/) ignore HTML / XML tags that they don't recognize. We can name blocks of code with `noweb` tags, like this:
+Let's exploit the fact that at least some markdown renderers, like Github's and like [MOU](http://25.io/mou/), ignore HTML / XML tags that they don't recognize. We can name blocks of code with `noweb` tags, like this:
 
     <noweb name="my_little_tests">
 
@@ -47,7 +47,7 @@ class TestSomething (unittest.TestCase):
 
 </noweb>
 
-Leave the blank line after the opening `<noweb...>` tag and another blank like before the ending `</noweb>` tag, unless you don't want to render the code like code. Here's a non-rendered `noweb` block --- no blank lines surrounding the contents of the noweb tag:
+Leave the blank line after the opening `<noweb...>` tag and another blank line before the ending `</noweb>` tag, unless you don't want to render the code like code. Here's a non-rendered `noweb` block --- no blank lines surrounding the contents of the `noweb` tag:
 
 <noweb name="another_little_test">
     def test_something_else (self):
@@ -61,7 +61,7 @@ Not too pretty, but it's important to know what happens when you don't leave bla
 With or without the blank lines, MOU won't render the tags themselves.
 MOU only renders the material between the opening and closing tags, called the _contents_ of the tags.
 
-But this here Tangledown compiler _doesn't_ ignore the tags. Tangledown is a Python script that sucks up the contents of the `noweb` tag pairs and sticks them into a dictionary with the keys `my_little_tests` or `another_little_test`, at least for the samples above. 
+But this here Tangledown compiler _doesn't_ ignore the tags. Tangledown is a Python script that sucks up the contents of the `noweb` tags and sticks them into a dictionary with the keys `my_little_tests` or `another_little_test`, at least for the samples above. 
 
 In general, the key for a noweb block is the string value of the `name` attribute of the `noweb` tag. Later, Tangledown will blow those lines back out wherever it sees a `block` tag with the same name. 
 
@@ -93,9 +93,9 @@ renders like this
 
 Because the `block` tag is inside a top-level `tangle` or `noweb` tag, MOU will render the `block` tag verbatim to the documentation. This is good for humans, who will think "AHA!, this bit of code --- this `block` --- refers to some other code --- in a `noweb` tag with the same name --- that I should read in another place and time. This here beautifully written document I'm reading right now is making it easy for me to understand the big picture because it's breaking things up like this. Thank you, kindly, author!" 
 
-In fact, that's exactly what you want for humans: talk about something in a place where you don't necessarily implement it.  But compilers need the block _right here and now_. Tangledown will substitute the contents of a block for the block tag in a tangle block somewhere else when writing files to the disk for you. The substitution process is hidden, behind the scenes, and only needed when it's time to create files on your hard drive. 
+In fact, that's exactly what you want for humans: talk about something in a place where you don't necessarily implement it.  But compilers need the block _right here and now_. Tangledown will substitute the contents of a block for the `block` tag in a tangle block somewhere else when writing files to the disk for you. The substitution process is hidden, behind the scenes, and only needed when it's time to create files on your hard drive. 
 
-You don't need any contents in a block tag, but you're welcome to put some in, say for some commentary. Tangledown will eat and ignore any contents in a `block` tag.
+You don't need any contents in a `block` tag, but you're welcome to put some in, say for some commentary. Tangledown will eat and ignore any contents in a `block` tag.
 
 ## BOOTSTRAPPING Step-by-Step
 
@@ -128,7 +128,7 @@ The following regular expressions match tags that may appear anywhere on a line.
 
 ### Test the recognizers
 
-The following code has two `block` tags that refer to the `noweb` tags of the regular expressions defined above. After Tangledown substitutes the contents of the `noweb` tags, the code becomes valid Python and you can run it. I lightly tested this with Python 2.7.11. When you run it, it proves that we can regognize all the various kinds of tags. Notice the special treatment for block ends, which will usually be on the same lines as their block tags, but not necessarily so. Also notice that it only operates on tangledown.md, so we need to fix that later.
+The following code has two `block` tags that refer to the `noweb` tags of the regular expressions defined above. After Tangledown substitutes the contents of the `noweb` tags, the code becomes valid Python and you can run it. I lightly tested this with Python 2.7.11. When you run it, it proves that we can regognize all the various kinds of tags. Notice the special treatment for block ends, which will usually be on the same lines as their block tags, but not necessarily so. Also notice that it only operates on one specific file, this here document you're reading right now, namely, tangledown.md, so we need to fix that later.
 
 <noweb name="openers">
 
@@ -180,7 +180,7 @@ Tangledown operates in two passes, once over the file and a second time over the
 
 ### First Pass: Saving Noweb and Tangle Blocks
 
-In the first pass over the file, we'll just save the noweb and tangle contents into dictionaries, without expanding nested block tags.
+In the first pass over the file, we'll just save the noweb and tangle contents into dictionaries, without expanding nested `block` tags.
 
 #### global dictionaries
 
@@ -194,8 +194,12 @@ In the first pass over the file, we'll just save the noweb and tangle contents i
 #### Oh no! There are two ways
 
 Turns out there are two ways to write literal blocks in MOU's flavor of
-Markdown: indented by four spaces and surrounded by triple backticks and _not_
-indented. We need to handle both ways. 
+Markdown: 
+
+1. indented by four spaces and 
+2. surrounded by triple backticks and _not_ indented. 
+
+We need to handle both ways. 
 
 We use the same trick of a harmless group around one of the backticks in the
 regular expression that recognizes triple backticks so that this regex is safe
@@ -291,7 +295,7 @@ Iterate over all the `tangle` tag contents and expand the
 We're doing the happy cases first, and
 will get to error handling someday, maybe.
 
-#### There is a block tag
+#### There is a `block` tag
 
 First, we need to detect that some list of lines contains a `block` tag. That
 means we must keep running the expander on that list.
@@ -309,9 +313,9 @@ def there_is_a_block_tag (lines):
 
 </noweb>
 
-#### Eat a block tag ####
+#### Eat a `block` tag ####
 
-If there is a block tag, we must eat it:
+If there is a `block` tag, we must eat it:
 
 <noweb name="eatBlockTag">
 
@@ -330,8 +334,8 @@ def eat_block_tag (i, lines):
 #### The Expander ####
 
 The following function does one round of block expansion. The caller must check
-whether any block tags remain, and keep running the expander until there are no
-more block tags. Our functional-programming conscience might be apalled, but, see, we don't have to be recursive _all the time_. Sometimes it's just easier to iterate.
+whether any `block` tags remain, and keep running the expander until there are no
+more `block` tags. Our functional-programming conscience might be apalled, but, see, we don't have to be recursive _all the time_. Sometimes it's just easier to iterate.
 
 <noweb name="expandBlocks">
 
