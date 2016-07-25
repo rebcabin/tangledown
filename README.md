@@ -23,7 +23,7 @@ If we need something _more_ powerful than Markdown, say to produce publishable P
 
 ## EXPLOIT: Markdown Ignores Mysterious Tags
 
-Let's exploit the fact that at some markdown renderers like Github's and like [MOU](http://25.io/mou/) ignore HTML / XML tags that they don't recognize. We can name blocks of code with `noweb` tags, like this:
+Let's exploit the fact that at least some markdown renderers, like Github's and like [MOU](http://25.io/mou/) ignore HTML / XML tags that they don't recognize. We can name blocks of code with `noweb` tags, like this:
 
     <noweb name="my_little_tests">
 
