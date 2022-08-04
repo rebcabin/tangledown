@@ -230,7 +230,7 @@ Tangledown operates in two passes, once over the file and a second time over the
 
 ### Getting a File Name
 
-`tangledown.py` is both a script and a module. As a script, you run it from the command line, so it gets its input file name from the command-line arguments. As a module, called from another Python program, you probably want to give the file as an argument to a function. 
+`tangledown.py` is both a script and a module. As a script, you run it from the command line, so it gets its input file name from the command-line arguments. As a module, called from another Python program, you probably want to give the file as an argument to a function. See `hello_world_tangler.py` and `hello_world.md` for examples. 
 
 Let's write two functions, `get_aFile`, which parses command-line arguments, and `get_lines`, which gets lines from a file denoted by its argument, `aFilename`. 
 
