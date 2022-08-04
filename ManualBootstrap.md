@@ -1,5 +1,29 @@
+---
+jupyter:
+  jupytext:
+    formats: ipynb,md
+    text_representation:
+      extension: .md
+      format_name: markdown
+      format_version: '1.3'
+      jupytext_version: 1.14.1
+  kernelspec:
+    display_name: Python 3 (ipykernel)
+    language: python
+    name: python3
+---
+
+# Manually Bootstrapping Tangledown
+
+
+This is an illiterate version of `tangledown.py`, one that will bootstrap `tangledown.py`. That means this notebook will tangle `tangledown.py` out of `README.md`. Once that is done one time, you can run `python tangledown.py README.md` over and over again. Each time, `tangledown.py` will be overwritten by a copy of itself.
+
+```python
 import re
 import sys
+```
+
+```python
 def get_aFile():
     """Get a file name from the command-line arguments."""
     print({f'len(sys.argv)': len(sys.argv), f'sys.argv': sys.argv})
@@ -12,16 +36,25 @@ def get_aFile():
         if file_names:
             aFile = sys.argv[1]
     return aFile
+```
+
+```python
 def get_lines(aFilename):
     """Get lines from a file denoted by aFilename."""
     with open(aFilename) as aFile:
         return aFile.readlines ()
+```
+
+```python
 noweb_start_re = re.compile (r'^<noweb name="([a-zA-Z][\w\s\-_\.]+)">$')
 noweb_end_re = re.compile (r'^</noweb>$')
 tangle_start_re = re.compile (r'^<tangle file="([a-zA-Z][\w\s\-_\.]+)">$')
 tangle_end_re = re.compile (r'^</tangle>$')
 block_start_re = re.compile (r'.*<block name="([a-zA-Z][\w\s\-_\.]+)">')
 block_end_re = re.compile (r'.*</bl[o]ck>')
+```
+
+```python
 def test_re_matching(lines):
     for line in lines:
         noweb_start_match = noweb_start_re.match (line)
@@ -51,14 +84,21 @@ def test_re_matching(lines):
             print ('BLOCK END ANOTHER LINE: ', block_end_match.group (0))
         else:
             pass
+```
+
+```python
 triple_backtick_re = re.compile (r'^`[`]`')
 blank_line_re      = re.compile (r'^\s*$')
+```
 
+```python
 def first_non_blank_line_is_triple_backtick (i, lines):
     while (blank_line_re.match (lines[i])):
         i = i + 1
     return triple_backtick_re.match (lines[i])
+```
 
+```python
 def accumulate_contents (lines, i, end_re):
     if (first_non_blank_line_is_triple_backtick (i, lines)):
         i = i + 1 # eat the line
@@ -76,7 +116,9 @@ def accumulate_contents (lines, i, end_re):
                 pass  # don't do nothin nohow
             else:
                 contents_lines.append (lines[j][snip:])
+```
 
+```python
 def accumulate_lines(lines):
     noweb_blocks = {}
     tangle_files = {}
@@ -92,13 +134,18 @@ def accumulate_lines(lines):
             i, tangle_files[file_key] = \
                 accumulate_contents(lines, i + 1, tangle_end_re)
     return noweb_blocks, tangle_files
+```
+
+```python
 def there_is_a_block_tag (lines):
     for line in lines:
         block_start_match = block_start_re.match (line)
         if (block_start_match):
             return True
     return False
+```
 
+```python
 def eat_block_tag (i, lines):
     for j in range (i, len(lines)):
         end_match = block_end_re.match (lines[j])
@@ -106,7 +153,9 @@ def eat_block_tag (i, lines):
             return j + 1
         else:  # DUDE!
             pass
+```
 
+```python
 def expand_blocks (noweb_blocks, lines):
     out_lines = []
     for i in range (len (lines)):
@@ -120,8 +169,9 @@ def expand_blocks (noweb_blocks, lines):
         else:
             out_lines.append (lines[i])
     return out_lines
+```
 
-
+```python
 def tangle_all(noweb_blocks, tangle_files):
     for k, v in tangle_files.items ():
         with open (k, 'w') as outfile:
@@ -130,9 +180,17 @@ def tangle_all(noweb_blocks, tangle_files):
                 lines = expand_blocks (noweb_blocks, lines)
             for line in lines:
                 outfile.write (line)
+```
+
+```python
 if __name__ == "__main__":
    file_from_sys_argv = get_aFile()
    lines = get_lines(file_from_sys_argv)
    test_re_matching(lines)
    noweb_blocks, tangle_files = accumulate_lines(lines)
    tangle_all(noweb_blocks, tangle_files)
+```
+
+```python
+
+```
