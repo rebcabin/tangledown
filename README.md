@@ -77,7 +77,7 @@ But `tangledown.py` _doesn't_ ignore the tags. `tangledown.py` is a Python scrip
 
 In general, the key for a noweb block is the string value of the `name` attribute of the `noweb` tag. Later, Tangledown will blow those lines back out wherever it sees a `block` tag with the same name. That's how you can define some code in one `noweb` and use it later, more than once if you like, in matching `blocks`, kind of like a C macro or an inline function.  
 
-Often, a `block` tag will be inside a `tangle` tag that sprays its entire contents to a file on disk. What file? The file named in the `file` attribute of the `tangle` tag. 
+Often, a `block` tag will be inside a `tangle` tag that sprays its entire contents to a file on disk. What file? The file named in the `file` attribute of the `tangle` tag. `block` tags can also be inside `noweb` tags, so one noweb can talk about another noweb without implementing it first.
 
 The same rules about blank lines hold for `tangle` tags as they do for `noweb` tags: if you want Markdown to render the contents like code, bracket the contents with blank lines; otherwise, leave the blank lines out. The following
 
@@ -103,13 +103,39 @@ renders like this
     
 ### You're a human! Read the `block` tags!
 
-Because the `block` tag is inside a top-level `tangle` or `noweb` tag, Markdown will render the `block` tag verbatim to the documentation. This is good for humans, who will think "AHA!, this bit of code --- this `block` --- refers to some other code --- in a `noweb` tag with the same name --- that I should read some other place and time. 
+Because a `block` tag is inside a top-level `tangle` or `noweb` tag, Markdown will render the `block` tag verbatim to the documentation. This is good for humans, who will think "AHA!, this bit of code --- this `block` --- refers to some other code --- in a `noweb` tag with the same name --- that I should read some other place and time. 
 
-This here beautifully written document I'm reading right now is making it easy for me to understand the big picture first, because it's breaking things up like this. Thank you, kindly, author! Without you, I'd be awash in details, I'd get tired and cranky before ever understanding anything important about this program!" 
+This here beautifully written document I'm reading right now is making it easy for me to understand the big picture first, because it's breaking things up like this. Thank you, kindly, author! Without you, I'd be awash in details, I'd get tired and cranky before ever understanding the big picture!" 
 
 That's exactly what you want for humans: talk about something in a place where you don't necessarily _implement_ it. But compilers usually need the full implementation of the block _right here and now_ before it's ever used. 
 
-Tangledown will substitute the contents of a block for the `block` tag in a tangle block somewhere else when writing files to the disk for you. The substitution process is hidden, behind the scenes, and only needed when it's time to create files on your hard drive. 
+See, I'll prove it to you. Here is the code for the whole program. You can understand this without understanding the _implementations_ of the sub-pieces, just getting an idea of _what_ they do from the names of the `block` tags. All we do is loop over all the lines in the input and substitute something wherever we see a `block` tag. What do we substitute? The contents of a `noweb` tag with the same name as the name mentioned in the `block` tag.
+
+<tangle file="tangledown.py">
+
+    <block name="openers"></block>
+    <block name="global dictionaries"></block>
+    <block name="oh-no-there-are-two-ways"></block>
+    <block name="accumulate-function"></block>
+    <block name="accumulate-script"></block>
+    <block name="thereIsABlockTag"></block>
+    <block name="eatBlockTag"></block>
+    <block name="expandBlocks"></block>
+    
+    for k, v in tangle_files.items ():
+        outfile = open (k, 'w')
+        lines = v
+        while there_is_a_block_tag (lines):
+            lines = expand_blocks (lines)
+        for line in lines:
+            outfile.write (line)
+        outfile.close ()
+
+</tangle>
+
+We'll implement those bits, like `global dictionaries` and `eatBlockTag`, later, after you've gotten the big picture.
+
+Tangledown will substitute the contents of the corresponding `noweb` for the `block` tag in a tangle block somewhere else when writing files to the disk for you. The substitution process is hidden, behind the scenes, and only needed when it's time to create files on your hard drive. 
 
 You don't need any contents in a `block` tag, but you're welcome to put some in, say for some in-code commentary. Tangledown will eat and ignore contents of a `block` tag. Your commentary for _humans_ to read and understand is the text _surrounding_ the `block` tags, Markdown text like the text you're reading right here and now.
 
@@ -386,28 +412,6 @@ def expand_blocks (lines):
 Ok, you saw at the top that the code in this here Markdown document, README.md, will read in all the lines in ... this here Markdown document, README.md. Bootstrapping!
 
 But you have to run something first. For that, I tangled the code manually just once and provide `tangledown.py` in the repository.
-
-<tangle file="tangledown.py">
-
-    <block name="openers"></block>
-    <block name="global dictionaries"></block>
-    <block name="oh-no-there-are-two-ways"></block>
-    <block name="accumulate-function"></block>
-    <block name="accumulate-script"></block>
-    <block name="thereIsABlockTag"></block>
-    <block name="eatBlockTag"></block>
-    <block name="expandBlocks"></block>
-    
-    for k, v in tangle_files.items ():
-        outfile = open (k, 'w')
-        lines = v
-        while there_is_a_block_tag (lines):
-            lines = expand_blocks (lines)
-        for line in lines:
-            outfile.write (line)
-        outfile.close ()
-
-</tangle>
 
 ## DUDE!
 
