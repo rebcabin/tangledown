@@ -133,7 +133,7 @@ See, I'll prove it to you. Here is the code for the whole program. You can under
 
 </tangle>
 
-We'll implement those bits, like `global dictionaries` and `eatBlockTag`, later, after you've gotten the big picture.
+We'll implement those bits, like `global dictionaries` and `eatBlockTag`, later, after you've gotten the big picture. Notice the names can contain spaces, can be in kebab-case, Pascal-case, camel-case, snake-case, whatever you like.
 
 Tangledown will substitute the contents of the corresponding `noweb` for the `block` tag in a tangle block somewhere else when writing files to the disk for you. The substitution process is hidden, behind the scenes, and only needed when it's time to create files on your hard drive. 
 
@@ -172,7 +172,7 @@ The regular expressions in noweb `anywhere_regular_expressions` matches `block` 
 
 ### Test the Regular Expressions
 
-The following code, in noweb `openers`, has two `block` tags that refer to the `noweb` tags of the regular expressions defined above, namely `left_justified_regular_expressions` and `anywhere_regular_expressions`. After Tangledown substitutes the contents of the `noweb` tags whose names match the names mentioned in the `block` tags, the code becomes valid Python and you can run it. When you run it, it proves that we can recognize all the various kinds of tags. Notice the special treatment for block ends, which will usually be on the same lines as their block tags, but not necessarily so. 
+The code in noweb `openers` has two `block` tags that refer to the `noweb` tags of the regular expressions defined above, namely `left_justified_regular_expressions` and `anywhere_regular_expressions`. After Tangledown substitutes the contents of the `noweb` tags whose names match the names mentioned in the `block` tags, the code becomes valid Python and you can run it. When you run it, it proves that we can recognize all the various kinds of tags. Notice the special treatment for block ends, which will usually be on the same lines as their block tags, but not necessarily so. 
 
 <noweb name="openers">
 
@@ -415,5 +415,5 @@ But you have to run something first. For that, I tangled the code manually just 
 
 ## DUDE!
 
-Some people like to write "TODO" in their code so they can find all the spots where they thought they might have trouble but didn't have time to write the prophylactic code at the time. I like to write "DUDE" because it sounds like"TODO" but is more rude and funny. 
+Some people like to write "TODO" in their code so they can find all the spots where they thought they might have trouble but didn't have time to write the error-handling (prophylactic) code at the time. I like to write "DUDE" because it sounds like"TODO" but is more rude and funny. 
 
