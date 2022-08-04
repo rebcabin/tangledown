@@ -1,5 +1,11 @@
 import re
-aFile = open ('tangledown.md')
+import sys
+print({f'len(sys.argv)': len(sys.argv), f'sys.argv': sys.argv})
+aFile = None
+if len(sys.argv) > 1:
+    aFile = sys.argv[1]
+else:
+    aFile = open('README.md')
 lines = aFile.readlines ()
 aFile.close ()
 noweb_start_re = re.compile (r'^<noweb name="([a-zA-Z][\w\s\-_\.]+)">$')
@@ -67,7 +73,7 @@ def accumulate (i, end_re):
             return j + 1, block_lines
         else:
             if (snip == 0 and triple_backtick_re.match (lines[j])):
-                pass
+                pass  # don't do nothin nohow
             else:
                 block_lines.append (lines[j][snip:])
     
@@ -92,7 +98,7 @@ def eat_block_tag (i, lines):
         end_match = block_end_re.match (lines[j])
         if (end_match):
             return j + 1
-        else: # DUDE!
+        else:  # DUDE!
             pass
 
 def expand_blocks (lines):
@@ -111,7 +117,7 @@ def expand_blocks (lines):
 
 
 
-for k, v in tangle_files.iteritems ():
+for k, v in tangle_files.items ():
     outfile = open (k, 'w')
     lines = v
     while there_is_a_block_tag (lines):
@@ -119,4 +125,3 @@ for k, v in tangle_files.iteritems ():
     for line in lines:
         outfile.write (line)
     outfile.close ()
-
