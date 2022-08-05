@@ -546,7 +546,6 @@ Some people write "TODO" in their code so they can find all the spots where they
 
 - modern Pythonic Type Annotation (PEP 484)
 - more examples
-- Jupyter and Jupytest notebooks
 
 ```python
 
