@@ -16,15 +16,11 @@ This is a toy. It's a useful toy, but it has zero error handling. This document 
 
 - README.md files are mandatory, or really should be, in projects.
 
-
 - README.md files should be authoritative and complete. README.md files that _can't_ get out of sync with code are best.
-
 
 - Let's put _all the real, live code_ for a project inside README.md, along with authoritative documentation. When you modify one, modify the other along with it.
 
-
 - Let's write README.md for human reasoning and understanding, that is, _top-down_ instead of _bottom-up_. Let's help readers understand the big picture before overwhelming them with implementation details.
-
 
 - Let's create a tool to suck the code out of README.md and rearrange it on disk in some other order required by build tools, debuggers, and IDEs.
 
@@ -139,7 +135,7 @@ renders like this
 Markdown renders `block` tags verbatim to the documentation. This is good for humans, who will think "AHA!, this `block` refers to some code in a `noweb` tag with the same name that I can read some other place and time.
 
 
-This here beautifully written document I'm reading right now is making it easy for me to understand the big picture first, because it's breaking things up like this. Thank you, kindly, author! Without you, I'd be awash in details, I'd get tired and cranky before understanding the big picture!"
+"This here beautifully written document I'm reading right now is making it easy for me to understand the big picture first, because it's breaking things up like this. Thank you, kindly, author! Without you, I'd be awash in details, I'd get tired and cranky before understanding the big picture!"
 
 
 That's exactly what you want for humans: talk about something in a place where you don't necessarily _implement_ it. But compilers usually need the full implementation of the block _right here and now_ before it's ever used.
@@ -551,3 +547,7 @@ Some people write "TODO" in their code so they can find all the spots where they
 - modern Pythonic Type Annotation (PEP 484)
 - more examples
 - Jupyter and Jupytest notebooks
+
+```python
+
+```

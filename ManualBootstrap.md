@@ -16,7 +16,7 @@ jupyter:
 # Manually Bootstrapping Tangledown
 
 
-This is an illiterate version of `tangledown.py`, one that will bootstrap `tangledown.py`. That means this notebook will tangle `tangledown.py` out of `README.md`. Once that is done one time, you can run `python tangledown.py README.md` over and over again. Each time, `tangledown.py` will be overwritten by a copy of itself.
+This is an illiterate version of `tangledown.py`, one that will bootstrap `tangledown.py`. That means this notebook will tangle `tangledown.py` out of `README.md`. Once that is done one time, you can run `python tangledown.py README.md` over and over again. Each time, `tangledown.py` will be overwritten by a copy of itself. You can also tangle `tangledown.py` from another Python program by importing functions from `tangledown.py`. The notebook `hello_world.ipynb
 
 ```python
 import re
