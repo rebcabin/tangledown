@@ -43,7 +43,18 @@ If we need something _more_ powerful than Tangledown, say to produce publishable
 Run `python3 tangledown.py REAMDE.md`. That command should _overwrite_ tangledown.py. The code for tangledown.py is inside README.md. The name of the file to overwrite, namely `tangledown.py` is embedded inside README.md itself, in the `file` attribute of a `<tangle>` tag. Read about them below!
 
 
-If you said `python3 tangledown.py MY-FOO.md`, then you would be tangling the code out of `MY-FOO.md`. You'll do that once you start writing your own code in Tangledown. You will love it!
+If you said `python3 tangledown.py MY-FOO.md`, then you would be tangling the
+code out of `MY-FOO.md`. You'll do that once you start writing your own code in
+Tangledown. You will love it!
+
+
+You can also run tangledown from inside a python program;
+`=hellow_world_tangler.py` is an example.
+[Jupytext](https://github.com/mwouts/jupytext) lets you RUN code from a Markdown
+document in a Jupyter notebook. If you open `hello_world.md` as a Jupytext [sic]
+notebook in [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) then you
+can run tangledown in Jupyter sells. It's very, very cool and is getting close
+to the high bar set by org-babel!
 
 
 ## HOW IT WORKS: Markdown Ignores Mysterious Tags
@@ -285,13 +296,13 @@ Tangledown operates in two passes, once over the file and a second time over the
 ### Getting a File Name
 
 
-`tangledown.py` is both a script and a module. As a script, you run it from the command line, so it gets its input file name from the command-line arguments. As a module, called from another Python program, you probably want to give the file as an argument to a function. See `hello_world_tangler.py` and `hello_world.md` for examples. 
+`tangledown.py` is both a script and a module. As a script, you run it from the command line, so it gets its input file name from the command-line arguments. As a module, called from another Python program, you probably want to give the file as an argument to a function. See `hello_world_tangler.py` and `hello_world.md` for examples.
 
 
-Let's write two functions, `get_aFile`, which parses command-line arguments, and `get_lines`, which gets lines from a file denoted by its argument, `aFilename`. 
+Let's write two functions, `get_aFile`, which parses command-line arguments, and `get_lines`, which gets lines from a file denoted by its argument, `aFilename`.
 
 
-`get_aFile` can parse command-line arguments that come from either `python` on the command line or from a `Jupitext` notebook, which has a few kinds of command-line arguments we must ignore, namely command-line arguments that end in `.py` or in `.json`. 
+`get_aFile` can parse command-line arguments that come from either `python` on the command line or from a `Jupitext` notebook, which has a few kinds of command-line arguments we must ignore, namely command-line arguments that end in `.py` or in `.json`.
 
 
 <noweb name="getting a file and its lines">
