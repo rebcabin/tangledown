@@ -40,7 +40,7 @@ If we need something _more_ powerful than Tangledown, say to produce publishable
 ## HOW TO RUN TANGLEDOWN:
 
 
-Run `python3 tangledown.py REAMDE.md`. That command should _overwrite_ tangledown.py. The code for tangledown.py is inside README.md. The name of the file to overwrite, namely `tangledown.py` is embedded inside README.md itself, in the `file` attribute of a `<tangle>` tag. Read about them below!
+One way: run `python3 tangledown.py REAMDE.md` at the command line. That command should _overwrite_ tangledown.py. The code for tangledown.py is inside README.md. The name of the file to overwrite, namely `tangledown.py` is embedded inside README.md itself, in the `file` attribute of a `<tangle>` tag. Read about them below!
 
 
 If you said `python3 tangledown.py MY-FOO.md`, then you would be tangling the
@@ -49,11 +49,11 @@ Tangledown. You will love it!
 
 
 You can also run tangledown from inside a python program;
-`=hellow_world_tangler.py` is an example.
+`hello_world_tangler.py` is an example.
 [Jupytext](https://github.com/mwouts/jupytext) lets you RUN code from a Markdown
 document in a Jupyter notebook. If you open `hello_world.md` as a Jupytext [sic]
 notebook in [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) then you
-can run tangledown in Jupyter sells. It's very, very cool and is getting close
+can run Tangledown in Jupyter sells. It's very, very cool and is getting close
 to the high bar set by org-babel!
 
 
@@ -75,17 +75,13 @@ Let's exploit the fact that most markdown renderers, like Github's and [PyCharm'
 
 The block above renders as follows:
 
-
-<noweb name="my_little_tests">
-
+```python
     class TestSomething (unittest.TestCase):
         """unittest documented here:
         https://docs.python.org/3/library/unittest.html"""
         def test_something (self):
             self.assertEqual (3, 2+1)
-    
-</noweb>
-
+```
 
 Leave a blank line after the opening `<noweb...>` tag and another blank line before the ending `</noweb>` tag, unless you don't want to render the code like code. Here's a non-rendered `noweb` block --- no blank lines surrounding the contents of the `noweb` tag:
 
@@ -131,31 +127,55 @@ The same rules about blank lines hold for `tangle` tags as they do for `noweb` t
 
 renders like this
 
+```python
+import unittest
 
-    import unittest
+<block name="my_little_tests"></block>
 
-    <block name="my_little_tests"></block>
+if __name__ == '__main__':
+    unittest.main()
+```
 
-    if __name__ == '__main__':
-        unittest.main()
-
-
-### You're a human! Read the `block` tags!
-
-
-Markdown renders `block` tags verbatim to the documentation. This is good for humans, who will think "AHA!, this `block` refers to some code in a `noweb` tag with the same name that I can read some other place and time.
+## IMPORTANT FOR JUPYTEXT USERS
 
 
-"This here beautifully written document I'm reading right now is making it easy for me to understand the big picture first, because it's breaking things up like this. Thank you, kindly, author! Without you, I'd be awash in details, I'd get tired and cranky before understanding the big picture!"
+Jupytext automatically syncs a Markdown file with a Jupyter notebook if you open README.md in Jupyter Lab, then `View->Activate Command Palette`, then check `Pair Notebook with Markdown`. If you edit one of the two, Jupytext will update the other, though to see the updates, you must `File->Reload Notebook from Disk` or `File->Reload Markdown File from Disk`, as appropriate.
+
+
+If you're reading or modifying README.md as a Jupyter notebook, that is, if you are reading or modifying README.ipynb, you will see tiny cells above and below all your tagged nowebs, blocks, and tangles. *DON'T DELETE THEM*. Markdown renderers simply ignore the tags, but Jupytext makes tiny cells out of them!
+
+
+You also probably don't want to RUN tagged blocks in Jupyter, but you DO want to run some blocks of code. See `hello_world.ipynb` after you have opened `hello_world.md` and Paired Notebook With Markdown; remember the Activate Command Palette GUI?
+
+
+## YOUR'RE A HUMAN! READ THE NAMES IN THE `block` TAGS!
+
+
+Markdown renders `block` tags verbatim to the documentation. This is good for humans, who will think
+
+
+> AHA!, this `block` refers to some code in a `noweb` tag with the same name that I can read some other place and time.
+
+
+> This here beautifully written document I'm reading right now is making it easy for me to understand the big picture first, because it's breaking things up like this. Thank you, kindly, author! Without you, I'd be awash in details, I'd get tired and cranky before understanding the big picture!
 
 
 That's exactly what you want for humans: talk about something in a place where you don't necessarily _implement_ it. But compilers usually need the full implementation of the block _right here and now_ before it's ever used.
 
 
-See, I'll prove it to you. Here is the code for the whole program. You can understand this without understanding the _implementations_ of the sub-pieces, just getting an idea of _what_ they do from the names of the `block` tags. All we do is loop over all the lines in the input and substitute something wherever we see a `block` tag. What do we substitute? The contents of a `noweb` tag with the same name as the name mentioned in the `block` tag.
+See, I'll prove it to you. Here is the code for the whole program. You can understand this without understanding the _implementations_ of the sub-pieces, just getting an idea of _what_ they do from the names of the `block` tags. READ THE NAMES IN THE BLOCK TAGS to get the big picture.
+
+
+All we do in the code below the block tags, in function `tangle_all`, is loop over all the lines in the input and substitute something wherever we see a `block` tag. What do we substitute? The contents of a `noweb` tag with the same name as the name mentioned in the `block` tag.
 
 
 This program can run as a script or imported as a module. We get that hybrid vigor by the standard Python trick of testing `__name__` against `"__main__"`.
+
+
+Now, if you're reading this as a Jupyter notebook in Jupytext (as explained above), you'll see a little tiny cell just before the code below and just after the code below. This code is in a `tangle` tag that you can't see in the notebook. Those tiny cells contain the all-important `tangle` start and end tags.
+
+
+DON'T DELETE THE TINY CELLS (if you're reading this as a Jupyter notebok in Jupytext)
 
 
 <tangle file="tangledown.py">
@@ -189,10 +209,10 @@ if __name__ == "__main__":
 </tangle>
 
 
-We'll implement those bits, like `accumulate_contents` and `eatBlockTag`, later, after you've gotten the big picture. Notice the names can contain spaces, can be in kebab-case, Pascal-case, camel-case, snake-case, whatever you like.
+We'll implement those block tags, like `accumulate_contents` and `eatBlockTag`, later, after you've gotten the big picture. Notice the names can contain spaces, can be in kebab-case, Pascal-case, camel-case, snake-case, whatever you like.
 
 
-`block` tags don't need any contents, but you're welcome to put some in, say for in-code commentary. Tangledown will eat and ignore contents of a `block` tag. In-code commentary is less important with tangledown, however, because Your commentary for _humans_ is the text _surrounding_ the `block` tags, Markdown text like the text you're reading right here and now.
+`block` tags don't need any contents, but you're welcome to put some in, say for in-code commentary. Tangledown will eat and ignore contents of a `block` tag. With Tangledown, in-code commentary is less important than it is in normal code, however, because Your commentary for _humans_ is the text _surrounding_ the `block` tags, Markdown text like the text you're reading right here and now.
 
 
 ## BOOTSTRAPPING, Step-by-Step<a name="bootstrapping"></a>
@@ -244,6 +264,9 @@ block_end_re = re.compile (r'.*</bl[o]ck>')
 
 
 The code in noweb `openers` has two `block` tags that refer to the nowebs of the regexes defined above, namely `left_justified_regexes` and `anywhere_regexes`. After Tangledown substitutes the contents of the nowebs, the code becomes valid Python and you can run it. When you run it, it proves that we can recognize all the various kinds of tags. We leave the regexes themselves as global pseudo-constants so that they're easy to test and to use in the body of the code.
+
+
+The code in `hello_world.ipynb` (after you have Paired a Notebook with the Markdown File) runs this test as its last act to check that `tangledown.py` was correctly tangled from `README.md`
 
 
 Notice the special treatment for block ends, which will usually be on the same lines as their block tags, but not necessarily so.
@@ -360,7 +383,10 @@ Tangledown must handle both ways.
 We use the same trick of a harmless group around one of the backticks in the regex that recognizes triple backticks so that this regex is safe to run on itself.
 
 
-The following function, in noweb `oh-no-there-are-two-ways` recognizes code blocks bracketed by triple backticks. Notice that the `noweb` tag for this block in this here README.md is triple-bacticked, itself. Kind of a funny self-toast joke, no? Tangledown can tangle all the options in Tangledown itself. Mostly, we use indented code blocks when we're talking about noweb and tangle tags, but don't want to run them. They won't run because they're indented, and the regexes in noweb `left_justified_regexes` won't match them.
+The following function, in noweb `oh-no-there-are-two-ways` recognizes code blocks bracketed by triple backticks. Notice that the `noweb` tag for this block in this here README.md is triple-bacticked, itself. Kind of a funny self-toast joke, no? Tangledown can tangle all the options in Tangledown itself. 
+
+
+Mostly, we use indented code blocks when we're talking about noweb and tangle tags, but don't want process them. Tangledown won't process them because they're indented, and the regexes in noweb `left_justified_regexes` won't match them.
 
 
 <noweb name="oh-no-there-are-two-ways">
