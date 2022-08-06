@@ -1,5 +1,6 @@
 import re
 import sys
+
 def get_aFile():
     """Get a file name from the command-line arguments."""
     print({f'len(sys.argv)': len(sys.argv), f'sys.argv': sys.argv})
@@ -12,24 +13,32 @@ def get_aFile():
         if file_names:
             aFile = sys.argv[1]
     return aFile
+
 def get_lines(aFilename):
     """Get lines from a file denoted by aFilename."""
     with open(aFilename) as aFile:
         return aFile.readlines ()
+
 noweb_start_re = re.compile (r'^<noweb name="([a-zA-Z][\w\s\-_\.]+)">$')
 noweb_end_re = re.compile (r'^</noweb>$')
+
 tangle_start_re = re.compile (r'^<tangle file="([a-zA-Z][\w\s\-_\.]+)">$')
 tangle_end_re = re.compile (r'^</tangle>$')
+
 block_start_re = re.compile (r'.*<block name="([a-zA-Z][\w\s\-_\.]+)">')
 block_end_re = re.compile (r'.*</bl[o]ck>')
+
+
 def test_re_matching(lines):
     for line in lines:
         noweb_start_match = noweb_start_re.match (line)
         tangle_start_match = tangle_start_re.match (line)
         block_start_match = block_start_re.match (line)
+
         noweb_end_match = noweb_end_re.match (line)
         tangle_end_match = tangle_end_re.match (line)
         block_end_match = block_end_re.match (line)
+
         if (noweb_start_match):
             print ('NOWEB: ', noweb_start_match.group (0))
             print ('name of the block: ', noweb_start_match.group (1))
@@ -51,6 +60,7 @@ def test_re_matching(lines):
             print ('BLOCK END ANOTHER LINE: ', block_end_match.group (0))
         else:
             pass
+
 triple_backtick_re = re.compile (r'^`[`]`')
 blank_line_re      = re.compile (r'^\s*$')
 
@@ -92,6 +102,7 @@ def accumulate_lines(lines):
             i, tangle_files[file_key] = \
                 accumulate_contents(lines, i + 1, tangle_end_re)
     return noweb_blocks, tangle_files
+
 def there_is_a_block_tag (lines):
     for line in lines:
         block_start_match = block_start_re.match (line)
@@ -122,6 +133,7 @@ def expand_blocks (noweb_blocks, lines):
     return out_lines
 
 
+
 def tangle_all(noweb_blocks, tangle_files):
     for k, v in tangle_files.items ():
         with open (k, 'w') as outfile:
@@ -130,9 +142,11 @@ def tangle_all(noweb_blocks, tangle_files):
                 lines = expand_blocks (noweb_blocks, lines)
             for line in lines:
                 outfile.write (line)
+
 if __name__ == "__main__":
    file_from_sys_argv = get_aFile()
    lines = get_lines(file_from_sys_argv)
    test_re_matching(lines)
    noweb_blocks, tangle_files = accumulate_lines(lines)
    tangle_all(noweb_blocks, tangle_files)
+

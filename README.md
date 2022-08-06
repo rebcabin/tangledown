@@ -2,7 +2,7 @@
 
 
 ### Brian Beckman
-### 4 Aug 2022
+### 5 Aug 2022
 
 
 ## DISCLAIMER:
@@ -83,7 +83,7 @@ The block above renders as follows:
         https://docs.python.org/3/library/unittest.html"""
         def test_something (self):
             self.assertEqual (3, 2+1)
-
+    
 </noweb>
 
 
@@ -160,29 +160,31 @@ This program can run as a script or imported as a module. We get that hybrid vig
 
 <tangle file="tangledown.py">
 
-    <block name="openers"></block>
-    <block name="oh-no-there-are-two-ways"></block>
-    <block name="accumulate-contents"></block>
-    <block name="accumulate-lines"></block>
-    <block name="thereIsABlockTag"></block>
-    <block name="eatBlockTag"></block>
-    <block name="expandBlocks"></block>
+```python
+<block name="openers"></block>
+<block name="oh-no-there-are-two-ways"></block>
+<block name="accumulate-contents"></block>
+<block name="accumulate-lines"></block>
+<block name="thereIsABlockTag"></block>
+<block name="eatBlockTag"></block>
+<block name="expandBlocks"></block>
 
-    def tangle_all(noweb_blocks, tangle_files):
-        for k, v in tangle_files.items ():
-            with open (k, 'w') as outfile:
-                lines = v
-                while there_is_a_block_tag (lines):
-                    lines = expand_blocks (noweb_blocks, lines)
-                for line in lines:
-                    outfile.write (line)
+def tangle_all(noweb_blocks, tangle_files):
+    for k, v in tangle_files.items ():
+        with open (k, 'w') as outfile:
+            lines = v
+            while there_is_a_block_tag (lines):
+                lines = expand_blocks (noweb_blocks, lines)
+            for line in lines:
+                outfile.write (line)
 
-    if __name__ == "__main__":
-       file_from_sys_argv = get_aFile()
-       lines = get_lines(file_from_sys_argv)
-       test_re_matching(lines)
-       noweb_blocks, tangle_files = accumulate_lines(lines)
-       tangle_all(noweb_blocks, tangle_files)
+if __name__ == "__main__":
+   file_from_sys_argv = get_aFile()
+   lines = get_lines(file_from_sys_argv)
+   test_re_matching(lines)
+   noweb_blocks, tangle_files = accumulate_lines(lines)
+   tangle_all(noweb_blocks, tangle_files)
+```
 
 </tangle>
 
@@ -214,11 +216,13 @@ The names in the attributes of `noweb` and `tangle` tags must start with a lette
 
 <noweb name="left_justified_regexes">
 
-    noweb_start_re = re.compile (r'^<noweb name="([a-zA-Z][\w\s\-_\.]+)">$')
-    noweb_end_re = re.compile (r'^</noweb>$')
+```python
+noweb_start_re = re.compile (r'^<noweb name="([a-zA-Z][\w\s\-_\.]+)">$')
+noweb_end_re = re.compile (r'^</noweb>$')
 
-    tangle_start_re = re.compile (r'^<tangle file="([a-zA-Z][\w\s\-_\.]+)">$')
-    tangle_end_re = re.compile (r'^</tangle>$')
+tangle_start_re = re.compile (r'^<tangle file="([a-zA-Z][\w\s\-_\.]+)">$')
+tangle_end_re = re.compile (r'^</tangle>$')
+```
 
 </noweb>
 
@@ -228,8 +232,10 @@ The regexes in noweb `anywhere_regexes` matches `block` tags that may appear any
 
 <noweb name="anywhere_regexes">
 
-    block_start_re = re.compile (r'.*<block name="([a-zA-Z][\w\s\-_\.]+)">')
-    block_end_re = re.compile (r'.*</bl[o]ck>')
+```python
+block_start_re = re.compile (r'.*<block name="([a-zA-Z][\w\s\-_\.]+)">')
+block_end_re = re.compile (r'.*</bl[o]ck>')
+```
 
 </noweb>
 
@@ -245,44 +251,46 @@ Notice the special treatment for block ends, which will usually be on the same l
 
 <noweb name="openers">
 
-    import re
-    import sys
+```python
+import re
+import sys
 
-    <block name="getting a file and its lines"></block>
-    <block name="left_justified_regexes"></block>
-    <block name="anywhere_regexes"></block>
+<block name="getting a file and its lines"></block>
+<block name="left_justified_regexes"></block>
+<block name="anywhere_regexes"></block>
 
-    def test_re_matching(lines):
-        for line in lines:
-            noweb_start_match = noweb_start_re.match (line)
-            tangle_start_match = tangle_start_re.match (line)
-            block_start_match = block_start_re.match (line)
+def test_re_matching(lines):
+    for line in lines:
+        noweb_start_match = noweb_start_re.match (line)
+        tangle_start_match = tangle_start_re.match (line)
+        block_start_match = block_start_re.match (line)
 
-            noweb_end_match = noweb_end_re.match (line)
-            tangle_end_match = tangle_end_re.match (line)
-            block_end_match = block_end_re.match (line)
+        noweb_end_match = noweb_end_re.match (line)
+        tangle_end_match = tangle_end_re.match (line)
+        block_end_match = block_end_re.match (line)
 
-            if (noweb_start_match):
-                print ('NOWEB: ', noweb_start_match.group (0))
-                print ('name of the block: ', noweb_start_match.group (1))
-            elif (noweb_end_match):
-                print ('NOWEB END: ', noweb_end_match.group (0))
-            elif (tangle_start_match):
-                print ('TANGLE: ', tangle_start_match.group (0))
-                print ('name of the file: ', tangle_start_match.group (1))
-            elif (tangle_end_match):
-                print ('TANGLE END: ', tangle_end_match.group (0))
-            elif (block_start_match):
-                print ('BLOCK: ', block_start_match.group (0))
-                print ('name of the block: ', block_start_match.group (1))
-                if (block_end_match):
-                    print ('BLOCK END SAME LINE: ', block_end_match.group (0))
-                else:
-                    print ('BLOCK NO END')
-            elif (block_end_match):
-                print ('BLOCK END ANOTHER LINE: ', block_end_match.group (0))
+        if (noweb_start_match):
+            print ('NOWEB: ', noweb_start_match.group (0))
+            print ('name of the block: ', noweb_start_match.group (1))
+        elif (noweb_end_match):
+            print ('NOWEB END: ', noweb_end_match.group (0))
+        elif (tangle_start_match):
+            print ('TANGLE: ', tangle_start_match.group (0))
+            print ('name of the file: ', tangle_start_match.group (1))
+        elif (tangle_end_match):
+            print ('TANGLE END: ', tangle_end_match.group (0))
+        elif (block_start_match):
+            print ('BLOCK: ', block_start_match.group (0))
+            print ('name of the block: ', block_start_match.group (1))
+            if (block_end_match):
+                print ('BLOCK END SAME LINE: ', block_end_match.group (0))
             else:
-                pass
+                print ('BLOCK NO END')
+        elif (block_end_match):
+            print ('BLOCK END ANOTHER LINE: ', block_end_match.group (0))
+        else:
+            pass
+```
 
 </noweb>
 
@@ -307,23 +315,25 @@ Let's write two functions, `get_aFile`, which parses command-line arguments, and
 
 <noweb name="getting a file and its lines">
 
-    def get_aFile():
-        """Get a file name from the command-line arguments."""
-        print({f'len(sys.argv)': len(sys.argv), f'sys.argv': sys.argv})
-        aFile = 'README.md'
-        if len(sys.argv) > 1:
-            file_names = [p for p in sys.argv
-                            if (p[0] != '-')  # option
-                               and (p[-3:] != '.py')
-                               and (p[-5:] != '.json')]
-            if file_names:
-                aFile = sys.argv[1]
-        return aFile
+```python
+def get_aFile():
+    """Get a file name from the command-line arguments."""
+    print({f'len(sys.argv)': len(sys.argv), f'sys.argv': sys.argv})
+    aFile = 'README.md'
+    if len(sys.argv) > 1:
+        file_names = [p for p in sys.argv
+                        if (p[0] != '-')  # option
+                           and (p[-3:] != '.py')
+                           and (p[-5:] != '.json')]
+        if file_names:
+            aFile = sys.argv[1]
+    return aFile
 
-    def get_lines(aFilename):
-        """Get lines from a file denoted by aFilename."""
-        with open(aFilename) as aFile:
-            return aFile.readlines ()
+def get_lines(aFilename):
+    """Get lines from a file denoted by aFilename."""
+    with open(aFilename) as aFile:
+        return aFile.readlines ()
+```
 
 </noweb>
 
@@ -355,7 +365,7 @@ The following function, in noweb `oh-no-there-are-two-ways` recognizes code bloc
 
 <noweb name="oh-no-there-are-two-ways">
 
-```
+```python
 triple_backtick_re = re.compile (r'^`[`]`')
 blank_line_re      = re.compile (r'^\s*$')
 
@@ -387,7 +397,7 @@ The function `accumulate_contents` starts at line `i`, then figures out whether 
 
 <noweb name="accumulate-contents">
 
-```
+```python
 def accumulate_contents (lines, i, end_re):
     if (first_non_blank_line_is_triple_backtick (i, lines)):
         i = i + 1 # eat the line
@@ -418,24 +428,25 @@ The function `accumulate_lines` sucks all the `noweb` tags and `tangle` tags out
 
 <noweb name="accumulate-lines">
 
-    def accumulate_lines(lines):
-        noweb_blocks = {}
-        tangle_files = {}
-        for i in range(len(lines)):
-            noweb_start_match = noweb_start_re.match (lines[i])
-            tangle_start_match = tangle_start_re.match (lines[i])
-            if (noweb_start_match):
-                block_key = noweb_start_match.group (1)
-                i, noweb_blocks[block_key] = \
-                    accumulate_contents(lines, i + 1, noweb_end_re)
-            elif (tangle_start_match):
-                file_key = tangle_start_match.group (1)
-                i, tangle_files[file_key] = \
-                    accumulate_contents(lines, i + 1, tangle_end_re)
-        return noweb_blocks, tangle_files
+```python
+def accumulate_lines(lines):
+    noweb_blocks = {}
+    tangle_files = {}
+    for i in range(len(lines)):
+        noweb_start_match = noweb_start_re.match (lines[i])
+        tangle_start_match = tangle_start_re.match (lines[i])
+        if (noweb_start_match):
+            block_key = noweb_start_match.group (1)
+            i, noweb_blocks[block_key] = \
+                accumulate_contents(lines, i + 1, noweb_end_re)
+        elif (tangle_start_match):
+            file_key = tangle_start_match.group (1)
+            i, tangle_files[file_key] = \
+                accumulate_contents(lines, i + 1, tangle_end_re)
+    return noweb_blocks, tangle_files
+```
 
 </noweb>
-
 
 ### DUDE!
 
@@ -476,7 +487,7 @@ First, we need to detect that some list of lines contains a `block` tag, left-ju
 
 <noweb name="thereIsABlockTag">
 
-```
+```python
 def there_is_a_block_tag (lines):
     for line in lines:
         block_start_match = block_start_re.match (line)
@@ -496,7 +507,7 @@ If there is a `block` tag, we must eat the tag and its meaningless contents:
 
 <noweb name="eatBlockTag">
 
-```
+```python
 def eat_block_tag (i, lines):
     for j in range (i, len(lines)):
         end_match = block_end_re.match (lines[j])
@@ -517,7 +528,7 @@ The following function does one round of block expansion. The caller must test w
 
 <noweb name="expandBlocks">
 
-```
+```python
 def expand_blocks (noweb_blocks, lines):
     out_lines = []
     for i in range (len (lines)):

@@ -56,8 +56,9 @@ Do it again to make sure it all worked!
 tangle_all(*accumulate_lines(get_lines("README.md")))
 ```
 
-Hot Dayyum!
+Hot Dayyum! Here is a deeper test that everything is ok:
 
 ```python
-
+from tangledown import test_re_matching
+test_re_matching(get_lines("README.md"))
 ```
