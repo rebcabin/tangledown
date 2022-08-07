@@ -134,8 +134,10 @@ def expand_blocks (noweb_blocks, lines):
 
 
 
+from pathlib import Path
 def tangle_all(noweb_blocks, tangle_files):
     for k, v in tangle_files.items ():
+        Path(k).parents[0].mkdir(parents=True, exist_ok=True)
         with open (k, 'w') as outfile:
             lines = v
             while there_is_a_block_tag (lines):
