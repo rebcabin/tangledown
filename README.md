@@ -139,7 +139,7 @@ if __name__ == '__main__':
 ## IMPORTANT FOR JUPYTEXT USERS
 
 
-Jupytext automatically syncs a Markdown file with a Jupyter notebook. If you open README.md in Jupyter Lab, then `View->Activate Command Palette`, then check `Pair Notebook with Markdown`. If you edit one of the two, Jupytext will update the other, though to see the updates, you must `File->Reload Notebook from Disk` or `File->Reload Markdown File from Disk`, as appropriate.
+Jupytext automatically syncs a Markdown file with a Jupyter notebook. If you open README.md in Jupyter Lab, then `View->Activate Command Palette`, then check `Pair Notebook with Markdown`, then if you edit one of the two, Jupytext will update the other. Though to see the updates, you must `File->Reload Notebook from Disk` or `File->Reload Markdown File from Disk`, as appropriate.
 
 
 If you're reading or modifying README.md as a Jupyter notebook, that is, if you are reading or modifying README.ipynb, you will see tiny cells above and below all your tagged nowebs, blocks, and tangles. *DON'T DELETE THEM*. Markdown renderers simply ignore the tags, but Jupytext makes tiny cells out of them!
