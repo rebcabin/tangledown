@@ -392,7 +392,7 @@ We use the same trick of a harmless group around one of the backticks in the reg
 The following function, in noweb `oh-no-there-are-two-ways` recognizes code blocks bracketed by triple backticks. Notice that the `noweb` tag for this block in this here README.md is triple-bacticked, itself. Kind of a funny self-toast joke, no? Tangledown can tangle all the options in Tangledown itself. 
 
 
-Mostly, we use indented code blocks when we're talking about noweb and tangle tags, but don't want process them. Tangledown won't process them because they're indented, and the regexes in noweb `left_justified_regexes` won't match them.
+Mostly, we use indented code blocks when we're talking about noweb and tangle tags, but don't want go process them. Tangledown won't process them because they're indented, and the regexes in noweb `left_justified_regexes` won't match them.
 
 #### noweb oh-no-there-are-two-ways
 
