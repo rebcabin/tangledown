@@ -169,7 +169,7 @@ See, I'll prove it to you. Here is the code for the whole program. You can under
 All we do in the code below the block tags, in function `tangle_all`, is loop over all the lines in the input and substitute something wherever we see a `block` tag. What do we substitute? The contents of a `noweb` tag with the same name as the name mentioned in the `block` tag.
 
 
-This program can run as a script or imported as a module. We get that hybrid vigor by the standard Python trick of testing `__name__` against `"__main__"`.
+This program can run as a script or can be imported as a module. We get that hybrid vigor by the standard Python trick of testing `__name__` against `"__main__"`.
 
 
 Now, if you're reading this as a Jupyter notebook in Jupytext (as explained above), you'll see a little tiny cell just before the code below and just after the code below. This code is in a `tangle` tag that you can't see in the notebook. Those tiny cells contain the all-important `tangle` start and end tags.
