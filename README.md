@@ -53,7 +53,7 @@ You can also run tangledown from inside a python program;
 [Jupytext](https://github.com/mwouts/jupytext) lets you RUN code from a Markdown
 document in a Jupyter notebook. If you open `hello_world.md` as a Jupytext [sic]
 notebook in [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) then you
-can run Tangledown in Jupyter sells. It's very, very cool and is getting close
+can run Tangledown in Jupyter cells. It's very, very cool and is getting close
 to the high bar set by org-babel!
 
 
