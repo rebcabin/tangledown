@@ -174,10 +174,11 @@ This program can run as a script or can be imported as a module. We get that hyb
 
 Now, if you're reading this as a Jupyter notebook in Jupytext (as explained above), you'll see a little tiny cell just before the code below and just after the code below. This code is in _the contents of_ a `tangle` tag. The _contents_ of any tag `foo` is the stuff between the opening tag `<foo>` and the closing tag `</foo>`. I know, we use the word _tag_ to mean three things: the opener `<foo>`, the closer `</foo>`, or the entire magilla between the opener `<foo>` and the closer `</foo>`. Forgive us, will you? I'm not sure any literature on HTML, XML, or SGML is any better about that nomenclature.
 
+
 The notebook won't render `<tangle ...>`, but will render the contents between `<tangle ...>` and `</tangle>` and will represent `<tangle ...>` and `</tangle>` with tiny cells. Those tiny cells contain the all-important `tangle` start and end taglets (see, there I invented a disambiguating word).
 
 
-DON'T DELETE THE TINY CELLS (if you're reading this as a Jupyter notebok in Jupytext)
+DON'T DELETE THE TINY CELLS (if you're reading this as a Jupyter notebok with Jupytext)
 
 
 <tangle file="tangledown.py">
@@ -235,6 +236,7 @@ The two regexes defined in the noweb `left_justified_regexes` match `noweb` and`
 
 The names in the attributes of `noweb` and `tangle` tags must start with a letter, and they can contain letters, numbers, hyphens, underscores, whitespace, and dots. That's what is said by the regexes in noweb `left_justified_regexes`, right here, this next one:
 
+
 #### noweb left_justified_regexes
 
 <noweb name="left_justified_regexes">
@@ -251,6 +253,7 @@ tangle_end_re = re.compile (r'^</tangle>$')
 
 
 The regexes in noweb `anywhere_regexes` matches `block` tags that may appear anywhere on a line. I converted the 'o' in 'block' to a harmless regex group `[o]` so that _block_end_ doesn't match itself. That makes it safe to run this code on this here document itself.
+
 
 #### noweb anywhere_regexes
 
@@ -274,6 +277,7 @@ The code in `hello_world.ipynb` (after you have Paired a Notebook with the Markd
 
 
 Notice the special treatment for block ends, which will usually be on the same lines as their block tags, but not necessarily so.
+
 
 #### noweb openers
 
@@ -340,6 +344,7 @@ Let's write two functions, `get_aFile`, which parses command-line arguments, and
 
 `get_aFile` can parse command-line arguments that come from either `python` on the command line or from a `Jupitext` notebook, which has a few kinds of command-line arguments we must ignore, namely command-line arguments that end in `.py` or in `.json`.
 
+
 #### noweb getting a file and its lines
 
 <noweb name="getting a file and its lines">
@@ -394,6 +399,7 @@ The following function, in noweb `oh-no-there-are-two-ways` recognizes code bloc
 
 Mostly, we use indented code blocks when we're talking about noweb and tangle tags, but don't want to process them. Tangledown won't process them because they're indented, and the regexes in noweb `left_justified_regexes` won't match them.
 
+
 #### noweb oh-no-there-are-two-ways
 
 <noweb name="oh-no-there-are-two-ways">
@@ -427,6 +433,7 @@ We'll just use iteration and array indices in a tasteful way so our functional f
 
 The function `accumulate_contents` starts at line `i`, then figures out whether a tag's first non-blank line is triple backtick, in which case it _won't_ snip four spaces from the beginning of every line, and finally keeps going until it sees the end of the tag. This function accumulates the contents of `noweb` or `tangle` tags. Remember that `block` tags don't have meanigful contents.
 
+
 #### noweb accumulate-contents
 
 <noweb name="accumulate-contents">
@@ -458,6 +465,7 @@ def accumulate_contents (lines, i, end_re):
 
 
 The function `accumulate_lines` sucks all the `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries `noweb_blocks` and `tangle_files` with any code or file attributes it finds inside noweb or tangle tags.
+
 
 #### noweb accumulate-lines
 
@@ -605,6 +613,7 @@ Some people write "TODO" in their code so they can find all the spots where they
 
 - modern Pythonic Type Annotation (PEP 484)
 - more examples
+- error handling (big job)
 
 ```python
 
