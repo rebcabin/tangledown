@@ -591,7 +591,7 @@ def expand_blocks (noweb_blocks, lines):
 </noweb>
 
 
-## Tangle It, Already!<a href="tangle_already"></a>
+## Tangle It, Already!<a id="tangle_already"></a>
 
 
 Ok, you saw at the top that the code in this here Markdown document, README.md, when run as a script, will read in all the lines in ... this here Markdown document, README.md. Bootstrapping!
