@@ -389,7 +389,7 @@ Tangledown must handle both ways.
 We use the same trick of a harmless group around one of the backticks in the regex that recognizes triple backticks so that this regex is safe to run on itself.
 
 
-The following function, in noweb `oh-no-there-are-two-ways` recognizes code blocks bracketed by triple backticks. Notice that the `noweb` tag for this block in this here README.md is triple-bacticked, itself. Kind of a funny self-toast joke, no? Tangledown can tangle all the options in Tangledown itself. 
+The following function, in noweb `oh-no-there-are-two-ways` recognizes code blocks bracketed by triple backticks. Notice that the `noweb` tag for this block in this here README.md is triple-bacticked, itself. Kind of a funny self-toast joke, no? Tangledown can tangle all the options in Tangledown itself.
 
 
 Mostly, we use indented code blocks when we're talking about noweb and tangle tags, but don't want to process them. Tangledown won't process them because they're indented, and the regexes in noweb `left_justified_regexes` won't match them.
@@ -589,7 +589,9 @@ def expand_blocks (noweb_blocks, lines):
 Ok, you saw at the top that the code in this here Markdown document, README.md, when run as a script, will read in all the lines in ... this here Markdown document, README.md. Bootstrapping!
 
 
-But you have to run something first. For that, I tangled the code manually just once and provide `tangledown.py` in the repository.
+But you have to run something first. For that, I tangled the code manually just
+once and provide `tangledown.py` in the repository. The chicken definitely comes
+before the egg.
 
 
 ## DUDE!
