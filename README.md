@@ -60,7 +60,7 @@ to the high bar set by org-babel!
 ## HOW IT WORKS: Markdown Ignores Mysterious Tags
 
 
-Let's exploit the fact that most markdown renderers, like Github's and [PyCharm's](https://www.jetbrains.com/pycharm/), ignore HTML / XML tags (stuff inside angle brackets) that they don't recognize. Let's enclose blocks of real, live code with `noweb` tags, like this:
+Let's exploit the fact that most markdown renderers, like Github's and [PyCharm's](https://www.jetbrains.com/pycharm/), ignore HTML / XML _tags_ (that it, stuff inside angle brackets) that they don't recognize. Let's enclose blocks of real, live code with `noweb` tags, like this:
 
 
     <noweb name="my_little_tests">
