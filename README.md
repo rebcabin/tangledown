@@ -239,6 +239,7 @@ The names in the attributes of `noweb` and `tangle` tags must start with a lette
 
 #### noweb left_justified_regexes
 
+
 <noweb name="left_justified_regexes">
 
 ```python
@@ -256,6 +257,7 @@ The regexes in noweb `anywhere_regexes` matches `block` tags that may appear any
 
 
 #### noweb anywhere_regexes
+
 
 <noweb name="anywhere_regexes">
 
@@ -280,6 +282,7 @@ Notice the special treatment for block ends, which will usually be on the same l
 
 
 #### noweb openers
+
 
 <noweb name="openers">
 
@@ -347,6 +350,7 @@ Let's write two functions, `get_aFile`, which parses command-line arguments, and
 
 #### noweb getting a file and its lines
 
+
 <noweb name="getting a file and its lines">
 
 ```python
@@ -402,6 +406,7 @@ Mostly, we use indented code blocks when we're talking about noweb and tangle ta
 
 #### noweb oh-no-there-are-two-ways
 
+
 <noweb name="oh-no-there-are-two-ways">
 
 ```python
@@ -436,6 +441,7 @@ The function `accumulate_contents` starts at line `i`, then figures out whether 
 
 #### noweb accumulate-contents
 
+
 <noweb name="accumulate-contents">
 
 ```python
@@ -468,6 +474,7 @@ The function `accumulate_lines` sucks all the `noweb` tags and `tangle` tags out
 
 
 #### noweb accumulate-lines
+
 
 <noweb name="accumulate-lines">
 
