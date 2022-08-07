@@ -172,7 +172,7 @@ All we do in the code below the block tags, in function `tangle_all`, is loop ov
 This program can run as a script or can be imported as a module. We get that hybrid vigor by the standard Python trick of testing `__name__` against `"__main__"`.
 
 
-Now, if you're reading this as a Jupyter notebook in Jupytext (as explained above), you'll see a little tiny cell just before the code below and just after the code below. This code is in a `tangle` tag that you can't see in the notebook. Those tiny cells contain the all-important `tangle` start and end tags.
+Now, if you're reading this as a Jupyter notebook in Jupytext (as explained above), you'll see a little tiny cell just before the code below and just after the code below. This code is in _the contents of_ a `tangle` tag that you can't see in the notebook. Those tiny cells contain the all-important `tangle` start and end tags.
 
 
 DON'T DELETE THE TINY CELLS (if you're reading this as a Jupyter notebok in Jupytext)
