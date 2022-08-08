@@ -19,14 +19,14 @@ def get_lines(aFilename):
     with open(aFilename) as aFile:
         return aFile.readlines ()
 
-noweb_start_re = re.compile (r'^<noweb name="([a-zA-Z\w\s\-_\.]+)">$')
+noweb_start_re = re.compile (r'^<noweb name="([\w\s\-\.]+)">$')
 noweb_end_re = re.compile (r'^</noweb>$')
 
 tangle_start_re = re.compile (r'^<tangle file="(.+\/\\[^\/]+|.+)">$')
 tangle_end_re = re.compile (r'^</tangle>$')
 
-block_start_re = re.compile (r'.*<block name="([a-zA-Z\w\s\-_\.]+)">')
-block_end_re = re.compile (r'.*</bl[o]ck>')
+block_start_re = re.compile (r'^(\s*)<block name="([\w\s\-\.]+)">')
+block_end_re = re.compile (r'^(\s)*</bl[o]ck>')
 
 
 def test_re_matching(lines):
@@ -113,6 +113,7 @@ def there_is_a_block_tag (lines):
 def eat_block_tag (i, lines):
     for j in range (i, len(lines)):
         end_match = block_end_re.match (lines[j])
+        # DUDE! Check leading whitespace against block_start_re
         if (end_match):
             return j + 1
         else:  # DUDE!
@@ -123,11 +124,12 @@ def expand_blocks (noweb_blocks, lines):
     for i in range (len (lines)):
         block_start_match = block_start_re.match (lines[i])
         if (block_start_match):
-            block_key = block_start_match.group (1)
-            block_lines = noweb_blocks [block_key] # DUDE!
+            leading_whitespace = block_start_match.group (1)
+            block_key = block_start_match.group (2)
+            block_lines = noweb_blocks [block_key]  # DUDE!
             i = eat_block_tag (i, lines)
             for block_line in block_lines:
-                out_lines.append (block_line)
+                out_lines.append (leading_whitespace + block_line)
         else:
             out_lines.append (lines[i])
     return out_lines

@@ -245,7 +245,7 @@ The names in the attributes of `noweb` and `tangle` tags must start with a lette
 <noweb name="left_justified_regexes">
 
 ```python
-noweb_start_re = re.compile (r'^<noweb name="([a-zA-Z\w\s\-_\.]+)">$')
+noweb_start_re = re.compile (r'^<noweb name="([\w\s\-\.]+)">$')
 noweb_end_re = re.compile (r'^</noweb>$')
 
 tangle_start_re = re.compile (r'^<tangle file="(.+\/\\[^\/]+|.+)">$')
@@ -255,7 +255,7 @@ tangle_end_re = re.compile (r'^</tangle>$')
 </noweb>
 
 
-The regexes in noweb `anywhere_regexes` matches `block` tags that may appear anywhere on a line. I converted the 'o' in 'block' to a harmless regex group `[o]` so that _block_end_ doesn't match itself. That makes it safe to run this code on this here document itself.
+The regexes in noweb `anywhere_regexes` matches `block` tags that may appear anywhere on a line. The regex preserves leading white space so that indented `block` tags indent their `noweb` brethren appropriately. The `block-end` regex also preserves leading white space so it can be checked against its twin opening `block-start` regex. I converted the 'o' in 'block' to a harmless regex group `[o]` so that _block_end_ doesn't match itself. That makes it safe to run this code on this here document itself.
 
 
 #### noweb anywhere_regexes
@@ -264,8 +264,8 @@ The regexes in noweb `anywhere_regexes` matches `block` tags that may appear any
 <noweb name="anywhere_regexes">
 
 ```python
-block_start_re = re.compile (r'.*<block name="([a-zA-Z\w\s\-_\.]+)">')
-block_end_re = re.compile (r'.*</bl[o]ck>')
+block_start_re = re.compile (r'^(\s*)<block name="([\w\s\-\.]+)">')
+block_end_re = re.compile (r'^(\s)*</bl[o]ck>')
 ```
 
 </noweb>
@@ -563,6 +563,7 @@ If there is a `block` tag, we must eat the tag and its meaningless contents:
 def eat_block_tag (i, lines):
     for j in range (i, len(lines)):
         end_match = block_end_re.match (lines[j])
+        # DUDE! Check leading whitespace against block_start_re
         if (end_match):
             return j + 1
         else:  # DUDE!
@@ -586,11 +587,12 @@ def expand_blocks (noweb_blocks, lines):
     for i in range (len (lines)):
         block_start_match = block_start_re.match (lines[i])
         if (block_start_match):
-            block_key = block_start_match.group (1)
-            block_lines = noweb_blocks [block_key] # DUDE!
+            leading_whitespace = block_start_match.group (1)
+            block_key = block_start_match.group (2)
+            block_lines = noweb_blocks [block_key]  # DUDE!
             i = eat_block_tag (i, lines)
             for block_line in block_lines:
-                out_lines.append (block_line)
+                out_lines.append (leading_whitespace + block_line)
         else:
             out_lines.append (lines[i])
     return out_lines
@@ -610,6 +612,13 @@ But you have to run something first. For that, I tangled the code manually just
 once and provide `tangledown.py` in the repository. The chicken definitely comes
 before the egg.
 
+
+But if you have the chicken (`tangledown.py`), you can import it as a module and execute the following cell. That should overwrite `tangledown.py` with the contents of this notebook or Markdown file.
+
+```python
+from tangledown import get_lines, accumulate_lines, tangle_all
+tangle_all(*accumulate_lines(get_lines("README.md")))
+```
 
 ## DUDE!
 
