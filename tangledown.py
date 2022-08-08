@@ -19,13 +19,13 @@ def get_lines(aFilename):
     with open(aFilename) as aFile:
         return aFile.readlines ()
 
-noweb_start_re = re.compile (r'^<noweb name="([a-zA-Z][\w\s\-_\.]+)">$')
+noweb_start_re = re.compile (r'^<noweb name="([a-zA-Z\w\s\-_\.]+)">$')
 noweb_end_re = re.compile (r'^</noweb>$')
 
-tangle_start_re = re.compile (r'^<tangle file="([a-zA-Z][\w\s\-_\.]+)">$')
+tangle_start_re = re.compile (r'^<tangle file="(.+)\/([^\/]+)">$')
 tangle_end_re = re.compile (r'^</tangle>$')
 
-block_start_re = re.compile (r'.*<block name="([a-zA-Z][\w\s\-_\.]+)">')
+block_start_re = re.compile (r'.*<block name="([a-zA-Z\w\s\-_\.]+)">')
 block_end_re = re.compile (r'.*</bl[o]ck>')
 
 
