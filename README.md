@@ -248,7 +248,7 @@ The names in the attributes of `noweb` and `tangle` tags must start with a lette
 noweb_start_re = re.compile (r'^<noweb name="([a-zA-Z\w\s\-_\.]+)">$')
 noweb_end_re = re.compile (r'^</noweb>$')
 
-tangle_start_re = re.compile (r'^<tangle file="(.+\/[^\/]+)">$')
+tangle_start_re = re.compile (r'^<tangle file="(.+\/\\[^\/]+|.+)">$')
 tangle_end_re = re.compile (r'^</tangle>$')
 ```
 
