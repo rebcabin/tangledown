@@ -203,17 +203,15 @@ DON'T DELETE THE TINY CELLS (if you're reading this as a Jupyter notebok with Ju
 
 from pathlib import Path
 def tangle_all(noweb_blocks, tangle_files):
-    files_tangled_to = set()
-    for k, v in tangle_files.items ():
+    for k, lines_list in tangle_files.items ():
         Path(k).parents[0].mkdir(parents=True, exist_ok=True)
-        mode = 'a' if k in files_tangled_to else 'w'
-        with open (k, mode) as outfile:
-            lines = v
+        contents = []
+        for lines in lines_list:
             while there_is_a_block_tag (lines):
                 lines = expand_blocks (noweb_blocks, lines)
-            for line in lines:
-                outfile.write (line)
-        files_tangled_to.add(k)
+            contents += lines
+        with open (k, 'w') as outfile:
+            outfile.write (''.join(contents))
 
 if __name__ == "__main__":
    file_from_sys_argv = get_aFile()
@@ -484,7 +482,7 @@ def accumulate_contents (lines, i, end_re):
 #### Do it already!
 
 
-The function `accumulate_lines` sucks all the `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries `noweb_blocks` and `tangle_files` with any code or file attributes it finds inside noweb or tangle tags.
+The function `accumulate_lines` sucks all the `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries `noweb_blocks` and `tangle_files` with any code or file attributes it finds inside noweb or tangle tags. The names of `noweb` tags must be globally unique within the Markdown file. Multiple `tangle` tags may refer to the same output file, in which cases, the contents of the second and subsequent `tangle` tags will be appended to the file.
 
 
 #### noweb accumulate-lines
@@ -505,8 +503,10 @@ def accumulate_lines(lines):
                 accumulate_contents(lines, i + 1, noweb_end_re)
         elif (tangle_start_match):
             file_key = tangle_start_match.group (1)
-            i, tangle_files[file_key] = \
-                accumulate_contents(lines, i + 1, tangle_end_re)
+            if not (file_key in tangle_files):
+                tangle_files[file_key] = []
+            tangle_files[file_key] += \
+                [accumulate_contents(lines, i + 1, tangle_end_re)[1]]
     return noweb_blocks, tangle_files
 ```
 
