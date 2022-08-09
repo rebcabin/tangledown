@@ -98,7 +98,7 @@ Not too pretty, but it's important to know what happens when you don't leave bla
 ## THREE TAGS: noweb, block, and tangle
 
 
-With or without the blank lines, Markdown won't render the opening `<noweb>` and closing `</noweb>` tags themselves. Markdown only renders the material between the tags, the _contents_ of the tags.
+With or without the blank lines, Markdown won't render the opening `<noweb ...>` and closing `</noweb>` tags themselves. Markdown only renders the material between the tags, the _contents_ of the tags. **NOTE** the `name` attribute must be on the same line as the `<noweb ...` opener. That's just a limitation of the regular expression we use to detect `noweb` tags.
 
 
 But `tangledown.py` _doesn't_ ignore the tags. `tangledown.py` is a Python script (and module) that sucks up the contents of the `noweb` tags and sticks them into a dictionary. For the examples above, the dictionary has the keys `my_little_tests` or `another_little_test`.
@@ -511,6 +511,7 @@ def accumulate_lines(lines):
 ```
 
 </noweb>
+
 
 ### DUDE!
 
