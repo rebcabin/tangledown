@@ -139,13 +139,22 @@ if __name__ == '__main__':
 ## IMPORTANT FOR JUPYTEXT USERS
 
 
-Jupytext automatically syncs a Markdown file with a Jupyter notebook. If you open README.md in Jupyter Lab, then `View->Activate Command Palette`, then check `Pair Notebook with Markdown`, then if you edit one of the two, Jupytext will update the other. Though to see the updates, you must `File->Reload Notebook from Disk` or `File->Reload Markdown File from Disk`, as appropriate.
+Jupytext automatically syncs a Markdown file with a Jupyter notebook. If you 
 
 
-If you're reading or modifying README.md as a Jupyter notebook, that is, if you are reading or modifying README.ipynb, you will see tiny cells above and below all your tagged nowebs, blocks, and tangles. *DON'T DELETE THEM*. Markdown renderers simply ignore the tags, but Jupytext makes tiny cells out of them!
+- first open README.md in Jupyter Lab
+- then you do `View->Activate Command Palette`
+- then you check `Pair Notebook with Markdown`
+- then if you edit one of the two, README.md or README.ipynb
 
 
-You also probably don't want to RUN tagged blocks in Jupyter, but you DO want to run some blocks of code. See `hello_world.ipynb` after you have opened `hello_world.md` and Paired Notebook With Markdown; remember the Activate Command Palette GUI?
+Jupytext will update the other. Though to see the updates, you must `File->Reload Notebook from Disk` or `File->Reload Markdown File from Disk`, as appropriate.
+
+
+If you're reading or modifying README.ipynb, you will see tiny cells above and below all your tagged nowebs, blocks, and tangles. *DON'T DELETE THEM*. Markdown renderers simply ignore the tags, but Jupytext makes tiny cells out of them!
+
+
+You also probably don't want to RUN tagged blocks in Jupyter, but you DO want to run some blocks of code. See the end of this document, and also see `hello_world.ipynb` after you have opened `hello_world.md` and _Paired Notebook With Markdown_; remember the _Activate Command Palette_ GUI?
 
 
 ## YOUR'RE A HUMAN! READ THE NAMES IN THE `block` TAGS!
@@ -166,7 +175,7 @@ That's exactly what you want for humans: talk about something in a place where y
 See, I'll prove it to you. Here is the code for the whole program. You can understand this without understanding the _implementations_ of the sub-pieces, just getting an idea of _what_ they do from the names of the `block` tags. READ THE NAMES IN THE BLOCK TAGS to get the big picture.
 
 
-All we do in the code below the block tags, in function `tangle_all`, is loop over all the lines in the input and substitute something wherever we see a `block` tag. What do we substitute? The contents of a `noweb` tag with the same name as the name mentioned in the `block` tag.
+All we do in the code below the block tags, in function `tangle_all`, is loop over all the lines in the input and substitute something wherever we see a `block` tag. What do we substitute? The contents of a `noweb` tag with the same name as the name mentioned in the `block` tag. The code will create the subdirectories needed, so if you tangle to file "foo/bar/baz/qux.py," the code will create the directory chain "./foo/br/baz/" if it doesn't exist. The code will also add to a file if it's mentioned more than once in the input, so if you tangle to "qux.py" in one tangle tag and then tangle to "qux.py" in a second tangle tag, the first tangle tag will overwrite "qux.py" and the second tangle tag will add to "qux.py".
 
 
 This program can run as a script or can be imported as a module. We get that hybrid vigor by the standard Python trick of testing `__name__` against `"__main__"`.
@@ -194,14 +203,17 @@ DON'T DELETE THE TINY CELLS (if you're reading this as a Jupyter notebok with Ju
 
 from pathlib import Path
 def tangle_all(noweb_blocks, tangle_files):
+    files_tangled_to = set()
     for k, v in tangle_files.items ():
         Path(k).parents[0].mkdir(parents=True, exist_ok=True)
-        with open (k, 'w') as outfile:
+        mode = 'a' if k in files_tangled_to else 'w'
+        with open (k, mode) as outfile:
             lines = v
             while there_is_a_block_tag (lines):
                 lines = expand_blocks (noweb_blocks, lines)
             for line in lines:
                 outfile.write (line)
+        files_tangled_to.add(k)
 
 if __name__ == "__main__":
    file_from_sys_argv = get_aFile()

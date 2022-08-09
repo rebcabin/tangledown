@@ -138,14 +138,17 @@ def expand_blocks (noweb_blocks, lines):
 
 from pathlib import Path
 def tangle_all(noweb_blocks, tangle_files):
+    files_tangled_to = set()
     for k, v in tangle_files.items ():
         Path(k).parents[0].mkdir(parents=True, exist_ok=True)
-        with open (k, 'w') as outfile:
+        mode = 'a' if k in files_tangled_to else 'w'
+        with open (k, mode) as outfile:
             lines = v
             while there_is_a_block_tag (lines):
                 lines = expand_blocks (noweb_blocks, lines)
             for line in lines:
                 outfile.write (line)
+        files_tangled_to.add(k)
 
 if __name__ == "__main__":
    file_from_sys_argv = get_aFile()
