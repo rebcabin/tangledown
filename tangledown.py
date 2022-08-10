@@ -153,7 +153,7 @@ def tangle_all(noweb_blocks, tangle_files):
 if __name__ == "__main__":
    file_from_sys_argv = get_aFile()
    lines = get_lines(file_from_sys_argv)
-   test_re_matching(lines)
+   # test_re_matching(lines)
    noweb_blocks, tangle_files = accumulate_lines(lines)
    tangle_all(noweb_blocks, tangle_files)
 

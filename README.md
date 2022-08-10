@@ -2,7 +2,7 @@
 
 
 ### Brian Beckman
-### 10 Aug 2022
+### 5 Aug 2022
 
 
 ## DISCLAIMER:
@@ -160,7 +160,7 @@ You also probably don't want to RUN tagged blocks in Jupyter, but you DO want to
 ## YOUR'RE A HUMAN! READ THE NAMES IN THE `block` TAGS!
 
 
-Markdown renders `block` tags that appear in the contents of `noweb` and `tangle` tags verbatim to the documentation (`block` tags that appear outside `noweb` and `tangle` tags aren't useful). Verbatim rendering of `block` tags is good for humans, who will think
+Markdown renders `block` tags verbatim to the documentation. This is good for humans, who will think
 
 
 > AHA!, this `block` refers to some code in a `noweb` tag with the same name that I can read some other place and time.
@@ -175,7 +175,7 @@ That's exactly what you want for humans: talk about something in a place where y
 See, I'll prove it to you. Here is the code for the whole program. You can understand this without understanding the _implementations_ of the sub-pieces, just getting an idea of _what_ they do from the names of the `block` tags. READ THE NAMES IN THE BLOCK TAGS to get the big picture.
 
 
-All we do in the code below the block tags, in function `tangle_all`, is loop over all the lines in the input and substitute something wherever we see a `block` tag. What do we substitute? The contents of a `noweb` tag with the same name as the name mentioned in the `block` tag. The code will create the subdirectories needed, so if you tangle to file "foo/bar/baz/qux.py," the code will create the directory chain "./foo/br/baz/" if it doesn't exist. The code will also add to a file if it's mentioned more than once in the input, so if you tangle to "qux.py" in one `tangle` tag and then tangle to "qux.py" in a second `tangle` tag, the first `tangle` tag will overwrite "qux.py" and the second `tangle` tag will add to "qux.py".
+All we do in the code below the block tags, in function `tangle_all`, is loop over all the lines in the input and substitute something wherever we see a `block` tag. What do we substitute? The contents of a `noweb` tag with the same name as the name mentioned in the `block` tag. The code will create the subdirectories needed, so if you tangle to file "foo/bar/baz/qux.py," the code will create the directory chain "./foo/br/baz/" if it doesn't exist. The code will also add to a file if it's mentioned more than once in the input, so if you tangle to "qux.py" in one tangle tag and then tangle to "qux.py" in a second tangle tag, the first tangle tag will overwrite "qux.py" and the second tangle tag will add to "qux.py".
 
 
 This program can run as a script or can be imported as a module. We get that hybrid vigor by the standard Python trick of testing `__name__` against `"__main__"`.
@@ -216,7 +216,7 @@ def tangle_all(noweb_blocks, tangle_files):
 if __name__ == "__main__":
    file_from_sys_argv = get_aFile()
    lines = get_lines(file_from_sys_argv)
-   test_re_matching(lines)
+   # test_re_matching(lines)
    noweb_blocks, tangle_files = accumulate_lines(lines)
    tangle_all(noweb_blocks, tangle_files)
 ```
