@@ -2,7 +2,7 @@
 
 
 ### Brian Beckman
-### 5 Aug 2022
+### 10 Aug 2022
 
 
 ## DISCLAIMER:
@@ -160,7 +160,7 @@ You also probably don't want to RUN tagged blocks in Jupyter, but you DO want to
 ## YOUR'RE A HUMAN! READ THE NAMES IN THE `block` TAGS!
 
 
-Markdown renders `block` tags verbatim to the documentation. This is good for humans, who will think
+Markdown renders `block` tags that appear in the contents of `noweb` and `tangle` tags verbatim to the documentation (`block` tags that appear outside `noweb` and `tangle` tags aren't useful). Verbatim rendering of `block` tags is good for humans, who will think
 
 
 > AHA!, this `block` refers to some code in a `noweb` tag with the same name that I can read some other place and time.
