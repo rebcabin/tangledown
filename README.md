@@ -5,31 +5,31 @@
 ### 12 Aug 2022
 
 
-## DISCLAIMER:
-
-
-This is a toy. It's a useful toy, but it has zero error handling. This document currently talks only about the happy path.  I try to be rude ("DUDE!") in comments every place where I sense trouble, but I'm only sure I haven't been rude enough. Read this with sense-of-humor bit turned on.
-
-
 ## OVERVIEW
 
 
-You wouldn't build a house without blueprints. You wouldn't write equations without some explanation. Why should you write code without documentation? Let's make that more natural than writing code without documentation, which is, tragically, the common practice.
+You wouldn't build a house without blueprints. You wouldn't write equations without some explanation. You wouldn't write a theorem without a proof. Why should you write code without documentation? Let's make that more natural than writing code without documentation, which is, tragically, the common practice.
 
 
 You might rejoin 
 
 
-> I give good names to functions and arguments so I can read my code later.
+> I give good names to functions and arguments so I or anyone else can read my code later.
 
 
 And I say 
 
 
-> That's like giving good names to variables in your mathematical theory. It's nice, but not enough. The big picture, the rationale, the unwritten motivation, they "why?", the architecture, the blueprints, all get lost in the details. To understand the code, you end up running it in a debugger or by inserting tracing printouts, just as, to understand some mathematics, you work through some actual examples, or, to understand the plumbing of a house, you tear out the walls because the blueprints are inadequate.
+> That's like giving good names to variables in your mathematical theory, but without proofs, explanations, and examples. It's nice, but not enough. The big picture, the rationale, the proofs, the unwritten motivation, the "why?", the architecture, the blueprints, all get lost in the details. Literally "lost" as in never written down. To understand the code, you end up running it in a debugger or by inserting tracing printouts, just as, to understand some undocumented mathematics, you work through actual examples and reverse engineer the proof, or, to understand the plumbing of a house with inadequate blueprints, you tear out the walls.
 
 
 Literate Programming is the best known way to save your audience that work. Who is your audience? Yourself, first, especially six months down the line when you're trying to refresh your memory. Other programmers, eventually, when they take over the job of maintaining and extending your code.
+
+
+> First, write a paper about your code, then put your actual code in the paper. RUN your code inside the paper so others (including your future self) can see it at work. That's just like writing down the proof of your theorem in mathematics. 
+
+
+Specifically:
 
 
 - README.md files are mandatory, or really should be, in projects.
@@ -63,6 +63,12 @@ _Tangledown.py_ pulls or _tangles_ code out of any Markdown document, not just t
 
 
 If we need something _more_ powerful than Tangledown, say to produce publishable LaTeX and PDF files, we'll go back to [org-mode](http://orgmode.org/) and [org-babel](http://orgmode.org/worg/org-contrib/babel/) in Emacs (or [spacemacs](http://spacemacs.org/) for you VIM users). Those are much more powerful, best-of-breed, classical Literate-Programming tools. You have to learn some Emacs to use them, and that's an insurmountable barrier for many people. Markdown is good enough for Github, and thus for almost everyone.
+
+
+## DISCLAIMER:
+
+
+This is a toy. It's a useful toy, but it has zero error handling. This document currently talks only about the happy path.  I try to be rude ("DUDE!") in comments every place where I sense trouble, but I'm only sure I haven't been rude enough. Read this with sense-of-humor bit turned on.
 
 
 ### COLOPHON: Why Writing Matters
