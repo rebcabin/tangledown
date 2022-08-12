@@ -70,6 +70,9 @@ The following tragedy occurs all-to-often in the software world:
 - The Reverse-Engineering team eventually gives up and writes a NewGiantProgramX.
 
 
+If we write documentation **first**, and whenever we modify or maintain the software, we modify and maintain the document **first**, we can sidestep this tragedy.
+
+
 ## HOW TO RUN TANGLEDOWN:
 
 
