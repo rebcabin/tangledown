@@ -18,6 +18,8 @@ This is a toy. It's a useful toy, but it has zero error handling. This document 
 
 - README.md files should be authoritative and complete. README.md files that _can't_ get out of sync with code are best.
 
+- Let's write the README.md **first**, before we write any code, to record our thinking and reasonong, and to save the future work of reverse engineering our code. Let's recursively do this: think, write, code, (test, refactor, test, refactor, ...), rinse and repeat.
+
 - Let's put _all the real, live code_ for a project inside README.md, along with authoritative documentation. When you modify one, modify the other along with it.
 
 - Let's write README.md for human reasoning and understanding, that is, _top-down_ instead of _bottom-up_. Let's help readers understand the big picture before overwhelming them with implementation details.
