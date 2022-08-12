@@ -18,7 +18,7 @@ This is a toy. It's a useful toy, but it has zero error handling. This document 
 
 - README.md files should be authoritative and complete. README.md files that _can't_ get out of sync with code are best.
 
-- Let's write the README.md **first**, before we write any code, to record our thinking and reasonong, and to save the future work of reverse engineering our code. 
+- Let's write the README.md **first**, before we write any code, to record our thinking and reasonong, and to save the future work of reverse engineering our code. Writing is the best way to clarify thinking, and the *only* way to record thinking.
 
 - Let's recursively do this: think, write, code, (test, refactor, test, refactor, ...), rinse and repeat. We never think without writing it down, because otherwise we won't remember why we did what we did. 
 
@@ -102,13 +102,13 @@ Not too pretty, but it's important to know what happens when you don't leave bla
 ## THREE TAGS: noweb, block, and tangle
 
 
-With or without the blank lines, Markdown won't render the opening `<noweb ...>` and closing `</noweb>` tags themselves. Markdown only renders the material between the tags, the _contents_ of the tags. **NOTE** the `name` attribute must be on the same line as the `<noweb ...` opener. That's just a limitation of the regular expression we use to detect `noweb` tags.
+With or without the blank lines, Markdown won't render the opening `<noweb ...>` and closing `</noweb>` tags themselves. Markdown only renders the material between the tags, the _contents_ of the tags. **NOTE** the `name` attribute must be on the same line as the `<noweb ...>` opener. That's just a limitation of the regular expression we use to detect `noweb` tags.
 
 
 But `tangledown.py` _doesn't_ ignore the tags. `tangledown.py` is a Python script (and module) that sucks up the contents of the `noweb` tags and sticks them into a dictionary. For the examples above, the dictionary has the keys `my_little_tests` or `another_little_test`.
 
 
-The dictionary key for a noweb block is the string value of the `name` attribute of the `noweb` tag. Later, Tangledown will blow those lines back out wherever it sees a `block` tag with the same name. That's how you can define some code in one `noweb` and use it later in matching `block` tags, more than once if you like, kind of like defining a C macro or inline function once and using it many times. The difference, here, with Literate Programming, is that you don't have to _define_ things before you _use_ them. You can define and use in any order that makes your prose more clear..
+The dictionary key for a noweb block is the string value of the `name` attribute of the `noweb` tag. Later, Tangledown will blow those lines back out wherever it sees a `block` tag with the same name. That's how you can define some code in one `noweb` and use it later in matching `block` tags, more than once if you like, kind of like defining a C macro or inline function once and using it many times. The difference, here, with Literate Programming, is that you don't have to _define_ things before you _use_ them. You can define things and use things in any order that makes your thinking and your prose more clear..
 
 
 Often, a `block` tag will be inside a `tangle` tag that sprays its expanded contents to a file on disk. What file? The file named in the `file` attribute of the `tangle` tag. `block` tags can also be inside `noweb` tags, so one noweb can talk about another noweb without implementing it first.
