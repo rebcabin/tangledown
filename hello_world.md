@@ -1,6 +1,12 @@
 # TANGLE HELLO_WORLD
 
 
+In JupyterLab, pair this markdown file with a Jupytext notebook, open the notebook, then
+
+
+## RUN ALL CELLS IN THIS NOTEBOOK
+
+
 A noweb tag named "hello world def" defining a function named "hello_world."
 
 
