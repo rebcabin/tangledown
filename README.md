@@ -18,7 +18,7 @@ This is a toy. It's a useful toy, but it has zero error handling. This document 
 
 - README.md files should be authoritative and complete. README.md files that _can't_ get out of sync with code are best.
 
-- Let's write the README.md **first**, before we write any code, to record our thinking and reasonong, and to save the future work of reverse engineering our code. Writing is the best way to clarify thinking, and the *only* way to record thinking.
+- Let's write the README.md **first**, before we write any code, to record our thinking and reasonong, and to save the future work of reverse engineering our code. 
 
 - Let's recursively do this: think, write, code, (test, refactor, test, refactor, ...), rinse and repeat. We never think without writing it down, because otherwise we won't remember why we did what we did. 
 
@@ -39,6 +39,35 @@ _Tangledown.py_ pulls or _tangles_ code out of any Markdown document, not just t
 
 
 If we need something _more_ powerful than Tangledown, say to produce publishable LaTeX and PDF files, we'll go back to [org-mode](http://orgmode.org/) and [org-babel](http://orgmode.org/worg/org-contrib/babel/) in Emacs (or [spacemacs](http://spacemacs.org/) for you VIM users). Those are much more powerful, best-of-breed, classical Literate-Programming tools. You have to learn some Emacs to use them, and that's an insurmountable barrier for many people. Markdown is good enough for Github, and thus for almost everyone.
+
+
+### COLOPHON: Why Writing Matters
+
+
+Leslie Lamport, Turing-Award Winner, 2013, noted that writing is the best way to clarify thinking, and the *only* way to record thinking. He had a bit more to say (approximately --- I've substituted "coding" for "mathematics" in what he actually said):
+
+
+> Writing is Nature's Way of showing you how sloppy your thinking is. Coding is Nature's Way of showing you how sloppy your writing is. Testing is Nature's Way of showing you how sloppy your coding is. 
+
+
+Writing good code is like writing mathematics. Good, tested code is like a proved theorem. Code without documentation is like a pile of equations with no explanation. It's next to hopeless to understand it, let alone use it creatively or even just to maintain it.
+
+
+To reduces sloppiness, we must keep testing close to writing. (think, write docs, code, (test, refactor, test, refactor, ...), ...) in a nested loop.
+
+
+The following tragedy occurs all-to-often in the software world: 
+
+
+- The original team who wrote GiantProgramX departs.
+
+- No one on staff knows how to modify or maintain GiantProgramX.
+
+- Management orders a 3-week Reverse Engineering project to document the design and maintenance of GiantProgramX.
+
+- The Reverse Engineers finds that the few comments in the code are Dead-On-Arrival --- out-of-date, irrelevant, misplaced, just-plain wrong. 
+
+- The Reverse-Engineering team eventually gives up and writes a NewGiantProgramX.
 
 
 ## HOW TO RUN TANGLEDOWN:
