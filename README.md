@@ -16,23 +16,29 @@ This is a toy. It's a useful toy, but it has zero error handling. This document 
 
 - README.md files are mandatory, or really should be, in projects.
 
-- README.md files should be authoritative and complete. README.md files that _can't_ get out of sync with code are best.
+- README.md files should be authoritative, complete, and in-sync with code. README.md files that _can't_ get out of sync with code are best. That's akin to having good blueprints for your house or other building you're putting up. You wouldn't think of building a house without authoritative, complete, up-to-date blueprints, would you?
 
-- Let's write the README.md **first**, before we write any code, to record our thinking and reasonong, and to save the future work of reverse engineering our code. 
+- Let's write the README.md **first**, before we write any code, to record our thinking and reasonong, and to save us the future work of reverse engineering our code. This is akin to writing blueprints **first**, before building your house.
 
-- Let's recursively do this: think, write, code, (test, refactor, test, refactor, ...), rinse and repeat. We never think without writing it down, because otherwise we won't remember why we did what we did. 
+- Let's recursively do this: (think, write, code, (test, refactor, test, refactor, ...) ...), rinse and repeat. Never think without writing in your Markdown files, lest we forget why we did what we did. 
 
-- Let's put _all the real, live code_ for a project inside README.md, along with authoritative documentation. When you modify one, modify the other along with it.
+- Let's put _all the real, live code_ for a project inside README.md, along with authoritative, up-to-date documentation. When you modify one, modify the other along with it. That's like modifying your blueprints when you remodel your house.
 
-- Let's write README.md for human reasoning and understanding, that is, _top-down_ instead of _bottom-up_. Let's help readers, including, most importantly, your future self, understand the big picture before overwhelming them with implementation details.
+- Let's help readers, including, most importantly, your future self, understand the big picture before overwhelming them with implementation details. Write about your code in _top-down_ order, just the way you'd write a mathematical theory or a story.
 
 - Let's create a tool to suck the code out of README.md and rearrange it on disk in some other order required by build tools, debuggers, and IDEs.
 
 
-I just described a kind of [Literate Programming](https://en.wikipedia.org/wiki/Literate_programming), a method of software documentation invented by [Donald Knuth](http://amturing.acm.org/award_winners/knuth_1013846.cfm). Knuth wrote MetaFont and TeX in literate style. Those are two of the most important programs ever written. In a blatant appeal to authority and celebrity, doesn't that mean Literate Programming is good enough for everyone?
+I just described a kind of [Literate Programming](https://en.wikipedia.org/wiki/Literate_programming), a method of software engineering invented by [Donald Knuth](http://amturing.acm.org/award_winners/knuth_1013846.cfm). Knuth wrote MetaFont and TeX in literate style. He wrote the outline of the book first, which mirrors the architecture of the code. Then he fitted the code into the book incrementally rewriting and refactoring until convergence. 
 
 
-This here document, README.md, the one you're reading right now, is, itself, a Literate Program. Because our documentation language is Markdown, we'll call the language of this document _Literate Markdown_. This here README.md that you're reading right now contains all the source for the Literate-Markdown tool called `tangledown.py`, with all its documentation, all presented in narrative style, like a story or a mathematical theory.
+MetaFont and TeX are two of the most important programs ever written. In a blatant appeal to authority and celebrity, doesn't that mean Literate Programming is good enough for everyone?
+
+
+Literate programming does ***not*** mean literate reverse engineering. Literate Programming is an inversion of the usual, broken process in software, which is "write the software, then hold on for dear life whilst you write some half-baked documentation for it by reverse engineering what you did months and years ago!" ***NO!*** Write the documentation *first*, fill in the code, test, revise, etc. Incrementally, interactively, using Markdown *as* your IDE. Write the blueprints _before_ building the house!
+
+
+This here document, README.md, the one you're reading right now, is, itself, a Literate Program. Because our documentation language is Markdown, we'll call the language of this document + code artifact _Literate Markdown_. This here README.md, which you're reading right now, contains all the source for the Literate-Markdown tool called `tangledown.py`, with all its documentation, all presented in narrative style, like a mathematical theory or a story.
 
 
 _Tangledown.py_ pulls or _tangles_ code out of any Markdown document, not just this one (README.md). The verb "tangle" is traditional in Literate Programming. You might think it should be "untangle," because the Markdown document is all tangled up from the point of view of build tools. But Knuth prefers the human's point of view. The Markdown document contains the code in the _correct_ order --- the order for human reasoning and understanding. Build tools need the code all tangled up in some other, effectively arbitrary order.
@@ -44,16 +50,19 @@ If we need something _more_ powerful than Tangledown, say to produce publishable
 ### COLOPHON: Why Writing Matters
 
 
-Leslie Lamport, Turing-Award Winner, 2013, noted that writing is the best way to clarify thinking, and the *only* way to record thinking. He had a bit more to say (approximately --- I've substituted "coding" for "mathematics" in what he actually said):
+Leslie Lamport, Turing-Award Winner, 2013, noted, approximately (I've substituted "coding" for "mathematics" in what he actually said):
 
 
 > Writing is Nature's Way of showing you how sloppy your thinking is. Coding is Nature's Way of showing you how sloppy your writing is. Testing is Nature's Way of showing you how sloppy your coding is. 
 
 
-Writing good code is like writing mathematics. Good, tested code is like a proved theorem. Code without documentation is like a pile of equations with no explanation. It's next to hopeless to understand it, let alone use it creatively or even just to maintain it.
+Writing good code is like writing mathematics. Good, tested code is like a proved theorem. Code without documentation is like a pile of equations with no explanation. It's next to hopeless to understand it, let alone use it creatively or even just to maintain it. 
 
 
-To reduces sloppiness, we must keep testing close to writing. (think, write docs, code, (test, refactor, test, refactor, ...), ...) in a nested loop.
+In another analogy, code without documentation is like a house without blueprints. Maintenance and alteration is vastly more difficult without bluprints. 
+
+
+Keep testing close to writing. (think, write docs, code, (test, refactor, test, refactor, ...), ...) in a nested loop.
 
 
 The following tragedy occurs all-to-often in the software world: 
@@ -67,10 +76,10 @@ The following tragedy occurs all-to-often in the software world:
 
 - The Reverse Engineers finds that the few comments in the code are Dead-On-Arrival --- out-of-date, irrelevant, misplaced, just-plain wrong. 
 
-- The Reverse-Engineering team eventually gives up and writes a NewGiantProgramX.
+- The Reverse-Engineering team eventually gives up and writes a NewGiantProgramX from scratch.
 
 
-If we write documentation **first**, and whenever we modify or maintain the software, we modify and maintain the document **first**, we can sidestep this tragedy.
+If we write documentation **first**, and we modify and maintain the document **first** whenever we modify or maintain the code, we can sidestep this tragedy.
 
 
 ## HOW TO RUN TANGLEDOWN:
@@ -247,6 +256,7 @@ def tangle_all(noweb_blocks, tangle_files):
                 lines = expand_blocks (noweb_blocks, lines)
             contents += lines
         with open (k, 'w') as outfile:
+            print(f"WRITING FILE: {k}")
             outfile.write (''.join(contents))
 
 if __name__ == "__main__":

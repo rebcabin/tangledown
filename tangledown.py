@@ -148,6 +148,7 @@ def tangle_all(noweb_blocks, tangle_files):
                 lines = expand_blocks (noweb_blocks, lines)
             contents += lines
         with open (k, 'w') as outfile:
+            print(f"WRITING FILE: {k}")
             outfile.write (''.join(contents))
 
 if __name__ == "__main__":

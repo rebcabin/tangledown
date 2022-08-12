@@ -46,12 +46,12 @@ def get_lines(aFilename):
 ```
 
 ```python
-noweb_start_re = re.compile (r'^<noweb name="([a-zA-Z][\w\s\-_\.]+)">$')
+noweb_start_re = re.compile (r'^<noweb name="([\w\s\-\.]+)">$')
 noweb_end_re = re.compile (r'^</noweb>$')
-tangle_start_re = re.compile (r'^<tangle file="([a-zA-Z][\w\s\-_\.]+)">$')
+tangle_start_re = re.compile (r'^<tangle file="(.+\/\\[^\/]+|.+)">$')
 tangle_end_re = re.compile (r'^</tangle>$')
-block_start_re = re.compile (r'.*<block name="([a-zA-Z][\w\s\-_\.]+)">')
-block_end_re = re.compile (r'.*</bl[o]ck>')
+block_start_re = re.compile (r'^(\s*)<block name="([\w\s\-\.]+)">')
+block_end_re = re.compile (r'^(\s)*</bl[o]ck>')
 ```
 
 ```python
@@ -131,8 +131,10 @@ def accumulate_lines(lines):
                 accumulate_contents(lines, i + 1, noweb_end_re)
         elif (tangle_start_match):
             file_key = tangle_start_match.group (1)
-            i, tangle_files[file_key] = \
-                accumulate_contents(lines, i + 1, tangle_end_re)
+            if not (file_key in tangle_files):
+                tangle_files[file_key] = []
+            tangle_files[file_key] += \
+                [accumulate_contents(lines, i + 1, tangle_end_re)[1]]
     return noweb_blocks, tangle_files
 ```
 
@@ -149,6 +151,7 @@ def there_is_a_block_tag (lines):
 def eat_block_tag (i, lines):
     for j in range (i, len(lines)):
         end_match = block_end_re.match (lines[j])
+        # DUDE! Check leading whitespace against block_start_re
         if (end_match):
             return j + 1
         else:  # DUDE!
@@ -161,36 +164,37 @@ def expand_blocks (noweb_blocks, lines):
     for i in range (len (lines)):
         block_start_match = block_start_re.match (lines[i])
         if (block_start_match):
-            block_key = block_start_match.group (1)
-            block_lines = noweb_blocks [block_key] # DUDE!
+            leading_whitespace = block_start_match.group (1)
+            block_key = block_start_match.group (2)
+            block_lines = noweb_blocks [block_key]  # DUDE!
             i = eat_block_tag (i, lines)
             for block_line in block_lines:
-                out_lines.append (block_line)
+                out_lines.append (leading_whitespace + block_line)
         else:
             out_lines.append (lines[i])
     return out_lines
 ```
 
 ```python
+from pathlib import Path
 def tangle_all(noweb_blocks, tangle_files):
-    for k, v in tangle_files.items ():
-        with open (k, 'w') as outfile:
-            lines = v
+    for k, lines_list in tangle_files.items ():
+        Path(k).parents[0].mkdir(parents=True, exist_ok=True)
+        contents = []
+        for lines in lines_list:
             while there_is_a_block_tag (lines):
                 lines = expand_blocks (noweb_blocks, lines)
-            for line in lines:
-                outfile.write (line)
+            contents += lines
+        with open (k, 'w') as outfile:
+            print(f"WRITING FILE: {k}")
+            outfile.write (''.join(contents))
 ```
 
 ```python
 if __name__ == "__main__":
    file_from_sys_argv = get_aFile()
    lines = get_lines(file_from_sys_argv)
-   test_re_matching(lines)
+   # test_re_matching(lines)
    noweb_blocks, tangle_files = accumulate_lines(lines)
    tangle_all(noweb_blocks, tangle_files)
-```
-
-```python
-
 ```
