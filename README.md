@@ -26,7 +26,7 @@ You might rejoin
 And I say 
 
 
-> That's like giving good names to variables in your mathematical theory. It's nice, but not enough. The big picture, the architecture, the blueprints, gets lost in the details. To understand the code, you end up running it in a debugger or by inserting tracing printouts, just as, to understand some mathematics, you work through some actual examples, or, to understand the plumbing of a house, you tear out the walls because the blueprints are inadequate.
+> That's like giving good names to variables in your mathematical theory. It's nice, but not enough. The big picture, the rationale, the unwritten motivation, they "why?", the architecture, the blueprints, all get lost in the details. To understand the code, you end up running it in a debugger or by inserting tracing printouts, just as, to understand some mathematics, you work through some actual examples, or, to understand the plumbing of a house, you tear out the walls because the blueprints are inadequate.
 
 
 Literate Programming is the best known way to save your audience that work. Who is your audience? Yourself, first, especially six months down the line when you're trying to refresh your memory. Other programmers, eventually, when they take over the job of maintaining and extending your code.
