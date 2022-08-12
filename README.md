@@ -14,6 +14,24 @@ This is a toy. It's a useful toy, but it has zero error handling. This document 
 ## OVERVIEW
 
 
+You wouldn't build a house without blueprints. You wouldn't write equations without some explanation. Why should you write code without documentation? Let's make that more natural than writing code without documentation, which is, tragically, the common practice.
+
+
+You might rejoin 
+
+
+> I give good names to functions and arguments so I can read my code later.
+
+
+And I say 
+
+
+> That's like giving good names to variables in your mathematical theory. It's nice, but not enough. The big picture, the architecture, the blueprints, gets lost in the details. To understand the code, you end up running it in a debugger or by inserting tracing printouts, just as, to understand some mathematics, you work through some actual examples, or, to understand the plumbing of a house, you tear out the walls because the blueprints are inadequate.
+
+
+Literate Programming is the best known way to save your audience that work. Who is your audience? Yourself, first, especially six months down the line when you're trying to refresh your memory. Other programmers, eventually, when they take over the job of maintaining and extending your code.
+
+
 - README.md files are mandatory, or really should be, in projects.
 
 - README.md files should be authoritative, complete, and in-sync with code. README.md files that _can't_ get out of sync with code are best. That's akin to having good blueprints for your house or other building you're putting up. You wouldn't think of building a house without authoritative, complete, up-to-date blueprints, would you?
@@ -92,15 +110,21 @@ If you said `python3 tangledown.py MY-FOO.md`, then you would be tangling the
 code out of `MY-FOO.md`. You'll do that once you start writing your own code in
 Tangledown. You will love it!
 
-
-You can also run tangledown from inside a python program;
+<!-- #region -->
+You can also run tangledown from inside a Python program;
 `hello_world_tangler.py` is an example.
 [Jupytext](https://github.com/mwouts/jupytext) lets you RUN code from a Markdown
 document in a Jupyter notebook. If you open `hello_world.md` as a Jupytext [sic]
 notebook in [JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) then you
-can run Tangledown in Jupyter cells. It's very, very cool and is getting close
-to the high bar set by org-babel!
+can run Tangledown in Jupyter cells. Right-click on the name `hello_world.md` in the JupyterLab GUI and choose 
 
+
+`Open With ...` $\longrightarrow$ `Jupytext Notebook`
+
+
+It's very, very cool and is getting close
+to the high bar set by org-babel!
+<!-- #endregion -->
 
 ## HOW IT WORKS: Markdown Ignores Mysterious Tags
 
@@ -196,7 +220,7 @@ Jupytext automatically syncs a Markdown file with a Jupyter notebook. If you
 Jupytext will update the other. Though to see the updates, you must `File->Reload Notebook from Disk` or `File->Reload Markdown File from Disk`, as appropriate.
 
 
-If you're reading or modifying README.ipynb, you will see tiny cells above and below all your tagged nowebs, blocks, and tangles. *DON'T DELETE THEM*. Markdown renderers simply ignore the tags, but Jupytext makes tiny cells out of them!
+If you're reading or modifying `README.ipynb`, or if you `Open With -> Jupytext Notebook` (my preference), you will see tiny cells above and below all your tagged nowebs, blocks, and tangles. *DON'T DELETE THEM*. Markdown renderers simply ignore the tags, but Jupytext makes tiny cells out of them!
 
 
 You also probably don't want to RUN tagged blocks in Jupyter, but you DO want to run some blocks of code. See the end of this document, and also see `hello_world.ipynb` after you have opened `hello_world.md` and _Paired Notebook With Markdown_; remember the _Activate Command Palette_ GUI?
@@ -205,7 +229,7 @@ You also probably don't want to RUN tagged blocks in Jupyter, but you DO want to
 ## YOUR'RE A HUMAN! READ THE NAMES IN THE `block` TAGS!
 
 
-Markdown renders `block` tags verbatim to the documentation. This is good for humans, who will think
+Markdown renders `block` tags that appear in the contents of `noweb` or `tangle` tags verbatim to the documentation. This is good for humans, who will think
 
 
 > AHA!, this `block` refers to some code in a `noweb` tag with the same name that I can read some other place and time.
@@ -217,16 +241,19 @@ Markdown renders `block` tags verbatim to the documentation. This is good for hu
 That's exactly what you want for humans: talk about something in a place where you don't necessarily _implement_ it. But compilers usually need the full implementation of the block _right here and now_ before it's ever used.
 
 
-See, I'll prove it to you. Here is the code for the whole program. You can understand this without understanding the _implementations_ of the sub-pieces, just getting an idea of _what_ they do from the names of the `block` tags. READ THE NAMES IN THE BLOCK TAGS to get the big picture.
+See, I'll prove it to you. Here is the code for all of `tangledown.py` itself. You can understand this without understanding the _implementations_ of the sub-pieces, just getting an idea of _what_ they do from the names of the `block` tags. READ THE NAMES IN THE BLOCK TAGS to get the big picture.
 
 
-All we do in the code below the block tags, in function `tangle_all`, is loop over all the lines in the input and substitute something wherever we see a `block` tag. What do we substitute? The contents of a `noweb` tag with the same name as the name mentioned in the `block` tag. The code will create the subdirectories needed, so if you tangle to file "foo/bar/baz/qux.py," the code will create the directory chain "./foo/br/baz/" if it doesn't exist. The code will also add to a file if it's mentioned more than once in the input, so if you tangle to "qux.py" in one tangle tag and then tangle to "qux.py" in a second tangle tag, the first tangle tag will overwrite "qux.py" and the second tangle tag will add to "qux.py".
+The whole program is in the function `tangle_all`. All we do there is loop over all the lines in the input and substitute something wherever we see a `block` tag. What do we substitute? The contents of a `noweb` tag with the same name as the name mentioned in the `block` tag. The code will create the subdirectories needed, so if you tangle to file `foo/bar/baz/qux.py,` the code creates the directory chain `./foo/br/baz/` if it doesn't exist. 
+
+
+The code will also append to a file that's mentioned more than once in the input, so if you tangle to `qux.py` in one tangle tag and then tangle to `qux.py` in a second tangle tag, the first tangle tag will overwrite `qux.py` and the second tangle tag will append to `qux.py` (actually, the program accumulates all tangles to one file in a list and then concatenates the list).
 
 
 This program can run as a script or can be imported as a module. We get that hybrid vigor by the standard Python trick of testing `__name__` against `"__main__"`.
 
 
-Now, if you're reading this as a Jupyter notebook in Jupytext (as explained above), you'll see a little tiny cell just before the code below and just after the code below. This code is in _the contents of_ a `tangle` tag. The _contents_ of any tag `foo` is the stuff between the opening tag `<foo>` and the closing tag `</foo>`. I know, we use the word _tag_ to mean three things: the opener `<foo>`, the closer `</foo>`, or the entire magilla between the opener `<foo>` and the closer `</foo>`. Forgive us, will you? I'm not sure any literature on HTML, XML, or SGML is any better about that nomenclature.
+Now, if you're reading this as a Jupyter notebook in Jupytext (as explained above), you'll see a little tiny cell just before the code below and just after the code below. The code is in _the contents of_ the `tangle` tag. The _contents_ of any tag `foo` is the stuff between the opening tag `<foo>` and the closing tag `</foo>`. I know, we use the word _tag_ to mean three things: the opener `<foo>`, the closer `</foo>`, or the entire magilla between the opener `<foo>` and the closer `</foo>`. Forgive us, will you? I'm not sure any literature on HTML, XML, or SGML is any better about that nomenclature.
 
 
 The notebook won't render `<tangle ...>`, but will render the contents between `<tangle ...>` and `</tangle>` and will represent `<tangle ...>` and `</tangle>` with tiny cells. Those tiny cells contain the all-important `tangle` start and end taglets (see, there I invented a disambiguating word).
