@@ -24,7 +24,7 @@ This is a toy. It's a useful toy, but it has zero error handling. This document 
 
 - Let's put _all the real, live code_ for a project inside README.md, along with authoritative documentation. When you modify one, modify the other along with it.
 
-- Let's write README.md for human reasoning and understanding, that is, _top-down_ instead of _bottom-up_. Let's help readers, inclugin, most importantly, your future self, understand the big picture before overwhelming them with implementation details.
+- Let's write README.md for human reasoning and understanding, that is, _top-down_ instead of _bottom-up_. Let's help readers, including, most importantly, your future self, understand the big picture before overwhelming them with implementation details.
 
 - Let's create a tool to suck the code out of README.md and rearrange it on disk in some other order required by build tools, debuggers, and IDEs.
 
