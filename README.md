@@ -29,9 +29,6 @@ Literate Programming is the best known way to save your audience that work. Who 
 > First, write a paper about your code, then put your actual code in the paper. RUN your code inside the paper, capturing printouts and diagrams and what not, so others (including your future self) can see the code at work. That's just like writing down the proof of your theorem in mathematics. 
 
 
-Specifically:
-
-
 I just described a kind of [Literate Programming](https://en.wikipedia.org/wiki/Literate_programming), a method of software engineering invented by [Donald Knuth](http://amturing.acm.org/award_winners/knuth_1013846.cfm). Knuth wrote MetaFont and TeX in literate style. He wrote the outline of the book first, which mirrors the architecture of the code. Then he fitted the code into the book incrementally rewriting and refactoring until convergence. 
 
 
