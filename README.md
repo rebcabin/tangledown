@@ -20,7 +20,7 @@ You might rejoin
 And I say 
 
 
-> That's nice, but it documents only the pieces, and says nothing about how the pieces fit together. It's not enough. The big picture, the rationale, the proofs, the unwritten motivation, the "why?", the concept of operations, the architecture, the blueprints, all get lost in the details, literally "lost" as in never written down. To understand the code, you end up running it in a debugger or by tracing printouts, just as, to understand some undocumented mathematics, you work through actual examples and reverse engineer a proof, or, to understand the plumbing of a house with inadequate blueprints, you tear out the walls.
+> That's nice, but it documents only the pieces, and says nothing about how the pieces fit together. It's not enough. The big picture, the rationale, the proofs, the unwritten motivation, the "why?", the concept of operations, the architecture, the blueprints, all get lost in the details, literally "lost" as in never written down. To understand the code, you end up running it in a debugger or by tracing printouts, just as, to understand some poorly documented mathematics, you create yourself some actual examples and reverse engineer a proof, or, to understand the plumbing of a house with inadequate blueprints, you tear out the walls.
 
 
 Literate Programming is the best known way to save your audience that work. Who is your audience? Yourself, first, especially six months down the line when you're trying to refresh your memory; other programmers, eventually, when they take over the job of maintaining and extending your code.
