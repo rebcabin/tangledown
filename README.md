@@ -53,7 +53,7 @@ Leslie Lamport, Turing-Award Winner, 2013, said, approximately:
 > Writing is Nature's Way of showing you how sloppy your thinking is. Coding is Nature's Way of showing you how sloppy your writing is. Testing your code is Nature's Way of showing you how sloppy your coding is. 
 
 
-Writing good code is like writing mathematics. Good, tested code is like a proved theorem. Code without documentation is like a pile of equations with no explanation, like a house without blueprints. It's next to hopeless to understand it, let alone use it creatively or even just to maintain it. 
+Writing good code is like writing mathematics. Good, tested code is like a proved theorem. Code without documentation is like a pile of equations with no explanation, like a house without blueprints. It's unnecessarily expensive to understand it, let alone use it creatively or even just to maintain it. 
 
 
 To keep testing close to writing, we need to RUN code in our documents. Jupytext is good for that: it keeps a Markdown file and a Jupyter notebook in sync. 
