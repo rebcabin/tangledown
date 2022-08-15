@@ -71,7 +71,7 @@ def first_non_blank_line_is_triple_backtick (i, lines):
 
 def accumulate_contents (lines, i, end_re):
     if (first_non_blank_line_is_triple_backtick (i, lines)):
-        i = i + 1 # eat the line
+        i = i + 1 # eat the line containing triple backticks
         snip = 0
     else:
         snip = 4
