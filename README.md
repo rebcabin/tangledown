@@ -279,7 +279,7 @@ Not too pretty, but it's important to know what code looks like in the notebook 
 With or without the blank lines, Markdown won't render the opening `<noweb ...>` and closing `</noweb>` tags themselves. Markdown only renders the material between the opening and closing tags. That material is called the _contents_ of the tags. The word _contents_ is ordinary jargon from HTML, XML, SGML, etc.
 
 
-**NOTE**: the `name` attribute must be on the same line as the `<noweb ...>` opener. That's just a limitation of the regular expression that detect `noweb` tags. Remeber, Tangledown is still just a toy, a very useful toy, but it's limited.
+**NOTE**: the `name` attribute must be on the same line as the `<noweb ...>` opener. That's just a limitation of the regular expressions that detect `noweb` tags. Remeber, Tangledown is still just a toy, a very useful toy, but it's limited.
 
 
 But `tangledown.py` _doesn't_ ignore the tags. `tangledown.py` is a Python script (and module) that sucks up the contents of the `noweb` tags and sticks them into a dictionary. For the examples above, the dictionary has the keys `my_little_tests` or `another_little_test`. You can see those keys in the Markdown file, or by expanding the little tiny, unlabeled, almost invisible, raw cells that Jupytext renders for the tags. ***DON'T DELETE THE LITTLE TINY, UNLABELED, ALMOST INVISIBLE, RAW CELLS.*** But it's completely safe to expand them (press _Enter_), look at them, close them up (press `Shift-Enter`) even edit them in a notebook.
