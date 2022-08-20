@@ -199,6 +199,9 @@ from tangledown import get_lines, accumulate_lines, tangle_all
 tangle_all(*accumulate_lines(get_lines("README.md")))
 ```
 
+If you're running the new, optional [Tangledown Kernel](#section-tangledown-kernel), you can evaluate the source code for the whole program in the [cell i'm linking right here in this notebook](#tangle-listing-tangle-all). ***How Cool is That?***
+
+
 Because Tangledown is a Python module, you can also run Tangledown from inside a standalone Python program, say in PyCharm or VS Code or whatever;
 `hello_world_tangler.py` in this repository is an example.
 
