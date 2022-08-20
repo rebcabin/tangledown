@@ -14,10 +14,16 @@ def get_aFile():
             aFile = sys.argv[1]
     return aFile
 
+raw_line_re = re.compile(r'<!-- #(end)?raw -->')
 def get_lines(aFilename):
     """Get lines from a file denoted by aFilename."""
     with open(aFilename) as aFile:
-        return aFile.readlines ()
+        in_lines = aFile.readlines ()
+        out_lines = []
+        for in_line in in_lines:
+            if not raw_line_re.match(in_line):
+                out_lines.append(in_line)
+        return out_lines
 
 noweb_start_re = re.compile (r'^<noweb name="(\w[\w\s\-\.]*)">$')
 noweb_end_re = re.compile (r'^</noweb>$')
@@ -87,6 +93,21 @@ def accumulate_contents (lines, i, end_re):
             else:
                 contents_lines.append (lines[j][snip:])
 
+import json
+from pathlib import Path
+def dump_current_markdown_artifacts(nowebs, tangles):
+    tangledown_dirpath = str(Path.home()) + '/.tangledown/' 
+    nowebspath = tangledown_dirpath + "nowebs.json" 
+    tanglespath = tangledown_dirpath + "tangles.json"
+    # only need to do this 'mkdir' once for both files
+    Path(nowebspath).parents[0].mkdir(parents=True, exist_ok=True)
+    with open(tanglespath, "w") as t:
+        json.dump(tangles, t)
+    with open(nowebspath, "w") as n:
+        json.dump(nowebs, n)
+    return nowebs, tangles
+
+
 def accumulate_lines(lines):
     noweb_blocks = {}
     tangle_files = {}
@@ -103,7 +124,7 @@ def accumulate_lines(lines):
                 tangle_files[file_key] = []
             tangle_files[file_key] += \
                 [accumulate_contents(lines, i + 1, tangle_end_re)[1]]
-    return noweb_blocks, tangle_files
+    return dump_current_markdown_artifacts(noweb_blocks, tangle_files)
 
 def there_is_a_block_tag (lines):
     for line in lines:
@@ -138,23 +159,43 @@ def expand_blocks (noweb_blocks, lines):
 
 
 
-from pathlib import Path
+def expand_lines_list(lines_list, noweb_blocks):
+    contents = []
+    for lines in lines_list:
+        while there_is_a_block_tag (lines):
+            lines = expand_blocks (noweb_blocks, lines)
+        contents += lines
+    return ''.join(contents)
+
 def tangle_all(noweb_blocks, tangle_files):
+    from pathlib import Path
     for k, lines_list in tangle_files.items ():
         Path(k).parents[0].mkdir(parents=True, exist_ok=True)
-        contents = []
-        for lines in lines_list:
-            while there_is_a_block_tag (lines):
-                lines = expand_blocks (noweb_blocks, lines)
-            contents += lines
+        joined_contents = expand_lines_list(lines_list, noweb_blocks)
         with open (k, 'w') as outfile:
             print(f"WRITING FILE: {k}")
-            outfile.write (''.join(contents))
+            outfile.write (joined_contents)
 
 if __name__ == "__main__":
-   file_from_sys_argv = get_aFile()
-   lines = get_lines(file_from_sys_argv)
-   # test_re_matching(lines)
-   noweb_blocks, tangle_files = accumulate_lines(lines)
-   tangle_all(noweb_blocks, tangle_files)
+    file_from_sys_argv = get_aFile()
+    lines = get_lines(file_from_sys_argv)
+    # test_re_matching(lines)
+    noweb_blocks, tangle_files = accumulate_lines(lines)
+    tangle_all(noweb_blocks, tangle_files)
+
+def get_current_file_tangles():
+    tanglesfile = "tangles.json"
+    tanglespath = str(Path.home()) + '/.tangledown/' + tanglesfile
+    tangles = None
+    with open(tanglespath) as k:
+        tangles = json.load(k)
+    return tangles
+
+def get_current_file_nowebs():
+    nowebsfile = 'nowebs.json'
+    nowebspath = str(Path.home()) + '/.tangledown/' + nowebsfile
+    nowebs = None
+    with open(nowebspath) as n:
+        nowebs = json.load(n)
+    return nowebs
 
