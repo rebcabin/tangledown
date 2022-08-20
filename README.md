@@ -137,7 +137,9 @@ Here's how I installed everything on an Apple Silicon (M1) Mac Book Pro, with Py
 
 <!-- #raw -->
 pip install jupyter
+
 pip install jupyterlab
+
 pip install jupytext
 <!-- #endraw -->
 
