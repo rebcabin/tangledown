@@ -27,7 +27,7 @@ And I say
 
 > The big picture, the rationale, the goals and objectives, the proofs, the motivation, the "why?", the concept of operations, the architecture, the blueprints, all get lost in the details, literally "lost" as in never written down.
 
->To understand code without higher-level documentation, you end up reverse-engineering it: running it in a debugger or tracing printouts. It's the same with mathematics: to understand under-documented mathematics, you create examples and reverse engineer proofs. Likewise, to understand the plumbing of a house with missing or inadequate blueprints, you tear out the walls.
+>To understand code without higher-level documentation, you end up reverse-engineering it: running it in a debugger or tracing printouts. It's the same with mathematics: to understand under-documented mathematics, you create examples and reverse-engineer proofs. Likewise, to understand the plumbing of a house with missing or inadequate blueprints, you tear out the walls.
 
 > Don't make me do all that.
 
