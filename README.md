@@ -394,14 +394,7 @@ If you're running the new, optional [Tangledown Kernel](#section-tangledown-kern
 <block name="thereIsABlockTag"></block>
 <block name="eatBlockTag"></block>
 <block name="expandBlocks"></block>
-
-def expand_lines_list(lines_list, noweb_blocks):
-    contents = []
-    for lines in lines_list:
-        while there_is_a_block_tag (lines):
-            lines = expand_blocks (noweb_blocks, lines)
-        contents += lines
-    return ''.join(contents)
+<block name="expand-lines-list"></block>
 
 def tangle_all(noweb_blocks, tangle_files):
     from pathlib import Path
@@ -423,16 +416,13 @@ if __name__ == "__main__":
 </tangle>
 
 
-The whole program is in the function `tangle_all`. The business with `__main__` lets the code run as a script. It just calls `tangle_all` after getting and accumulating lines from the given Markdown file.
+The whole program is in the function `tangle_all`. The business with `__name__ == "__main__"` lets the code run as a script. It just calls `tangle_all` after getting and accumulating lines from the given Markdown file.
 
 
-All we do in `tangle_all` is loop over all the lines in the tangles (`for k, lines_list in ...`) from the input and substitute something wherever we see a `block` tag (`while there_is_a_block_tag`). What do we substitute? The contents of a `noweb` tag with the same name as the `block` tag. `Expand_blocks` does that job. See how it's implemented [here](#expand-blocks).
+All we do in `tangle_all` is loop over all the lines in the tangles (`for k, lines_list in ...`) from the input and substitute something wherever we see a `block` tag (`while there_is_a_block_tag`). What do we substitute? The contents of a `noweb` tag with the same name as the `block` tag. `Expand_blocks` (called by [expand_lines_list](#expand-lines-list)) does that job. See how it's implemented [here](#expand-blocks).
 
 
-> We separated out the inner loop into another function, `expand_lines_list`, so that the [Tangledown Kernel](#section-tangledown-kernel) can import it and apply it to the contents of cells that contain `block` tags. `tangle_all` calls `expand_lines_list`; `expand_lines_list` calls `expand_blocks`.
-
-
-The code will create the subdirectories needed. For example, if you tangle to file `foo/bar/baz/qux.py,` the code creates the directory chain `./foo/br/baz/` if it doesn't exist. See [Known Bugs](#section-known-bugs).
+The code will create the subdirectories needed. For example, if you tangle to file `foo/bar/baz/qux.py,` the code creates the directory chain `./foo/br/baz/` if it doesn't exist.
 
 
 The code will also accumulate output for `tangle` files mentioned more than once. If you tangle to `qux.py` in one place and then also tangle to `qux.py` somewhere else, the second tangle won't overwrite the first, but append to it. That's why the loop `for k, lines_list in tangle_files...` actually loops over _lists_ of lines. Each list contains all the lines for a given output file.
@@ -446,6 +436,29 @@ We'll implement the blocks, like `accumulate_contents` and `eatBlockTag`, later.
 
 `block` tags don't need any contents, but you're welcome to put some in, say for in-code commentary. Tangledown will eat and ignore contents of a `block` tag. With Tangledown, in-code commentary is less important than it is in normal (tragically flawed!) code, however, because your commentary for _humans_ is the text _surrounding_ the `block` tags, Markdown text like the text you're reading right here and now.
 
+
+### noweb: expand-lines-list<a id="expand-lines-list"></a>
+
+
+We separated out the inner loop into another function, `expand_lines_list`, so that the [Tangledown Kernel](#section-tangledown-kernel) can import it and apply it to the contents of cells that contain `block` tags. `tangle_all` calls `expand_lines_list`; `expand_lines_list` calls `expand_blocks`.
+
+<!-- #raw -->
+<noweb name="expand-lines-list">
+<!-- #endraw -->
+
+```python
+def expand_lines_list(lines_list, noweb_blocks):
+    contents = []
+    for lines in lines_list:
+        while there_is_a_block_tag (lines):
+            lines = expand_blocks (noweb_blocks, lines)
+        contents += lines
+    return ''.join(contents)
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
 
 ## Tangledown Tangles Itself?
 
@@ -673,7 +686,7 @@ Tangledown is a funny little compiler. We could go all highfalutin' and write it
 We'll just use iteration and array indices, but in a tasteful way so our functional friends won't get seasick. This is Python, after all, not highfalutin' Haskell! We can just _get it done_.
 
 
-The function `accumulate_contents` accumulates the contents of `noweb` or `tangle` tags. Remember that `block` tags don't have meanigful contents. The function starts at line `i`, then figures out whether a tag's first non-blank line is triple backtick, in which case it _won't_ snip four spaces from the beginning of every line, and finally keeps going until it sees the closing taglet, `</noweb>` or `</tangle>`.
+The function `accumulate_contents` accumulates the contents of `noweb` or `tangle` tags. Remember that `block` tags don't have meanigful contents. The function starts at line `i`, then figures out whether a tag's first non-blank line is triple backtick, in which case it _won't_ snip four spaces from the beginning of every line, and finally keeps going until it sees the closing taglet, `</noweb>` or `</tangle>`. It returns a tuple of the line index _after_ the closing taglet, and the contents, possibly de-dented.
 
 
 #### noweb: accumulate-contents
@@ -683,6 +696,8 @@ The function `accumulate_contents` accumulates the contents of `noweb` or `tangl
 
 ```python
 def accumulate_contents (lines, i, end_re):
+    r"""Harvest contents of a noweb or tangle tag. The start
+    taglet was consumed by caller; we consume the end taglet."""
     if (first_non_blank_line_is_triple_backtick (i, lines)):
         i = i + 1 # eat the line containing triple backticks
         snip = 0
@@ -710,14 +725,18 @@ def accumulate_contents (lines, i, end_re):
 The function `accumulate_lines` sucks the contents of all the `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries, `noweb_blocks` and `tangle_files`, keyed by `name` or `file` attributes it finds inside `noweb` or `tangle` tags. 
 
 
-This function also dumps the dictionaries to json blobs in a fixed place in your home directory, then returns them in a tuple. The reason to dump them to a fixed place is so that the [Tangledown Kernel](#section-tangledown-kernel) can find them. The Tangledown Kernel has NO WAY to find out the name of the notebook  being processed (see this [question on stackoverflow](https://stackoverflow.com/questions/37534440/passing-command-line-arguments-to-argv-in-jupyter-ipython-notebook)), so we dump the data to a fixed file location, as advised in [this stackoverflow question](https://stackoverflow.com/questions/11026959/writing-a-dict-to-txt-file-and-reading-it-back). We could use pickle, but that's a refinement ([TODO](#todo)).
+This function also [dumps the dictionaries to json blobs in a fixed place in your home directory](#dump-artifacts), then returns them in a tuple. We could pickle the contents, but that's a refinement ([TODO](#todo)). The reason to dump them to a fixed place is so that the [Tangledown Kernel](#section-tangledown-kernel) can find them. 
+
+
+The Tangledown Kernel has NO WAY to find out the name of the notebook  being processed (see this [question on stackoverflow](https://stackoverflow.com/questions/37534440
+/passing-command-line-arguments-to-argv-in-jupyter-ipython-notebook)), so we dump the data to a fixed file location, as advised in [this stackoverflow question](https://stackoverflow.com/questions/11026959/writing-a-dict-to-txt-file-and-reading-it-back). [Papermill](https://papermill.readthedocs.io/en/latest/) offers a potential solution (TODO).
 
 
 <noweb name="accumulate-lines">
 
 ```python
-<block name="dump-current-markdown-artifacts">
-
+<block name="dump-current-markdown-artifacts"></block>
+<block name="normalize-file-path"></block>
 def accumulate_lines(lines):
     noweb_blocks = {}
     tangle_files = {}
@@ -729,7 +748,7 @@ def accumulate_lines(lines):
             i, noweb_blocks[block_key] = \
                 accumulate_contents(lines, i + 1, noweb_end_re)
         elif (tangle_start_match):
-            file_key = tangle_start_match.group (1)
+            file_key = str(normalize_file_path(tangle_start_match.group(1)))
             if not (file_key in tangle_files):
                 tangle_files[file_key] = []
             tangle_files[file_key] += \
@@ -739,6 +758,31 @@ def accumulate_lines(lines):
 
 </noweb>
 
+
+#### noweb: normalize-file-path
+
+
+We must normalize file names so that, for example, "foo.txt" and "./foo.txt" indicate the same file and so that `~/` denotes the home directory on Mac and Linux.
+
+<!-- #raw -->
+<noweb name="normalize-file-path">
+<!-- #endraw -->
+
+```python
+def anchor_is_tilde(path_str: str) -> bool:
+    result = (path_str[0:2] == "~/") and (Path(path_str).anchor == '')
+    return result
+
+def normalize_file_path(tangle_file_attribute: str) -> Path:
+    result: Path = Path(tangle_file_attribute)
+    if (anchor_is_tilde(tangle_file_attribute)):
+        result = (Path.home() / tangle_file_attribute[2:])
+    return result
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
 
 ### DUDE!
 
@@ -873,18 +917,19 @@ Some people write "TODO" in their code so they can find all the spots where they
 I must apologize once again, but this is just a toy at this point! Recall the [DISCLAIMER](#disclaimer). The following are stackranked from highest to lowest priority.
 
 
-1. writing to "tangledown.py" and to "./tangledown.py" clobbers the file rather than appending. Use pathlib to compare filenames rather than string comparison.
-2. tangling to files in the home directory via `~` does not work. We know one dirty way to fix it, but proper practice with pathlib is a better answer.
+1. FIXED: writing to "tangledown.py" and to "./tangledown.py" clobbers the file rather than appending. Use pathlib to compare filenames rather than string comparison.
+2. FIXED: tangling to files in the home directory via `~` does not work. We know one dirty way to fix it, but proper practice with pathlib is a better answer.
 
 
 ## Next Steps<a id="todo"></a>
 
 
-- use pathlib to compare tangle file names
+- DONE: use pathlib to compare tangle file names
 - modern Pythonic Type Annotation (PEP 484)
 - more examples
 - error handling (big job)
 - Support multiple instances of the Tangledown Kernel. Because it reads files with fixed names in the home directory, it has no way of processing multiple Tangledown notebooks.
+    - investigate [Papermill](https://papermill.readthedocs.io/en/latest/) as a solution
 - find out whether pickle is a better alternative to json for dumping dictionaries for the kernel
 - DONE: Jupytext kernel for `tangledown` so we can run `noweb` and `block` tags that have `block` tags in them.
 
@@ -939,7 +984,7 @@ If you modify the kernel, re-tangle its source from here, re-install it by runni
 Adapted from [these official docs](https://jupyter-client.readthedocs.io/en/latest/wrapperkernels.html).
 
 
-### noweb: Dump Nowebs and Tangles from Current File
+### noweb: Dump Nowebs and Tangles from Current File<a id="dump-artifacts"></a>
 
 
 The following is support for the Tangledown Kernel from the Tangledown Compiler itself. The Tangledown Compiler writes the nowebs and tangles out to a fixed place in the home directory, and the Tangledown Kernel reads them from there. You can have ***only one instance of the Tangledown Kernel at one time on your machine*** because the names of the files are fixed. The Tangledown Kernel has no way to dynamically know what file you're working with. Sorry about that!
@@ -1106,6 +1151,8 @@ banner = "Tangledown kernel - expanding 'block' tags"
 <!-- #raw -->
 </tangle>
 <!-- #endraw -->
+
+# APPENDIX: Experimental Playground
 
 ```python
 

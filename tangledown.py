@@ -76,6 +76,8 @@ def first_non_blank_line_is_triple_backtick (i, lines):
     return triple_backtick_re.match (lines[i])
 
 def accumulate_contents (lines, i, end_re):
+    r"""Harvest contents of a noweb or tangle tag. The start
+    taglet was consumed by caller; we consume the end taglet."""
     if (first_non_blank_line_is_triple_backtick (i, lines)):
         i = i + 1 # eat the line containing triple backticks
         snip = 0
@@ -107,6 +109,15 @@ def dump_current_markdown_artifacts(nowebs, tangles):
         json.dump(nowebs, n)
     return nowebs, tangles
 
+def anchor_is_tilde(path_str: str) -> bool:
+    result = (path_str[0:2] == "~/") and (Path(path_str).anchor == '')
+    return result
+
+def normalize_file_path(tangle_file_attribute: str) -> Path:
+    result: Path = Path(tangle_file_attribute)
+    if (anchor_is_tilde(tangle_file_attribute)):
+        result = (Path.home() / tangle_file_attribute[2:])
+    return result
 
 def accumulate_lines(lines):
     noweb_blocks = {}
@@ -119,7 +130,7 @@ def accumulate_lines(lines):
             i, noweb_blocks[block_key] = \
                 accumulate_contents(lines, i + 1, noweb_end_re)
         elif (tangle_start_match):
-            file_key = tangle_start_match.group (1)
+            file_key = str(normalize_file_path(tangle_start_match.group(1)))
             if not (file_key in tangle_files):
                 tangle_files[file_key] = []
             tangle_files[file_key] += \
@@ -158,7 +169,6 @@ def expand_blocks (noweb_blocks, lines):
     return out_lines
 
 
-
 def expand_lines_list(lines_list, noweb_blocks):
     contents = []
     for lines in lines_list:
@@ -166,6 +176,7 @@ def expand_lines_list(lines_list, noweb_blocks):
             lines = expand_blocks (noweb_blocks, lines)
         contents += lines
     return ''.join(contents)
+
 
 def tangle_all(noweb_blocks, tangle_files):
     from pathlib import Path
