@@ -136,17 +136,19 @@ To keep testing close to writing, to close Lamport's virtuous loop of writing, t
 Here's how I installed everything on an Apple Silicon (M1) Mac Book Pro, with Python 3.9:
 
 <!-- #raw -->
+```
 pip install jupyter
-
 pip install jupyterlab
-
 pip install jupytext
+```
 <!-- #endraw -->
 
 Here is how I run it:
 
 <!-- #raw -->
+```
 jupyter lab
+```
 <!-- #endraw -->
 
 If, in JupyterLab, you
