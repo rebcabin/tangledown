@@ -32,7 +32,7 @@ class TangledownKernel(IPythonKernel):
             reply_content = await super().do_execute(
                 expanded_code, silent, store_history, user_expressions)
             stream_content = {
-                'name': 'stdout', 
+                'name': 'stdout',
                 'text': reply_content,
             }
             self.send_response(self.iopub_socket, 'stream', stream_content)

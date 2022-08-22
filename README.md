@@ -2,13 +2,14 @@
 
 
 ### Brian Beckman
-### Friday, 19 Aug 2022
+### Monday, 22 Aug 2022
+### v0.0.1
 
 
 ## OVERVIEW
 
 
-You wouldn't build a house without blueprints. You wouldn't write equations without writing rationale. You wouldn't write a theorem without writing a proof. 
+You wouldn't build a house without blueprints. You wouldn't write equations without writing rationale. You wouldn't write a theorem without writing a proof.
 
 
 Would you write code without documentation? Tragically, that's the common practice.
@@ -79,7 +80,7 @@ When rewriting old code base in literate style, ***detangle*** the existing code
 ***Tangledown*** is a tool that extracts code from any Markdown file into executable order on the disk.
 
 
-With a new project, write the documentation *first*, fill in the code, test, revise, etc. Incrementally, interactively, using Markdown *as* your IDE. 
+With a new project, write the documentation *first*, fill in the code, test, revise, etc. Incrementally, interactively, using Markdown *as* your IDE.
 
 
 Write the blueprints _before_ building the house!
@@ -179,13 +180,16 @@ Unless you're running the optional, new [Tangledown Kernel](#section-tangledown-
 This here README.md, the one you're reading right now, is *literature*, after all, so it should tell a story. Let's tell the story of creating Tangledown itself. We'll use Tangledown to _create_ Tangledown. That's just like bootstrapping a compiler. Just as we compile a compiler with a compiler, we'll use Tangledown to tangle Tangledown itself out of this here document named README.md that you're reading right now.
 
 
-## DISCLAIMER:<a id="disclaimer"></a>
+## DISCLAIMER<a id="disclaimer"></a>
 
 
 This is a useful toy, but it has zero error handling. This document currently talks only about the happy path.  I try to be rude ("DUDE!") in comments every place where I sense trouble, but I'm only sure I haven't been rude enough. Read this with sense-of-humor bit turned on. This story is supposed to be fun!
 
 
-## HOW TO RUN TANGLEDOWN:<a id="how-to-run"></a>
+I also didn't try it on Windows, but I did try it on WSL, the Windows Subsystem for Linux. Works great on WSL!
+
+
+## HOW TO RUN TANGLEDOWN<a id="how-to-run"></a>
 
 
 One way: run `python3 tangledown.py REAMDE.md` at the command line. That command should _overwrite_ tangledown.py. The code for tangledown.py is inside this here README.md that you're reading right now. The name of the file to overwrite, namely `tangledown.py`, is embedded inside this here README.md itself, in the `file` attribute of a `<tangle ...>` tag. Read about `tangle` tags [below](#section-tangle-tags)!
@@ -203,7 +207,7 @@ from tangledown import get_lines, accumulate_lines, tangle_all
 tangle_all(*accumulate_lines(get_lines("README.md")))
 ```
 
-If you're running the new, optional [Tangledown Kernel](#section-tangledown-kernel), you can evaluate the source code for the whole program in the [cell i'm linking right here in this notebook](#tangle-listing-tangle-all). ***How Cool is That?***
+After you have tangled at least once, as above, and if you're running the new, optional [Tangledown Kernel](#section-tangledown-kernel), you can evaluate the source code for the whole program in the [cell i'm linking right here in this notebook](#tangle-listing-tangle-all). ***How Cool is That?***
 
 
 Because Tangledown is a Python module, you can also run Tangledown from inside a standalone Python program, say in PyCharm or VS Code or whatever;
@@ -219,7 +223,7 @@ can run Tangledown in Jupyter cells. Right-click on the name `hello_world.md` in
 `Open With ...` $\longrightarrow$ `Jupytext Notebook`
 
 
-Then run cells! This is getting close to the high bar set by org-babel! 
+Then run cells! This is getting close to the high bar set by org-babel!
 <!-- #endregion -->
 
 ## HOW IT WORKS: Markdown Ignores Mysterious Tags
@@ -431,7 +435,7 @@ The code will also accumulate output for `tangle` files mentioned more than once
 You can run Tangldedown as a script or  import it as a module. We get that hybrid vigor by the standard Python trick of testing `__name__` against `"__main__"`.
 
 
-We'll implement the blocks, like `accumulate_contents` and `eatBlockTag`, later. You can read about them, or not, after you've gotten the big picture. 
+We'll implement the blocks, like `accumulate_contents` and `eatBlockTag`, later. You can read about them, or not, after you've gotten the big picture.
 
 
 `block` tags don't need any contents, but you're welcome to put some in, say for in-code commentary. Tangledown will eat and ignore contents of a `block` tag. With Tangledown, in-code commentary is less important than it is in normal (tragically flawed!) code, however, because your commentary for _humans_ is the text _surrounding_ the `block` tags, Markdown text like the text you're reading right here and now.
@@ -722,10 +726,10 @@ def accumulate_contents (lines, i, end_re):
 #### noweb: accumulate-lines
 
 
-The function `accumulate_lines` sucks the contents of all the `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries, `noweb_blocks` and `tangle_files`, keyed by `name` or `file` attributes it finds inside `noweb` or `tangle` tags. 
+The function `accumulate_lines` sucks the contents of all the `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries, `noweb_blocks` and `tangle_files`, keyed by `name` or `file` attributes it finds inside `noweb` or `tangle` tags.
 
 
-This function also [dumps the dictionaries to json blobs in a fixed place in your home directory](#dump-artifacts), then returns them in a tuple. We could pickle the contents, but that's a refinement ([TODO](#todo)). The reason to dump them to a fixed place is so that the [Tangledown Kernel](#section-tangledown-kernel) can find them. 
+This function also [dumps the dictionaries to json blobs in a fixed place in your home directory](#dump-artifacts), then returns them in a tuple. We could pickle the contents, but that's a refinement ([TODO](#todo)). The reason to dump them to a fixed place is so that the [Tangledown Kernel](#section-tangledown-kernel) can find them.
 
 
 The Tangledown Kernel has NO WAY to find out the name of the notebook  being processed (see this [question on stackoverflow](https://stackoverflow.com/questions/37534440
@@ -937,13 +941,13 @@ I must apologize once again, but this is just a toy at this point! Recall the [D
 # APPENDIX: Developer Notes
 
 
-If you change the code in this README.md and you want to test it by running the cell in Section [Tangle It, Already!](#tangle-already), you usually must restart the Jupyter kernel because Jupytext caches code. 
+If you change the code in this README.md and you want to test it by running the cell in Section [Tangle It, Already!](#tangle-already), you usually must restart the Jupyter kernel because Jupytext caches code. If things continue to not make sense, try restarting the notebook server. It rarely but occasionally produces incorrect answers for more obscure reasons.
 
 
 # APPENDIX: Tangledown Kernel<a id="section-tangledown-kernel"></a>
 
 
-The Tangledown kernel is ***OPTIONAL***, but nice. Everything I talked about so far works fine without out it, but the Tangledown Kernel lets you evaluate Jupytext notebook cells that have `block` tags in them. For example, you can run Tangledown on Tangledown itself in this notebook just by evaluating the cell that contains all of Tangledown, including the source for the kernel, [here](#tangle-listing-tangle-all). 
+The Tangledown kernel is ***OPTIONAL***, but nice. Everything I talked about so far works fine without out it, but the Tangledown Kernel lets you evaluate Jupytext notebook cells that have `block` tags in them. For example, you can run Tangledown on Tangledown itself in this notebook just by evaluating the cell that contains all of Tangledown, including the source for the kernel, [here](#tangle-listing-tangle-all).
 
 
 The Tangledown Compiler writes all the nowebs and tangles from an input notebook or Markdown file out to a fixed place in the home directory, and the Tangledown Kernel reads them from there. You can have ***only one instance of the Tangledown Kernel at one time on your machine*** because the names of the files are fixed. The Tangledown Kernel has no way to dynamically know what file you're working with. Sorry about that!
@@ -952,7 +956,7 @@ The Tangledown Compiler writes all the nowebs and tangles from an input notebook
 ## Installing the Tangledown Kernel
 
 
-After you tangle the code out of this here README.md, you will have two new files
+After you tangle the code out of this here README.md at least once, you will have two new files
 - `./tangledown_kernel/tangledown_kernel.py`
 - `./tangledown_kernel/kernel.json`
 
@@ -969,13 +973,21 @@ jupyter kernelspec install --user tangledown_kernel
 You must put the source for the Tangledown Kernel somewhere Python can find it before you start Jupyter Lab. One way is to modify the `PYTHONPATH` environment variable. The following works for me on the Mac:
 
 <!-- #raw -->
-PYTHONPATH=".:/Users/brian/Library/Jupyter/kernels/tangledown_kernel" jupyter lab  
+PYTHONPATH=".:/Users/brian/Library/Jupyter/kernels/tangledown_kernel" jupyter lab
 <!-- #endraw -->
 
-Once the kernel is installed, there are multiple ways to run it in Jupyter Lab. When you first open a notebook, you get a menu. The default is the regular Python 3 kernel, and it works fine, but you won't be able to run cells that have `block` tags in them. If you choose the Tangledown Kernel, you can run such cells. 
+Once the kernel is installed, there are multiple ways to run it in Jupyter Lab. When you first open a notebook, you get a menu. The default is the regular Python 3 kernel, and it works fine, but you won't be able to run cells that have `block` tags in them. If you choose the Tangledown Kernel, you can run such cells.
 
 
-If you modify the kernel, re-tangle its source from here, re-install it by running the little bash script above, and restart the kernel inside the notebook. Most of the time, you don't have to restart Jupyter Lab itself, but sometimes after a really bad bug, you might have to.
+If you modify the kernel: 
+
+
+1. re-tangle the kernel source, say by running the cell in [this section](#how-to-run)
+2. re-install the kernel by running the little bash script above
+3. restart the kernel inside the notebook
+
+
+Most of the time, you don't have to restart Jupyter Lab itself, but sometimes after a really bad bug, you might have to.
 
 
 ## Source for the Tangledown Kernel
@@ -997,8 +1009,8 @@ The following is support for the Tangledown Kernel from the Tangledown Compiler 
 import json
 from pathlib import Path
 def dump_current_markdown_artifacts(nowebs, tangles):
-    tangledown_dirpath = str(Path.home()) + '/.tangledown/' 
-    nowebspath = tangledown_dirpath + "nowebs.json" 
+    tangledown_dirpath = str(Path.home()) + '/.tangledown/'
+    nowebspath = tangledown_dirpath + "nowebs.json"
     tanglespath = tangledown_dirpath + "tangles.json"
     # only need to do this 'mkdir' once for both files
     Path(nowebspath).parents[0].mkdir(parents=True, exist_ok=True)
@@ -1065,7 +1077,7 @@ class TangledownKernel(IPythonKernel):
             reply_content = await super().do_execute(
                 expanded_code, silent, store_history, user_expressions)
             stream_content = {
-                'name': 'stdout', 
+                'name': 'stdout',
                 'text': reply_content,
             }
             self.send_response(self.iopub_socket, 'stream', stream_content)

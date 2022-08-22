@@ -98,8 +98,8 @@ def accumulate_contents (lines, i, end_re):
 import json
 from pathlib import Path
 def dump_current_markdown_artifacts(nowebs, tangles):
-    tangledown_dirpath = str(Path.home()) + '/.tangledown/' 
-    nowebspath = tangledown_dirpath + "nowebs.json" 
+    tangledown_dirpath = str(Path.home()) + '/.tangledown/'
+    nowebspath = tangledown_dirpath + "nowebs.json"
     tanglespath = tangledown_dirpath + "tangles.json"
     # only need to do this 'mkdir' once for both files
     Path(nowebspath).parents[0].mkdir(parents=True, exist_ok=True)
