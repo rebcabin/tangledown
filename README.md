@@ -2,8 +2,8 @@
 
 
 ### Brian Beckman
-### Monday, 22 Aug 2022
-### v0.0.1
+### Tue, 23 Aug 2022
+### v0.0.2
 
 
 ## OVERVIEW
