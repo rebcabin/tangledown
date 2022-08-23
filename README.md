@@ -929,6 +929,7 @@ I must apologize once again, but this is just a toy at this point! Recall the [D
 
 
 - DONE: use pathlib to compare tangle file names
+- somehow get the Tangledown Kernel to tangle everything automatically when it's restarted
 - modern Pythonic Type Annotation (PEP 484)
 - more examples
 - error handling (big job)
@@ -947,7 +948,7 @@ If you change the code in this README.md and you want to test it by running the 
 # APPENDIX: Tangledown Kernel<a id="section-tangledown-kernel"></a>
 
 
-The Tangledown kernel is ***OPTIONAL***, but nice. Everything I talked about so far works fine without out it, but the Tangledown Kernel lets you evaluate Jupytext notebook cells that have `block` tags in them. For example, you can run Tangledown on Tangledown itself in this notebook just by evaluating the cell that contains all of Tangledown, including the source for the kernel, [here](#tangle-listing-tangle-all).
+The Tangledown kernel is ***OPTIONAL***, but nice. Everything I talked about so far works fine without it, but the Tangledown Kernel lets you evaluate Jupytext notebook cells that have `block` tags in them. For example, you can run Tangledown on Tangledown itself in this notebook just by evaluating the cell that contains all of Tangledown, including the source for the kernel, [here](#tangle-listing-tangle-all).
 
 
 The Tangledown Compiler writes all the nowebs and tangles from an input notebook or Markdown file out to a fixed place in the home directory, and the Tangledown Kernel reads them from there. You can have ***only one instance of the Tangledown Kernel at one time on your machine*** because the names of the files are fixed. The Tangledown Kernel has no way to dynamically know what file you're working with. Sorry about that!
