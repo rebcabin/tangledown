@@ -234,28 +234,25 @@ Let's exploit the fact that most Markdown renderers, like Jupytext's, Github's, 
 
     <noweb name="my_little_tests">
 
-        class TestSomething (unittest.TestCase):
-            """unittest documented here: https://goo.gl/OqCGEx"""
-            def test_something (self):
-                self.assertEqual (3, 2+1)
+    class TestSomething (): 
+        def test_something (self):
+            assert (3 == 2+1)
 
     </noweb>
 
 
-The block above renders as follows. You can see the `noweb` tags by _expanding_ the little tiny, raw cells (pressing _Enter_ on them) above and below the code in Jupytext. You can close those cells up by "running" the cells (pressing _Shift-Enter_ on them). ***DON'T DELETE THE TINY RAW CELLS***.
+The markdown above renders as follows. You can see the `noweb` tags by _expanding_ the little tiny, raw cells (pressing _Enter_ on them) above and below the code in Jupytext. You can close those cells up by "running" the cells (pressing _Shift-Enter_ on them). ***DON'T DELETE THE TINY RAW CELLS***.
 
 
-By the way, there's no point to running this next code cell; that won't do anything except tell you that `unittest` isn't defined.
+By the way, there's no point to running this next code cell; that won't do anything except define the class `TestSomething`. Later, [in the tangle section](#section-tangle-tags), and if you're running the [Tangledown Kernel](#section-tangledown-kernel), you can run a cell that has a corresponding `block` tag and this noweb will be expanded there.
 
 
 <noweb name="my_little_tests">
 
 ```python
-    class TestSomething (unittest.TestCase):
-        """unittest documented here:
-        https://docs.python.org/3/library/unittest.html"""
-        def test_something (self):
-            self.assertEqual (3, 2+1)
+class TestSomething ():
+    def test_something (self):
+        assert (3 == 2+1)
 ```
 
 </noweb>
@@ -317,12 +314,10 @@ The same rules about blank lines hold for `tangle` tags as they do for `noweb` t
 
     <tangle file="/dev/null">
 
-        import unittest
+    <block name="my_little_tests"></block>
 
-        <block name="my_little_tests"></block>
-
-        if __name__ == '__main__':
-          unittest.main()
+    if __name__ == '__main__':
+        TestSomething().test_something()
 
     </tangle>
 
@@ -338,16 +333,16 @@ import unittest
 <block name="my_little_tests"></block>
 
 if __name__ == '__main__':
-    unittest.main()
+    TestSomething().test_something()
 ```
 
 </tangle>
 
 
+Don't evaluate the code cell in the Python Kernel, you'll get a syntax error because the `block` tag is not valid Python until after tangling. I could make the code cell a raw cell, which never evaluates, but I would lose Python syntax coloring. But it's better to try the new, optional [Tangledown Kernel](#section-tangledown-kernel), in which the cell executes just fine.
+
+
 Notice we discard this file by writing it to `/dev/null`. That's a nifty trick for temporary `tangle` blocks. You can talk about them, validate them by executing their cells in the [Tangledown Kernel](#section-tangledown-kernel), and throw them away.
-
-
-Don't evaluate the code cell in the Python Kernel, you'll get a syntax error because the `block` tag is not valid Python until after tangling. I could make the code cell a raw cell, which never evaluates, but I would lose Python syntax coloring. But it's better to try the new, optional [Tangledown Kernel](#section-tangledown-kernel).
 
 
 ## YOUR'RE A HUMAN! READ THE NAMES IN THE `block` TAGS!
@@ -401,7 +396,6 @@ If you're running the new, optional [Tangledown Kernel](#section-tangledown-kern
 <block name="expand-lines-list"></block>
 
 def tangle_all(noweb_blocks, tangle_files):
-    from pathlib import Path
     for k, lines_list in tangle_files.items ():
         Path(k).parents[0].mkdir(parents=True, exist_ok=True)
         joined_contents = expand_lines_list(lines_list, noweb_blocks)
@@ -523,7 +517,7 @@ block_end_re = re.compile (r'^(\s)*</bl[o]ck>')
 ### noweb: openers
 
 
-The code in noweb `openers` has two `block` tags that refer to the nowebs of the regexes defined above, namely `left_justified_regexes` and `anywhere_regexes`. After Tangledown substitutes the contents of the nowebs for the blocks, the code becomes valid Python and you can run it in the [Tangledown Kernel](#section-tangledown-kernel). When you run it, it proves that we can recognize all the various kinds of tags. We leave the regexes themselves as global pseudo-constants so that they're both easy to test and to use in the body of the code.
+The code in noweb `openers` has two `block` tags that refer to the nowebs of the regexes defined above, namely `left_justified_regexes` and `anywhere_regexes`. After Tangledown substitutes the contents of the nowebs for the blocks, the code becomes valid Python and you can call `test_re_matching` in the [Tangledown Kernel](#section-tangledown-kernel) or at the command line. When you call it, it proves that we can recognize all the various kinds of tags. We leave the regexes themselves as global pseudo-constants so that they're both easy to test and to use in the body of the code.
 
 
 The code in `hello_world.ipynb` (after you have Paired a Notebook with the Markdown File `hello_world.md`) runs this test as its last act to check that `tangledown.py` was correctly tangled from this here `README.md`
@@ -537,6 +531,7 @@ Notice the special treatment for block ends, which are usually on the same lines
 ```python
 import re
 import sys
+from pathlib import Path
 
 <block name="getting a file and its lines"></block>
 <block name="left_justified_regexes"></block>
@@ -602,8 +597,11 @@ Let's write two functions, `get_aFile`, which parses command-line arguments, and
 <noweb name="getting a file and its lines">
 
 ```python
+<block name="save-afile-path-for-kernel"></block>
 def get_aFile():
-    """Get a file name from the command-line arguments."""
+    """Get a file name from the command-line arguments. Write
+    full path to a fixed place so the Tangledown Kernel can
+    find it."""
     print({f'len(sys.argv)': len(sys.argv), f'sys.argv': sys.argv})
     aFile = 'README.md'
     if len(sys.argv) > 1:
@@ -613,11 +611,12 @@ def get_aFile():
                            and (p[-5:] != '.json')]
         if file_names:
             aFile = sys.argv[1]
-    return aFile
+    return save_aFile_path_for_kernel(aFile)
 
 raw_line_re = re.compile(r'<!-- #(end)?raw -->')
 def get_lines(aFilename):
-    """Get lines from a file denoted by aFilename."""
+    """Get lines from a file denoted by aFilename. Strip 'raw'
+    fenceposts."""
     with open(aFilename) as aFile:
         in_lines = aFile.readlines ()
         out_lines = []
@@ -629,6 +628,29 @@ def get_lines(aFilename):
 
 </noweb>
 
+
+### noweb: Save a File Path for the Kernel<a id="save-afile-path-for-kernel"></a>
+
+
+Returns its input file name after expanding its full path and saving the full path in a special place where the [Tangledown Kernel](#section-tangledown-kernel) can find it.
+
+<!-- #raw -->
+<noweb name="save-afile-path-for-kernel">
+<!-- #endraw -->
+
+```python
+def save_aFile_path_for_kernel(aFile: str):
+    xpath = Path.cwd() / Path(aFile).name
+    safepath = Path.home() / '.tangledown/current_victim_file.txt'
+    Path(safepath).parents[0].mkdir(parents=True, exist_ok=True)
+    with open(safepath, "w") as t:
+        t.write(str(xpath))
+    return aFile
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
 
 ### First Pass: Saving Noweb and Tangle Blocks
 
@@ -729,17 +751,9 @@ def accumulate_contents (lines, i, end_re):
 The function `accumulate_lines` sucks the contents of all the `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries, `noweb_blocks` and `tangle_files`, keyed by `name` or `file` attributes it finds inside `noweb` or `tangle` tags.
 
 
-This function also [dumps the dictionaries to json blobs in a fixed place in your home directory](#dump-artifacts), then returns them in a tuple. We could pickle the contents, but that's a refinement ([TODO](#todo)). The reason to dump them to a fixed place is so that the [Tangledown Kernel](#section-tangledown-kernel) can find them.
-
-
-The Tangledown Kernel has NO WAY to find out the name of the notebook  being processed (see this [question on stackoverflow](https://stackoverflow.com/questions/37534440
-/passing-command-line-arguments-to-argv-in-jupyter-ipython-notebook)), so we dump the data to a fixed file location, as advised in [this stackoverflow question](https://stackoverflow.com/questions/11026959/writing-a-dict-to-txt-file-and-reading-it-back). [Papermill](https://papermill.readthedocs.io/en/latest/) offers a potential solution (TODO).
-
-
 <noweb name="accumulate-lines">
 
 ```python
-<block name="dump-current-markdown-artifacts"></block>
 <block name="normalize-file-path"></block>
 def accumulate_lines(lines):
     noweb_blocks = {}
@@ -757,7 +771,7 @@ def accumulate_lines(lines):
                 tangle_files[file_key] = []
             tangle_files[file_key] += \
                 [accumulate_contents(lines, i + 1, tangle_end_re)[1]]
-    return dump_current_markdown_artifacts(noweb_blocks, tangle_files)
+    return noweb_blocks, tangle_files
 ```
 
 </noweb>
@@ -929,20 +943,20 @@ I must apologize once again, but this is just a toy at this point! Recall the [D
 
 
 - DONE: use pathlib to compare tangle file names
-- somehow get the Tangledown Kernel to tangle everything automatically when it's restarted
+- DONE: somehow get the Tangledown Kernel to tangle everything automatically when it's restarted
 - modern Pythonic Type Annotation (PEP 484)
 - more examples
 - error handling (big job)
-- Support multiple instances of the Tangledown Kernel. Because it reads files with fixed names in the home directory, it has no way of processing multiple Tangledown notebooks.
-    - investigate [Papermill](https://papermill.readthedocs.io/en/latest/) as a solution
-- find out whether pickle is a better alternative to json for dumping dictionaries for the kernel
+- DONE: Support multiple instances of the Tangledown Kernel. Because it reads files with fixed names in the home directory, it has no way of processing multiple Tangledown notebooks.
+    - DONE: investigate [Papermill](https://papermill.readthedocs.io/en/latest/) as a solution
+- DONE: find out whether pickle is a better alternative to json for dumping dictionaries for the kernel
 - DONE: Jupytext kernel for `tangledown` so we can run `noweb` and `block` tags that have `block` tags in them.
 
 
 # APPENDIX: Developer Notes
 
 
-If you change the code in this README.md and you want to test it by running the cell in Section [Tangle It, Already!](#tangle-already), you usually must restart the Jupyter kernel because Jupytext caches code. If things continue to not make sense, try restarting the notebook server. It rarely but occasionally produces incorrect answers for more obscure reasons.
+If you change the code in this README.md and you want to test it by running the cell in Section [Tangle It, Already!](#tangle-already), you usually must restart whatever Jupyter kernel you're running because Jupytext caches code. If things continue to not make sense, try restarting the notebook server. It rarely but occasionally produces incorrect answers for more obscure reasons.
 
 
 # APPENDIX: Tangledown Kernel<a id="section-tangledown-kernel"></a>
@@ -951,7 +965,10 @@ If you change the code in this README.md and you want to test it by running the 
 The Tangledown kernel is ***OPTIONAL***, but nice. Everything I talked about so far works fine without it, but the Tangledown Kernel lets you evaluate Jupytext notebook cells that have `block` tags in them. For example, you can run Tangledown on Tangledown itself in this notebook just by evaluating the cell that contains all of Tangledown, including the source for the kernel, [here](#tangle-listing-tangle-all).
 
 
-The Tangledown Compiler writes all the nowebs and tangles from an input notebook or Markdown file out to a fixed place in the home directory, and the Tangledown Kernel reads them from there. You can have ***only one instance of the Tangledown Kernel at one time on your machine*** because the names of the files are fixed. The Tangledown Kernel has no way to dynamically know what file you're working with. Sorry about that!
+The Tangledown Compiler writes the full path of the current Markdown file corresponding to the current notebook to fixed place in the home directory, and the Tangledown Kernel reads gets all the nowebs from there. 
+
+
+If you are running more than one instance of the Tangledown Kernel at one time on your machine, you must ***RESTART THE TANGLEDOWN KERNEL WHEN YOU SWITCH NOTEBOOKS*** because the name of the current file is a fixed, singleton. The Tangledown Kernel has no way to dynamically know what file you're working with. Sorry about that!
 
 
 ## Installing the Tangledown Kernel
@@ -997,70 +1014,7 @@ Most of the time, you don't have to restart Jupyter Lab itself, but sometimes af
 Adapted from [these official docs](https://jupyter-client.readthedocs.io/en/latest/wrapperkernels.html).
 
 
-### noweb: Dump Nowebs and Tangles from Current File<a id="dump-artifacts"></a>
-
-
-The following is support for the Tangledown Kernel from the Tangledown Compiler itself. The Tangledown Compiler writes the nowebs and tangles out to a fixed place in the home directory, and the Tangledown Kernel reads them from there. You can have ***only one instance of the Tangledown Kernel at one time on your machine*** because the names of the files are fixed. The Tangledown Kernel has no way to dynamically know what file you're working with. Sorry about that!
-
-<!-- #raw -->
-<noweb name="dump-current-markdown-artifacts">
-<!-- #endraw -->
-
-```python
-import json
-from pathlib import Path
-def dump_current_markdown_artifacts(nowebs, tangles):
-    tangledown_dirpath = str(Path.home()) + '/.tangledown/'
-    nowebspath = tangledown_dirpath + "nowebs.json"
-    tanglespath = tangledown_dirpath + "tangles.json"
-    # only need to do this 'mkdir' once for both files
-    Path(nowebspath).parents[0].mkdir(parents=True, exist_ok=True)
-    with open(tanglespath, "w") as t:
-        json.dump(tangles, t)
-    with open(nowebspath, "w") as n:
-        json.dump(nowebs, n)
-    return nowebs, tangles
-```
-
-<!-- #raw -->
-</noweb>
-<!-- #endraw -->
-
-### tangle exports: Get Nowebs and Tangles from Current File
-
-
-The following are included in `tangledown.py` just so the Tangledown Kernel can import them from the compiler sources. Those sources must be somewhere Python can find them, say on your `PYTHONPATH`. I didn't have to do anything special on my Mac to get this working.
-
-<!-- #raw -->
-<tangle file="./tangledown.py">
-<!-- #endraw -->
-
-```python
-def get_current_file_tangles():
-    tanglesfile = "tangles.json"
-    tanglespath = str(Path.home()) + '/.tangledown/' + tanglesfile
-    tangles = None
-    with open(tanglespath) as k:
-        tangles = json.load(k)
-    return tangles
-
-def get_current_file_nowebs():
-    nowebsfile = 'nowebs.json'
-    nowebspath = str(Path.home()) + '/.tangledown/' + nowebsfile
-    nowebs = None
-    with open(nowebspath) as n:
-        nowebs = json.load(n)
-    return nowebs
-```
-
-<!-- #raw -->
-</tangle>
-<!-- #endraw -->
-
-### tangle: The Tangledown Kernel Itself
-
-
-The kernel calls `expand_lines_list` after reformatting the lines a little. We learned by experiment about the reformatting. `expand_lines_list` is explained in the [section about Tangledown itself](#tangle-listing-tangle-all). The rest of this is boilerplate from the [official kernel documentation](https://jupyter-client.readthedocs.io/en/stable/wrapperkernels.html).
+The kernel calls `expand_lines_list` after reformatting the lines a little. We learned by experiment about the reformatting. `expand_lines_list` is explained in the [section about Tangledown itself](#tangle-listing-tangle-all). The rest of this is boilerplate from the [official kernel documentation](https://jupyter-client.readthedocs.io/en/stable/wrapperkernels.html). There is no point, by the way, in running the cell below in any kernel. It's meant for the Jupyterlab startup engine, only. You just need to tangle it out and install it, as above.
 
 <!-- #raw -->
 <tangle file="./tangledown_kernel/tangledown_kernel.py">
@@ -1110,8 +1064,8 @@ import sys  # for version_info
 from pathlib import Path
 from tangledown import \
         accumulate_lines, \
-        expand_lines_list, \
-        get_current_file_nowebs
+        get_lines, \
+        expand_lines_list
 ```
 
 <!-- #raw -->
@@ -1123,12 +1077,18 @@ from tangledown import \
 
 These get indented on expansion because the `block` tag is indented. You could do it the other way: indent the code here and DON'T indent the block tag, but that would be ugly, wouldn't it?
 
+
+Notice this kernel runs Tangledown on the full file path that's stored in `current_victim_file.txt`. That file path got [written to that special place](#save-afile-path-for-kernel) when you tangled the file the first time. This may explain why you must tangle the file once and then restart the kernel whenever you switch notebooks that are running the Tangledown Kernel.
+
 <!-- #raw -->
 <noweb name="kernel-instance-variables">
 <!-- #endraw -->
 
 ```python
-nowebs = get_current_file_nowebs()
+current_victim_filepath = ""
+with open(Path.home() / '.tangledown/current_victim_file.txt') as v:
+    current_victim_filepath = v.read()
+nowebs, tangles_ = accumulate_lines(get_lines(current_victim_filepath))
 implementation = 'Tangledown'
 implementation_version = '1.0'
 language = 'no-op'
@@ -1166,7 +1126,3 @@ banner = "Tangledown kernel - expanding 'block' tags"
 <!-- #endraw -->
 
 # APPENDIX: Experimental Playground
-
-```python
-
-```

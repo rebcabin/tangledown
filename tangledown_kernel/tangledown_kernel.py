@@ -4,11 +4,14 @@ import sys  # for version_info
 from pathlib import Path
 from tangledown import \
         accumulate_lines, \
-        expand_lines_list, \
-        get_current_file_nowebs
+        get_lines, \
+        expand_lines_list
 
 class TangledownKernel(IPythonKernel):
-    nowebs = get_current_file_nowebs()
+    current_victim_filepath = ""
+    with open(Path.home() / '.tangledown/current_victim_file.txt') as v:
+        current_victim_filepath = v.read()
+    nowebs, tangles_ = accumulate_lines(get_lines(current_victim_filepath))
     implementation = 'Tangledown'
     implementation_version = '1.0'
     language = 'no-op'
