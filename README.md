@@ -939,14 +939,16 @@ I must apologize once again, but this is just a toy at this point! Recall the [D
 2. FIXED: tangling to files in the home directory via `~` does not work. We know one dirty way to fix it, but proper practice with pathlib is a better answer.
 
 
-## Next Steps<a id="todo"></a>
+# Next Steps<a id="todo"></a>
 
 
+- NOT-STARTED: Have the Tangledown Kernel, when evaluating tangle-able cells, write them out one at a time. Without this feature, the only way to write out files is to tangle the entire notebook. Possibly do these as cell magics.
+- NOT-STARTED: Research cell magics for `noweb` and `tangle` cells.
+- NOT-STARTED: modern Pythonic Type Annotation (PEP 484)
+- NOT-STARTED: more examples
+- NOT-STARTED: error handling (big job)
 - DONE: use pathlib to compare tangle file names
 - DONE: somehow get the Tangledown Kernel to tangle everything automatically when it's restarted
-- modern Pythonic Type Annotation (PEP 484)
-- more examples
-- error handling (big job)
 - DONE: Support multiple instances of the Tangledown Kernel. Because it reads files with fixed names in the home directory, it has no way of processing multiple Tangledown notebooks.
     - DONE: investigate [Papermill](https://papermill.readthedocs.io/en/latest/) as a solution
 - DONE: find out whether pickle is a better alternative to json for dumping dictionaries for the kernel
