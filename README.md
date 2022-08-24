@@ -1,9 +1,9 @@
 # Tangledown: One-Step Literate Markdown
 
 
-### Brian Beckman
-### Tue, 23 Aug 2022
-### v0.0.2
+#### Brian Beckman
+#### Tue, 23 Aug 2022
+#### v0.0.3
 
 
 ## OVERVIEW
