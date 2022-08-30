@@ -5,7 +5,7 @@ from pathlib import Path
 from tangledown import \
         accumulate_lines, \
         get_lines, \
-        expand_lines_list
+        expand_tangles
 
 class TangledownKernel(IPythonKernel):
     current_victim_filepath = ""
@@ -31,7 +31,8 @@ class TangledownKernel(IPythonKernel):
                    allow_stdin=False):
         if not silent:
             cleaned_lines = [line + '\n' for line in code.split('\n')]
-            expanded_code = expand_lines_list([cleaned_lines], self.nowebs)  # HERE'S THE BEEF !
+            # HERE'S THE BEEF!
+            expanded_code = expand_tangles([cleaned_lines], self.nowebs)
             reply_content = await super().do_execute(
                 expanded_code, silent, store_history, user_expressions)
             stream_content = {
