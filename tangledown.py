@@ -149,7 +149,7 @@ def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
                 tangles[key]: Liness = []
             tangles[key] += \
                 [accumulate_contents(lines, i + 1, tangle_end_re)[1]]
-                # the [1] just gets the lines, not the line number
+                # the [1] gets the lines, omits the line number
     return nowebs, tangles
 
 def there_is_a_block_tag (lines: Lines) -> bool:

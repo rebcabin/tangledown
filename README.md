@@ -2,8 +2,8 @@
 
 
 #### Brian Beckman
-#### Mon, 29 Aug 2022
-#### v0.0.4
+#### Tue, 30 Aug 2022
+#### v0.0.5
 
 
 ## OVERVIEW
@@ -461,10 +461,10 @@ A `Line` is a string, Python base type `str`. `Lines` is the type of a list of l
 A noweb name is a string, and a tangle file name is a string. A line number is an `int`, a Python base type.
 
 
-Nowebs are dictionaries from noweb names to tuples of line numbers and lines. The line numbers help Tangledown skip triple-backticks in contents. Read about that in [accumulate-contents](#accumulate-contents).
+Nowebs are dictionaries from noweb names to lines. 
 
 
-The code accumulates output for `tangle` files mentioned more than once. If you tangle to `qux.py` in one place and then also tangle to `qux.py` somewhere else, the second tangle won't overwrite the first, but append to it. That's why the loop `for k, liness in tangles...` actually loops over _lists_ of lists of lines. Each sub-list contains all the lines for a given tangle block. Read about that in [expand-tangles](#expand-tangles).
+Tangles are dictionaries from file names to Liness --- lists of lists of lines. Tangledown accumulates output for `tangle` files mentioned more than once. If you tangle to `qux.py` in one place and then also tangle to `qux.py` somewhere else, the second tangle won't overwrite the first, but append to it. That's why tangles are lists of lists of lines, one list of lines for each mentioning of a given file. Read more about that in [expand-tangles](#expand-tangles).
 
 <!-- #raw -->
 <noweb name="types">
@@ -809,7 +809,7 @@ Tangledown is a funny little compiler. It converts Literate Markdown to Python. 
 We'll just use iteration and array indices, but in a tasteful way so our functional friends won't get seasick. This is Python, after all, not highfalutin' Haskell! We can just _get it done_, but with some grace, panache, and aplomb.
 
 
-The function `accumulate_contents` accumulates the contents of `noweb` or `tangle` tags. Remember that `block` tags don't have meanigful contents. The function starts at line `i`, then figures out whether a tag's first non-blank line is triple backtick, in which case it _won't_ snip four spaces from the beginning of every line, and finally keeps going until it sees the closing taglet, `</noweb>` or `</tangle>`. It returns a tuple of the line index _after_ the closing taglet, and the contents, possibly de-dented.
+The function `accumulate_contents` accumulates the contents of `noweb` or `tangle` tags. The function starts at line `i`, then figures out whether a tag's first non-blank line is triple backtick, in which case it _won't_ snip four spaces from the beginning of every line, and finally keeps going until it sees the closing taglet, `</noweb>` or `</tangle>`. It returns a tuple of the line index _after_ the closing taglet, and the contents, possibly de-dented. The function manipulates line numbers to skip over triple backticks.
 
 <!-- #raw -->
 <noweb name="accumulate-contents">
@@ -869,7 +869,7 @@ def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
                 tangles[key]: Liness = []
             tangles[key] += \
                 [accumulate_contents(lines, i + 1, tangle_end_re)[1]]
-                # the [1] just gets the lines, not the line number
+                # the [1] gets the lines, omits the line number
     return nowebs, tangles
 ```
 
@@ -1124,7 +1124,7 @@ Adapted from [these official docs](https://jupyter-client.readthedocs.io/en/late
 The kernel calls [`expand_tangles`](#expand-tangles) after reformatting the lines a little. We learned about the reformatting by experiment. We explain `expand_tangles` [here](#expand-lines-list) in the [section about Tangledown itself](#tangle-listing-tangle-all). The rest of this is boilerplate from the [official kernel documentation](https://jupyter-client.readthedocs.io/en/stable/wrapperkernels.html). There is no point, by the way, in running the cell below in any kernel. It's meant for the Jupyterlab startup engine, only. You just need to tangle it out and install it, as above.
 
 
-**NOTE**: You will get errors if you run this cell in the notebook.
+> **NOTE**: You will get errors if you run this cell in the notebook.
 
 <!-- #raw -->
 <tangle file="./tangledown_kernel/tangledown_kernel.py">
