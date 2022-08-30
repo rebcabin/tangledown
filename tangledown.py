@@ -130,7 +130,7 @@ def normalize_file_path(tangle_file_attribute: str) -> Path:
     result: Path = Path(tangle_file_attribute)
     if (anchor_is_tilde(tangle_file_attribute)):
         result = (Path.home() / tangle_file_attribute[2:])
-    return result
+    return result.absolute()
 
 def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
     nowebs: Nowebs = {}
