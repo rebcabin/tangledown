@@ -730,12 +730,14 @@ Returns its input file name after expanding its full path and saving the full pa
 
 ```python
 def save_aFile_path_for_kernel(aFile: FileName) -> FileName:
-    xpath: Path = Path.cwd() / Path(aFile).name
-    safepath: Path = Path.home() / '.tangledown/current_victim_file.txt'
-    Path(safepath).parents[0].mkdir(parents=True, exist_ok=True)
-    with open(safepath, "w") as t:
-        t.write(str(xpath))
-    return aFile
+  xpath: Path = Path.cwd() / Path(aFile).name
+  victim_file_name = str(xpath.absolute())
+  safepath: Path = Path.home() / '.tangledown/current_victim_file.txt'
+  Path(safepath).parents[0].mkdir(parents=True, exist_ok=True)
+  print(f"SAVING {victim_file_name} in secret place {str(safepath)}")
+  with open(safepath, "w") as t:
+      t.write(victim_file_name)
+  return aFile
 ```
 
 <!-- #raw -->
@@ -1043,15 +1045,15 @@ I must apologize once again, but this is just a toy at this point! Recall the [D
 2. FIXED: tangling to files in the home directory via `~` does not work. We know one dirty way to fix it, but proper practice with pathlib is a better answer.
 
 
-# Next Steps<a id="todo"></a>
+# TODO<a id="todo"></a>
 
 
 - NOT-STARTED: Have the Tangledown Kernel, when evaluating tangle-able cells, write them out one at a time. Without this feature, the only way to write out files is to tangle the entire notebook. Possibly do these as cell magics.
 - NOT-STARTED: Research cell magics for `noweb` and `tangle` cells.
 - NOT-STARTED: more examples
 - NOT-STARTED: error handling (big job)
-- NOT-STARTED: convert relative file paths to absolute
 - NOT-STARTED: type annotations for the kernel
+- DONE: convert relative file paths to absolute
 - DONE: modern Pythonic Type Annotation (PEP 484)
 - DONE: use pathlib to compare tangle file names
 - DONE: somehow get the Tangledown Kernel to tangle everything automatically when it's restarted

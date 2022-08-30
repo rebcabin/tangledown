@@ -30,12 +30,14 @@ def get_aFile() -> str:
     return aFile
 
 def save_aFile_path_for_kernel(aFile: FileName) -> FileName:
-    xpath: Path = Path.cwd() / Path(aFile).name
-    safepath: Path = Path.home() / '.tangledown/current_victim_file.txt'
-    Path(safepath).parents[0].mkdir(parents=True, exist_ok=True)
-    with open(safepath, "w") as t:
-        t.write(str(xpath))
-    return aFile
+  xpath: Path = Path.cwd() / Path(aFile).name
+  victim_file_name = str(xpath.absolute())
+  safepath: Path = Path.home() / '.tangledown/current_victim_file.txt'
+  Path(safepath).parents[0].mkdir(parents=True, exist_ok=True)
+  print(f"SAVING {victim_file_name} in secret place {str(safepath)}")
+  with open(safepath, "w") as t:
+      t.write(victim_file_name)
+  return aFile
 
 raw_line_re: re = re.compile(r'<!-- #(end)?raw -->')
 def get_lines(aFilename: str) -> Lines:
