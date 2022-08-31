@@ -446,7 +446,7 @@ if __name__ == "__main__":
 The whole program is in the function `tangle_all`. The standard Python trick of testing `__name__` against `"__main__"` give hybrid vigor: `tangledown.py` is both a script and module to import.
 
 
-All we do in `tangle_all` is loop over all the line lists in the tangles (`for filename, liness in tangles.items()`) and [expand them](#expand-lines-list) to replace blocks with nowebs. 
+All we do in `tangle_all` is loop over all the line lists in the tangles (`for filename, liness in tangles.items()`) and [expand them](#expand-tangles) to replace blocks with nowebs. 
 
 
 The code will create the subdirectories needed. For example, if you tangle to file `foo/bar/baz/qux.py,` the code creates the directory chain `./foo/br/baz/` if it doesn't exist.
@@ -1011,7 +1011,7 @@ def expand_blocks (nowebs: Nowebs, lines: Lines) -> Lines:
 </noweb>
 <!-- #endraw -->
 
-## Tangle It, Already!<a id="tangle_already"></a>
+## Tangle It, Already!<a id="tangle-already"></a>
 
 
 Ok, you saw [at the top](#how-to-run) that the code in this here Markdown document, README.md, when run as a script, will read in all the lines in ... this here Markdown document, `README.md`. Bootstrapping!
@@ -1123,7 +1123,7 @@ Most of the time, you don't have to restart Jupyter Lab itself, but sometimes af
 Adapted from [these official docs](https://jupyter-client.readthedocs.io/en/latest/wrapperkernels.html).
 
 
-The kernel calls [`expand_tangles`](#expand-tangles) after reformatting the lines a little. We learned about the reformatting by experiment. We explain `expand_tangles` [here](#expand-lines-list) in the [section about Tangledown itself](#tangle-listing-tangle-all). The rest of this is boilerplate from the [official kernel documentation](https://jupyter-client.readthedocs.io/en/stable/wrapperkernels.html). There is no point, by the way, in running the cell below in any kernel. It's meant for the Jupyterlab startup engine, only. You just need to tangle it out and install it, as above.
+The kernel calls [`expand_tangles`](#expand-tangles) after reformatting the lines a little. We learned about the reformatting by experiment. We explain `expand_tangles` [here](#expand-tangles) in the [section about Tangledown itself](#tangle-listing-tangle-all). The rest of this is boilerplate from the [official kernel documentation](https://jupyter-client.readthedocs.io/en/stable/wrapperkernels.html). There is no point, by the way, in running the cell below in any kernel. It's meant for the Jupyterlab startup engine, only. You just need to tangle it out and install it, as above.
 
 
 > **NOTE**: You will get errors if you run this cell in the notebook.
