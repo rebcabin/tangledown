@@ -2,17 +2,26 @@
 
 
 #### Brian Beckman
-#### Tue, 30 Aug 2022
-#### v0.0.5
+#### Sun, 4 Sep 2022
+#### v0.0.6
 
 
 ## OVERVIEW
 
 
-### SOFTWARE AS LITERATURE
+### WRITING MATTERS
 
 
-You're writing a murder mystery. METHOD 1: You introduce a data sheet with all the characters and their relationships to all the other characters. Francis stands to inherit, but Evelyn has a life-insurance policy on Victor. Bobbie is strong enough to swing an axe. Alice has poisonous plants in her garden. Charlie has a gun collection. Danielle is a chef and owns sharp knives. You lay out their schedules and whereabouts for several weeks. After presenting the data sheet, you write down the murder and the solution. 
+Leslie Lamport, Turing-Award Winner, 2013, said, approximately:
+
+
+> Writing is Nature's Way of showing you how sloppy your thinking is. Coding is Nature's Way of showing you how sloppy your writing is. Testing is Nature's Way of showing you how sloppy your coding is.
+
+
+### CREATIVE WRITING 101
+
+
+You're writing a murder mystery. METHOD 1: Start with a data sheet: all the characters and their relationships. Francis stands to inherit, but Evelyn has a life-insurance policy on Victor. Bobbie is strong enough to swing an axe. Alice has poisonous plants in her garden. Charlie has a gun collection. Danielle is a chef and owns sharp knives. Lay out their schedules and whereabouts for several weeks. Finally, write down the murder and the solution. 
 
 
 METHOD 2: There's a murder. Your romantic detective asks "Who knew whom? Who benefitted? Who could have been at the scene of the crime? What was the murder weapon? Who could have done it?"
@@ -21,10 +30,10 @@ METHOD 2: There's a murder. Your romantic detective asks "Who knew whom? Who ben
 If your objective is to _engage_ the audience, to motivate them to unravel the mystery and learn the twists and turns along the way, which is the better method? If your objective is to have them spend several hours trying to guess where this is all going, which is the better method?
 
 
-Now, you're writing about some complex software. METHOD 1: You present all the functions and interfaces, cross dependencies, asynchronous versus synchronous, global and local state variables, possibilities for side effects. Finally, you present unit tests and a main program.
+Now, you're writing about some software. METHOD 1: Present all the functions and interfaces, cross dependencies, asynchronous versus synchronous, global and local state variables, possibilities for side effects. Finally, present unit tests and a main program.
 
 
-METHOD 2: You present the unit tests and main program first, its rationale and concept of operation, the solution it delivers, its modes and methods. Finally, you present all the functions, interfaces, and procedures, all the bits and bobs that could effect the solution.
+METHOD 2: Present the unit tests and main program. Explain the program's rationale and concept of operation, the solution it delivers, its modes and methods. Finally, present all the functions, interfaces, and procedures, all the bits and bobs that could effect the solution.
 
 
 If your objective is to _engage_ your audience, to have them understand the software deeply, as if they had written it themselves, which is the better method? If your objective is to have them spend several hours in fits and starts trying to guess what you mean, which is the better method?
@@ -33,25 +42,18 @@ If your objective is to _engage_ your audience, to have them understand the soft
 ### SOFTWARE AS DOCUMENTATION
 
 
-Tragically, the standard level of documentation in software forces every reader to reverse-engineer software.
-
-
-You say:
+Phaedrus says:
 
 
 > I give good names to functions and parameters to make my code readable. I use Doxygen and Sphinx to document parameters and return types. _I'm a professional!_
 
 
-And I say
+And Socrates says:
 
 
-> That's nice, but it only documents the pieces, and says nothing about how the pieces fit together. It's like giving me a jigsaw puzzle without the box top. It's almost sadistic.
-
-> The big picture, the rationale, the goals and objectives, the proofs, the motivation, the "what" and the "why?", the concept of operations, the architecture, the methaphorical blueprints, where is that?
+> That's nice, but you only document the pieces, and say nothing about how the pieces fit together. It's like giving me a jigsaw puzzle without the box top. It's almost sadistic.
 
 > You condemn me to reverse-engineering your software: to run it in a debugger or to trace printouts. 
-
-> Don't make me do all that.
 
 
 ### LITERATE PROGRAMMING
@@ -67,28 +69,10 @@ Who is your audience?
 - other programmers, eventually, when they take over maintaining and extending your code
 
 
-### COLOPHON: Why Writing Matters
-
-
-Leslie Lamport, Turing-Award Winner, 2013, said, approximately:
-
-
-> Writing is Nature's Way of showing you how sloppy your thinking is. Coding is Nature's Way of showing you how sloppy your writing is. Testing is Nature's Way of showing you how sloppy your coding is.
-
-
 ## IMPERATIVES
 
 
 > First, write a paper about your code, explaining, at least to yourself, what you want to do and how you plan to do it. Flesh out your actual code inside the paper. RUN your code inside the paper, capturing printouts and charts and diagrams and what not, so others (including your future self) can see the code at work. Iterate the process, rewriting prose and code as you invent and simplify, in a loop.
-
-
-I once instructed a flock of interns to spend their first week writing their final report. After the predictable eyebrow-raising and mutual sidelong glances, I explained why:
-
-- If you commence your research and coding before thinking out your objective and goals, you will have many false starts and waste time backtracking. Thinking means writing, and thinking is good.
-
-- If you wait till the end, you will spend three weeks trying to remember and rationalize all the decisions, good and bad you made along the way.
-
-- Of course you will revise your report as your results emerge, but revising an organized paper is much more efficient than organizing half-forgotten decisions.
 
 
 ### Executable Order Versus Human-Understandable Order
@@ -97,22 +81,22 @@ I once instructed a flock of interns to spend their first week writing their fin
 Ok, that's just ordinary Jupyter-notebook practice, right? Code inside your documentation, right?
 
 
-With ordinary Jupyter-notebook practice, you must write everything in ***executable order***, because a Jupyter notebook is just a fancy interface to an underlying execution kernel. Executable order usually forces you to define all details before you use them. With Literate Programming, you don't necessarily write your code in executable order, the order forced by kernels. You write your code in ***human-understandable order***.
+With ordinary Jupyter-notebook practice, you write everything in ***executable order***, because a Jupyter notebook is just a fancy interface to an execution kernel. Executable order usually forces you to define all details before you use them. With Literate Programming, you write in ***human-understandable order***.
 
 
 Executable order is usually the reverse of human-understandable order. Humans want to understrand the big picture *first*, then the details. They want to see the box-top of the jigsaw puzzle _before_ looking at all the pieces. Executable order is ***upside-down and inside-out***. 
 
 
-We've all had the experience of reading code and Jupyter notebooks backwards so we don't get overwhelmed by details before understanding the big picture. That observation leads us to another imperative.
+We've all had the experience of reading code and notebooks backwards so we don't get overwhelmed by details before understanding the big picture. That observation leads us to another imperative.
 
 
-> Write about your code in human-understandable order. Don't be tyrranized by your programming language into defining everything in full, formal detail before you can talk about anything. Use tools to rearrange your code in executable order.
+> Write about your code in human-understandable order. Don't be tyrranized by your programming language into defining everything before you can talk about anything. Use tools to rearrange your code in executable order.
 
 
 [Donald Knuth](http://amturing.acm.org/award_winners/knuth_1013846.cfm) invented Literate Programming so that he could both write _about_ [MetaFont](https://en.wikipedia.org/wiki/Metafont) and [TeX](https://texfaq.org/FAQ-lit) and _implement_ them in the same place. These are two of the most important computer programs ever written. Their longevity and quality speak to the viability of Literate Programming.
 
 
-## What to do with Existing Code?
+## What to do with Existing Code
 
 
 When rewriting old code base in literate style, ***detangle*** the existing code into understandable small pieces, rearrange it, and write about it in human-understandable order. To run the code, use a tool like Tangledown to re-tangle the code out to executable order on disk where compilers and interpreters can pick it up and run it, even inside notebook cells.
@@ -121,16 +105,16 @@ When rewriting old code base in literate style, ***detangle*** the existing code
 ## Tangledown is Inside This Here Document, README.md
 
 
-***Tangledown*** is the tool that extracts code from any Markdown file into executable order on the disk. This here document, README.md, the one you're reading right now, is the Literate Program for Tangledown. 
+***Tangledown*** is the tool that rearranges code from any Markdown file into executable order. This here document, README.md, the one you're reading right now, is the Literate Program for Tangledown. 
 
 
 Because our documentation language is Markdown, the language of this document is _Literate Markdown_. This here README.md, which you're reading right now, contains all the source for the Literate-Markdown tool, `tangledown.py`, with all its documentation, all presented in human-understandable order, a top-down narrative style, like a story.
 
 
-`tangledown.py` pulls or ***tangles*** code out of any Markdown document, not just this here README.md that you're reading right now. The verb "tangle" is traditional in Literate Programming. You might think it should be "untangle," because the Markdown document is all tangled up from executable order. But Knuth prefers the human's point of view. The Markdown document contains the code in the _correct_, human-understandable order. 
+`tangledown.py` ***tangles*** code out of any Markdown document, not just this here README.md that you're reading right now. The verb "tangle" is traditional in Literate Programming. You might think it should be "untangle," because the Markdown document is all tangled up from executable order. But Knuth prefers the human's point of view. The Markdown document contains the code in the _correct_, human-understandable order. 
 
 
-If we need something _more_ powerful than Tangledown, we'll go back to [org-babel](http://orgmode.org/worg/org-contrib/babel/) in Emacs (or [spacemacs](http://spacemacs.org/) for you VIM users). Those are much more powerful, best-of-breed Literate-Programming tools. You have to learn some Emacs to use them, and that's an insurmountable barrier for many people. Markdown is good enough for Github, and thus for most of us right now.
+If we need something _more_ powerful than Tangledown, we'll go back to [org-babel](http://orgmode.org/worg/org-contrib/babel/) in Emacs (or [spacemacs](http://spacemacs.org/) for you VIM users). Those are much more powerful, best-of-breed Literate-Programming tools. You have to learn some Emacs to use them, and that's an  barrier for many people. Markdown is good enough for Github, and thus for most of us right now.
 
 
 You can _also_ run Tangledown inside a Jupyter notebook, specifically one that is linked to this here document, README.md, the one you're reading right now. See [this section](#oh-my-jupytext) for more.
@@ -145,27 +129,33 @@ You can _also_ run Tangledown inside a Jupyter notebook, specifically one that i
 Here's how I installed everything on an Apple Silicon (M1) Mac Book Pro, with Python 3.9:
 
 <!-- #raw -->
+```
 pip install jupyter
 pip install jupyterlab
 pip install jupytext
+```
 <!-- #endraw -->
 
 Here is how I run it:
 
 <!-- #raw -->
+```
 jupyter lab
+```
 <!-- #endraw -->
 
 or
 
 <!-- #raw -->
+```
 PYTHONPATH=".:$HOME/Documents/GitHub/tangledow:$HOME/Library/Jupyter/kernels/tangledown_kernel" jupyter lab ~
+```
 <!-- #endraw -->
 
 when I want the [Tangledown Kernel](#section-tangledown-kernel), and I almost always want the Tangledown kernel.
 
 
-If, in JupyterLab, you
+I JupyterLab
 
 
 - open README.md
@@ -190,7 +180,7 @@ Unless you're running the optional, new [Tangledown Kernel](#section-tangledown-
 # LET ME TELL YOU A STORY
 
 
-This here README.md, the one you're reading right now, is *literature*, after all, so it should tell a story. Let's tell the story of creating Tangledown itself. We'll use Tangledown to _create_ Tangledown. That's just like bootstrapping a compiler. Just as we compile a compiler with a compiler, we'll use Tangledown to tangle Tangledown itself out of this here document named README.md that you're reading right now.
+This here README.md, the one you're reading right now, is *literature*, after all, so it should tell a story. Let's tell the story of creating Tangledown itself. We'll use Tangledown to _create_ Tangledown. That's just like bootstrapping a compiler. We'll use Tangledown to tangle Tangledown itself out of this here document named README.md that you're reading right now.
 
 
 The first part of the story is that I just started writing the story, the Markdown. Then I filled in the code, moved everything around when I needed to, and kept rewriting until it all worked the way I wanted it to work.
@@ -199,7 +189,7 @@ The first part of the story is that I just started writing the story, the Markdo
 ## DISCLAIMER<a id="disclaimer"></a>
 
 
-This is a useful toy, but it has zero error handling. We This document currently talks only about the happy path.  I try to be rude ("DUDE!") in comments every place where I sense trouble, but I'm only sure I haven't been rude enough. Read this with sense-of-humor bit turned on. This story is supposed to be fun!
+This is a useful toy, but it has zero error handling. We currently talk only about the happy path. I try to be rude ("DUDE!") in comments every place where I sense trouble, but I'm only sure I haven't been rude enough. Read this a sense-of-humor. This story is supposed to be fun!
 
 
 I also didn't try it on Windows, but I did try it on WSL, the Windows Subsystem for Linux. Works great on WSL!
@@ -211,7 +201,7 @@ I also didn't try it on Windows, but I did try it on WSL, the Windows Subsystem 
 One way: run `python3 tangledown.py REAMDE.md` at the command line. That command should _overwrite_ tangledown.py. The code for tangledown.py is inside this here README.md that you're reading right now. The name of the file to overwrite, namely `tangledown.py`, is embedded inside this here README.md itself, in the `file` attribute of a `<tangle ...>` tag. Read about `tangle` tags [below](#section-tangle-tags)!
 
 
-If you said `python3 tangledown.py MY-FOO.md`, then you would tangle the
+If you said `python3 tangledown.py MY-FOO.md`, then you would tangle
 code out of `MY-FOO.md`. You'll do that once you start writing your own code in
 Tangledown. You will love it! We have some big examples that we'll write about elsewhere. Those examples include embedded code and microcode for exotic hardware, all written in Python!
 
@@ -223,7 +213,7 @@ from tangledown import get_lines, accumulate_lines, tangle_all
 tangle_all(*accumulate_lines(get_lines("README.md")))
 ```
 
-After you have tangled at least once, as above, and if you're running the new, optional [Tangledown Kernel](#section-tangledown-kernel), you can evaluate the source code for the whole program in the [cell i'm linking right here in this notebook](#tangle-listing-tangle-all). ***How Cool is That?***
+After you have tangled at least once, as above, and if you switch the notebook kernel to  the new, optional [Tangledown Kernel](#section-tangledown-kernel), you can evaluate the source code for the whole program in the [cell i'm linking right here in this notebook](#tangle-listing-tangle-all). ***How Cool is That?***
 
 
 Because Tangledown is a Python module, you can also run Tangledown from inside a standalone Python program, say in PyCharm or VS Code or whatever;
@@ -231,7 +221,7 @@ Because Tangledown is a Python module, you can also run Tangledown from inside a
 
 <!-- #region -->
 Once again, Jupytext lets you RUN code from a Markdown
-document in a Jupyter notebook. If you open `hello_world.md` as a Jupytext
+document in a JupyterLab notebook with just the ordinary Python3 kernel. If you open `hello_world.md` as a Jupytext
 notebook in JupyterLab then you
 can run Tangledown in Jupyter cells. Right-click on the name `hello_world.md` in the JupyterLab GUI and choose
 
@@ -245,7 +235,10 @@ Then run cells! This is getting close to the high bar set by org-babel!
 ## HOW IT WORKS: Markdown Ignores Mysterious Tags
 
 
-Let's exploit the fact that most Markdown renderers, like Jupytext's, Github's, and [PyCharm's](https://www.jetbrains.com/pycharm/), ignore HTML / XML _tags_ (that is, stuff inside angle brackets) that they don't recognize. Let's enclose blocks of real, live code with `noweb` tags, like this:
+How can we rearrange code cells in a notebook or Markdown file from human-understandable order to executable order?
+
+
+Exploit the fact that most Markdown renderers, like Jupytext's, Github's, and [PyCharm's](https://www.jetbrains.com/pycharm/), ignore HTML / XML _tags_ (that is, stuff inside angle brackets) that they don't recognize. Let's enclose blocks of real, live code with `noweb` tags, like this:
 
 
     <noweb name="my_little_tests">
@@ -288,7 +281,10 @@ Markdown ignores `<noweb ...>` and `</noweb>` tags, but `tangledown.py` _doesn't
 #### CONTENTS OF A TAG
 
 
-The contents of a `noweb` tag is (are?) the material between the opening `<noweb ...>` and closing `</noweb>` fenceposts. Markdown renders contents with syntax coloring and indentation. The term _contents_ is ordinary jargon from HTML, XML, SGML, etc., and applies to any opening `<foo ...>` and closing `</foo>` pair.
+The contents of a `noweb` tag is (are?) the material between the opening `<noweb ...>` and closing `</noweb>` fenceposts. Markdown renders code contents with syntax coloring and indentation. That's why we want code cells to be CODE cells and not RAW cells. 
+
+
+The term _contents_ is ordinary jargon from HTML, XML, SGML, etc., and applies to any opening `<foo ...>` and closing `</foo>` pair.
 
 
 #### ATTRIBUTES OF A TAG
@@ -306,7 +302,7 @@ The Tangledown dictionary key for contents of a `noweb` tag is the string value 
     <noweb name="foo"> 
 <!-- #endraw -->
 
-Ditto for our other tags. That's a limitation of the regular expressions that detect `noweb` tags. Remeber, [Tangledown is a toy](#disclaimer), a very useful toy, but it's limited.
+Ditto for our other tags. That's a limitation of the regular expressions that detect `noweb` tags. Remeber, [Tangledown is a toy](#disclaimer), a useful toy, but it's limited.
 
 
 #### FENCEPOST CELLS
@@ -315,10 +311,10 @@ Ditto for our other tags. That's a limitation of the regular expressions that de
 You can create the fencepost cells, `<noweb ...>` and `</noweb>`, either in the Markdown file, or you can create them in the synchronized Jupytext notebook. 
 
 
-If you create them in Markdown, leave a blank line after the opening `<noweb ...>` and a blank line before the closing `</noweb>`. If you don't, the Markdown renderer won't color and indent the contents. Tangledown will still work, but your code will look like text. 
+If you create fencepost cells in Markdown, leave a blank line after the opening `<noweb ...>` and a blank line before the closing `</noweb>`. If you don't, the Markdown renderer won't color and indent the contents. Tangledown will still work, but your code will look like text. 
 
 
-If you write them in Markdown instead of in the notebook, they appear in the notebook as tiny, invisible Markdown cells because the renderer ignores them. ***DON'T DELETE THEM***, but you can open (Enter) and close (Shift-Enter) them. 
+If you write fencepost cells in Markdown instead of in the notebook, they appear as tiny, invisible Markdown cells because the renderer treats them as empty markdown cells. ***DON'T DELETE THEM***, but you can open (Enter) and close (Shift-Enter) them. 
 
 
 If you create `noweb` and `tangle` tags in the notebook and you want them _visible_, mark them _RAW_ by pressing "R" with the cell highlighted but not editable. Don't mark them CODE (don't press "Y"). Tangledown will break because Jupytext will surround them with triple-backticks.
@@ -327,16 +323,19 @@ If you create `noweb` and `tangle` tags in the notebook and you want them _visib
 ### `block` tags
 
 
-Later, in the [second pass](#second-pass), Tangledown blows the contents of a `noweb` back out wherever it sees a `block` tag with the same `name` attribute. That's how you can define code anywhere in your document and use it in any other place, later or earlier, more than once if you like. 
+Later, in the [second pass](#second-pass), Tangledown blows the contents of `noweb` tags back out wherever it sees `block` tags with matching `name` attributes. That's how you can define code anywhere in your document and use it in any other place, later or earlier, more than once if you like. 
 
 
-`block` tags may appear in the contents of `noweb` tags and in the in the contets of `tangle` tags, too. The contents of `block` tags are discarded. Only the `name` attribute of a `block` tag matters.
+`block` tags may appear in the contents of `noweb` tags and in the in the contets of `tangle` tags, too. 
+
+
+Tangledown discards the contents of `block` tags. Only the `name` attribute of a `block` tag matters.
 
 
 #### WRITE IN ANY-OLD-ORDER YOU LIKE
 
 
-You don't have to write the noweb _before_ you write a matching `block` tag. You can refer to a `noweb` tag before it exists in time and positionally before it exists in space, more than once if you like. You can define things and name things and use things in any order that makes your thinking and your story more clear. This is literature, after all.
+You don't have to write the noweb _before_ you write a matching `block` tag. You can refer to a `noweb` tag before it exists in time and space, more than once if you like. You can define things and name things and use things in any order that makes your thinking and your story more clear. This is literature, after all.
 
 
 ### `tangle` tags <a id="section-tangle-tags"></a>
@@ -375,7 +374,7 @@ if __name__ == '__main__':
 </tangle>
 
 
-The example above has the tags in tiny, invisible Markdown cells above and below the code. Play around with opening and closing them with Enter and Shift-Enter, respectively.
+See the tiny, invisible Markdown cells above and below the code? Play around with opening and closing them with Enter and Shift-Enter, respectively, and marking them RAW (Press "R") and Markdown ("M"). Don't mark them CODE ("Y").
 
 
 You can evaluate the cell with the new, optional [Tangledown Kernel](#section-tangledown-kernel). Don't evaluate the code cell in the Python Kernel, you'll get a syntax error because the `block` tag is not valid Python. 
@@ -390,12 +389,9 @@ This code tangles to the file `/dev/null`. That's a nifty trick for temporary `t
 Markdown renders `block` tags verbatim inside nowebs or tangles. This is good for humans, who will think
 
 
-> AHA!, this `block` refers to some code in a `noweb` tag somewhere else in this Markdown document. I can read all the details of that code later, when it will make more sense, after I've understood the big picture. I can look at the pieces of the jigsaw puzzle (the `noweb` tags) after I've looked at the completed puzzle on the box top (the `tangle` tags).
+> AHA!, this `block` refers to some code in a `noweb` tag somewhere else in this Markdown document. I can read all the details of that code later, when it will make more sense. I can look at the pieces of the jigsaw puzzle (the `noweb` tags) after I've looked at the completed puzzle on the box top (the `tangle` tags).
 
-> This here beautifully written document I'm reading right here and now is making it easy for me to understand the big picture first. Thank you, kindly, author! Without you, I'd be awash in details. I'd get tired and cranky before understanding the big picture!
-
-
-That's exactly what you want for humans: talk about something, name the pieces, show how they fit together, without necessarily choking down all the details first.
+> Thank you, kindly, author! Without you, I'd be awash in details. I'd get tired and cranky before understanding the big picture!
 
 
 See, I'll prove it to you. Below is the code for all of `tangledown.py` itself. You can understand this without understanding the _implementations_ of the sub-pieces, just getting an idea of _what_ they do from the names of the `block` tags. **READ THE NAMES IN THE BLOCK TAGS**. Later, if you want to, you can read all the details in the `noweb` tags named by the `block` tags.
@@ -404,7 +400,7 @@ See, I'll prove it to you. Below is the code for all of `tangledown.py` itself. 
 ## TANGLE ALL<a id="tangle-listing-tangle-all"></a>
 
 
-If you're running the new, optional [Tangledown Kernel](#section-tangledown-kernel), you can evaluate this cell and run Tangledown on Tangledown itself, right here in a Jupyter notebook. ***How Cool is That?***
+If you're running the new, optional [Tangledown Kernel](#section-tangledown-kernel), you can evaluate this next cell and run Tangledown on Tangledown itself, right here in a Jupyter notebook. ***How Cool is That?***
 
 <!-- #raw -->
 <tangle file="./tangledown.py">
@@ -443,7 +439,7 @@ if __name__ == "__main__":
 </tangle>
 <!-- #endraw -->
 
-The whole program is in the function `tangle_all`. The standard Python trick of testing `__name__` against `"__main__"` give hybrid vigor: `tangledown.py` is both a script and module to import.
+The whole program is in the function `tangle_all`. We get hybrid vigor by testing `__name__` against `"__main__"`: `tangledown.py` is both a script and module.
 
 
 All we do in `tangle_all` is loop over all the line lists in the tangles (`for filename, liness in tangles.items()`) and [expand them](#expand-tangles) to replace blocks with nowebs. 
@@ -452,10 +448,13 @@ All we do in `tangle_all` is loop over all the line lists in the tangles (`for f
 The code will create the subdirectories needed. For example, if you tangle to file `foo/bar/baz/qux.py,` the code creates the directory chain `./foo/br/baz/` if it doesn't exist.
 
 
-### TYPES
+## TYPES
 
 
-A `Line` is a string, Python base type `str`. `Lines` is the type of a list of lines. `Liness` is the type of a list of list of lines, in a pluralizing shorthand borrowed from Haskell practice.
+Let us now explain the implementation. The first block in the tangle above is _types_. What is its noweb? It's here.
+
+
+A `Line` is a string, Python base type `str`. `Lines` is the type of a list of lines. `Liness` is the type of a list of list of lines, in a pluralizing shorthand borrowed from Haskell practice. Pronounce `liness` the way [Smeagol](https://lotr.fandom.com/wiki/Gollum) would do: "my precious lineses!"
 
 
 A noweb name is a string, and a tangle file name is a string. A line number is an `int`, a Python base type.
@@ -496,11 +495,19 @@ We'll implement all the noweb blocks, like `accumulate_contents` and `eatBlockTa
 ## DEBUGGING AND REFACTORING
 
 
-The Tangledown Kernel doesn't support the Jupytext debugger, yet. Sorry about that. Tangle the code out to disk and debug it with pudb or whatever. [Tangledown is still a toy](#disclaimer). Ditto refactoring. PyCharm is great for that, but you'll have to do it on tangled files.
+The Tangledown Kernel doesn't support the Jupytext debugger, yet. Sorry about that. Tangle the code out to disk and debug it with pudb or whatever. [Tangledown is still a toy](#disclaimer). Ditto refactoring. PyCharm is great for that, but you'll have to do it on tangled files and detangle (paste) back into the Markdown.
 
 
 ## EXPAND TANGLES<a id="expand-tangles"></a>
 
+```python
+from graphviz import Digraph
+g = Digraph(graph_attr={'size': '8,5'}, node_attr={'fontname': 'courier'})
+g.attr(rankdir='LR')
+g.edge('tangle_all', 'expand_tangles')
+g.edge('expand_tangles', 'expand_blocks')
+g
+```
 
 We separated out the inner loop over Liness into another function, `expand_tangles`, so that the [Tangledown Kernel](#section-tangledown-kernel) can import it and apply it to `block` tags. `tangle_all` calls `expand_tangles`; `expand_tangles` calls `expand_blocks`. Read about `expand_blocks` [here](#expand-blocks).
 
@@ -525,21 +532,21 @@ def expand_tangles(liness: Liness, nowebs: Nowebs) -> str:
 ## Tangledown Tangles Itself?
 
 
-Tangledown uses two kinds of regular expressions (regexes) for matching tags in any Markdown file:
+Tangledown uses two kinds of regular expressions (regexes) for matching tags in a Markdown file:
 
 - regexes for `noweb` and `tangle` tags that appear on lines by themselves, left-justified
 
-- regexes that match `<block ...>` tags that may be indented, and match their closing `</block>` tags, which may appear on the same line as `<block ...>` or lines by themselves.
+- regexes that match `<block ...>` tags that may be indented, and match their closing `</block>` tags, which may appear on the same line as `<block ...>` or on lines by themselves.
 
 
-Both kinds of regex are ___safe___, in the sense that they do not match themselves. That means it's safe to run
+Both kinds of regex are ___safe___: they do not match themselves. That means it's safe to run
 `tangledown.py` on this here `READMD.md`, which contains source for `tangledown.py`.
 
 
-The two regexes in noweb `left_justified_regexes` match `noweb` and`tangle` tags that appear on lines by themselves, left-justified. These regexes won't match themselves; that's our bootstrapping technique. 
+The two regexes in noweb `left_justified_regexes` match `noweb` and`tangle` tags that appear on lines by themselves, left-justified.
 
 
-> They also wont match `noweb` and `tangle` tags that are indented. That lets us _talk about_ `noweb` and `tangle` tags: just put the examples you're talking about in an _indented_ Markdown code cell instead of in a triple-backticked code cell with no indentation.
+> They also wont match `noweb` and `tangle` tags that are indented. That lets us _talk about_ `noweb` and `tangle` tags without processing them: just put the examples you're talking about in an _indented_ Markdown code cell instead of in a triple-backticked code cell.
 
 
 The names in the attributes of `noweb` and `tangle` tags must start with a letter, and they can contain letters, numbers, hyphens, underscores, whitespace, and dots. 
@@ -572,7 +579,7 @@ tangle_end_re = re.compile (r'^</tangle>$')
 The regexes in this noweb, `anywhere_regexes`, match `block` tags that may be indented,  preserving indentation. The `block_end_re` regex also preserves indentation. 
 
 
-I converted the 'o' in 'block' to a harmless regex group `[o]` so that _block_end_ doesn't match itself. That makes it safe to run this code on this here document itself.
+I converted the 'o' in 'block' to a harmless regex group `[o]` so that `block_end_re` won't match itself. That makes it safe to run this code on this here document itself.
 
 <!-- #raw -->
 <noweb name="anywhere_regexes">
@@ -599,7 +606,7 @@ The code in noweb `openers` has two `block` tags that refer to the nowebs of the
 The code in `hello_world.ipynb` (after you have Paired a Notebook with the Markdown File `hello_world.md`) runs this test as its last act to check that `tangledown.py` was correctly tangled from this here `README.md`. That code works in the ordinary Python kernel and in the [Tangledown Kernel](#section-tangledown-kernel).
 
 
-Notice the special treatment for block ends, which are usually on the same lines as their block opener tags, but not necessarily so. That's what lets you put (useless) contents in `block` tags.
+Notice the special treatment for block ends, which are usually on the same lines as their block opener tags, but not necessarily so. That lets you put (useless) contents in `block` tags.
 
 <!-- #raw -->
 <noweb name="openers">
@@ -654,7 +661,7 @@ def test_re_matching(lines: Lines) -> None:
 ## TANGLEDOWN: Two Passes
 
 
-Tangledown operates in two passes, once over the file to collect contents of `noweb` and `tangle` tags, and a second time over the `tangle` tags to expand `block` tags. That is, in the second pass, Tangledown substitutes noweb contents for corresponding `block` tags until there are no more, creating valid code that it writes to disk if the Markdown is correctly written.
+Tangledown passes once over the file to collect contents of `noweb` and `tangle` tags, and again over the `tangle` tags to expand `block` tags. In the second pass, Tangledown substitutes noweb contents for corresponding `block` tags until there are no more `block` tags, creating valid Python.
 
 
 ### Getting a File Name
@@ -669,11 +676,11 @@ Let's write two functions,
 
 - `get_lines`, which 
 
-  - gets lines, without processing `noweb`, `tangle`, or `block` tags, from a file denoted by its argument, `aFilename`
+  - gets lines, without processing `noweb`, `tangle`, or `block` tags, from its argument, `aFilename`
   
   - strips out `#raw` and `#endraw` fenceposts 
   
-  - writes out the full file path to a secret place where the [Tangledown Kernel](#section-tangledown-kernel) can pick it up.
+  - writes out the full file path to a secret place where the [Tangledown Kernel](#section-tangledown-kernel) can pick it up
 
 
 `get_aFile` can parse command-line arguments that come from either `python` on the command line or from a `Jupitext` notebook, which has a few kinds of command-line arguments we must ignore, namely command-line arguments that end in `.py` or in `.json`.
@@ -704,7 +711,7 @@ raw_line_re: re = re.compile(r'<!-- #(end)?raw -->')
 def get_lines(aFilename: str) -> Lines:
     """Get lines from a file denoted by aFilename. Strip 'raw'
     fenceposts. Write full path to a secret place for the 
-    kernel to pick it up."""
+    Tangledown kernel to pick it up."""
     save_aFile_path_for_kernel(aFilename)
     with open(aFilename) as aFile:
         in_lines: Lines = aFile.readlines ()
@@ -763,19 +770,19 @@ Turns out there are two ways to write literal blocks in Markdown:
 Tangledown must handle both ways.
 
 
-We use the trick of a harmless regex group --- stuff inside square brackets --- around one of the backticks in the regex that recognizes triple backticks. Now this regex is safe to run on itself. See `triple_backtick_re` in the code immediately below.
+We use the trick of a harmless regex group --- regex stuff inside square brackets --- around one of the backticks in the regex that recognizes triple backticks. This regex is safe to run on itself. See `triple_backtick_re` in the code immediately below.
 
 
-The function `first_non_blank_line_is_triple_backtick`, in noweb `oh-no-there-are-two-ways` recognizes code blocks bracketed by triple backticks. Notice that the contents of this `noweb` tag  is triple-bacticked, itself. Kind of a funny self-toast joke, no?
+The function `first_non_blank_line_is_triple_backtick`, in noweb `oh-no-there-are-two-ways` recognizes code blocks bracketed by triple backticks. The contents of this `noweb` tag  is triple-bacticked, itself. Kind of a funny self-toast joke, no?
 
 
 Remember the _use-mention_ dichotomy from Philosophy class? No problem if you don't.
 
 
-When we're _talking about_ `noweb` and `tangle` tags, but don't want to process them, we use indented code blocks, not triple-backticked. Tangledown won't process indented `noweb` and `tangle` tags because the regexes in noweb `left_justified_regexes` won't match them. 
+When we're _talking about_ `noweb` and `tangle` tags, but don't want to process them, we indent the tags and use indented code blocks, not triple-backticked. Tangledown won't process indented `noweb` and `tangle` tags because the regexes in noweb `left_justified_regexes` won't match them. 
 
 
-We also see, here, why line numbers help. We might do this in some bitchin' list comprehension, but this is more obvious-at-a-glance. That's a good thing.
+We also see, here, why the code tracks line numbers. We might do this in some super-cool, sophomoric but still bitchin' list comprehension, but this is more obvious-at-a-glance. That's a good thing.
 
 <!-- #raw -->
 <noweb name="oh-no-there-are-two-ways">
@@ -808,10 +815,10 @@ Tangledown is a funny little compiler. It converts Literate Markdown to Python. 
 - completely obvious to anyone
 
 
-We'll just use iteration and array indices, but in a tasteful way so our functional friends won't get seasick. This is Python, after all, not highfalutin' Haskell! We can just _get it done_, but with some grace, panache, and aplomb.
+We'll just use iteration and array indices, but in a tasteful way so our functional friends won't puke. This is Python, after all, not Haskell! We can just _get it done_, with grace, panache, and aplomb.
 
 
-The function `accumulate_contents` accumulates the contents of `noweb` or `tangle` tags. The function starts at line `i`, then figures out whether a tag's first non-blank line is triple backtick, in which case it _won't_ snip four spaces from the beginning of every line, and finally keeps going until it sees the closing taglet, `</noweb>` or `</tangle>`. It returns a tuple of the line index _after_ the closing taglet, and the contents, possibly de-dented. The function manipulates line numbers to skip over triple backticks.
+The function `accumulate_contents` accumulates the contents of left-justified `noweb` or `tangle` tags. The function starts at line `i` of the input, then figures out whether a tag's first non-blank line is triple backtick, in which case it _won't_ snip four spaces from the beginning of every line, and finally keeps going until it sees the closing fencepost, `</noweb>` or `</tangle>`. It returns a tuple of the line index _after_ the closing fencepost, and the contents, possibly de-dented. The function manipulates line numbers to skip over triple backticks.
 
 <!-- #raw -->
 <noweb name="accumulate-contents">
@@ -846,7 +853,7 @@ def accumulate_contents (
 #### ACCUMULATE LINES
 
 
-The function `accumulate_lines` sucks the contents of all the `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries, `noweb_blocks` and `tangle_files`, keyed by `name` or `file` attributes it finds inside `noweb` or `tangle` tags.
+The function `accumulate_lines` sucks the contents of all the left-justified `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries, `noweb_blocks` and `tangle_files`, keyed by `name` or `file` attributes it finds inside `noweb` or `tangle` tags.
 
 <!-- #raw -->
 <noweb name="accumulate-lines">
@@ -882,7 +889,7 @@ def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
 #### NORMALIZE FILE PATH
 
 
-We must normalize file names so that, for example, "foo.txt" and "./foo.txt" indicate the same file and so that `~/` denotes the home directory on Mac and Linux.
+We must normalize file names so that, for example, "foo.txt" and "./foo.txt" indicate the same file and so that `~/` denotes the home directory on Mac and Linux. I didn't test this on Windows.
 
 <!-- #raw -->
 <noweb name="normalize-file-path">
@@ -912,6 +919,7 @@ There is a lot that can go wrong. We can have all kinds of mal-formed contents:
 - too many or not enough triple-backtick lines
 - indentation errors
 - broken tags
+- mismatched fenceposts
 - dangling tags
 - misspelled names
 - syntax errors
@@ -925,7 +933,7 @@ We'll get to error handling someday, maybe. Tangledown is [just a little toy at 
 ### Second Pass: Expanding Blocks<a id="second-pass"></a>
 
 
-Iterate over all the `tangle` tag contents and expand the
+Iterate over all the `noweb` or `tangle` tag contents and expand the
 `block` tags we find in there, recursively. That means keep going until there are no more `block` tags, because nowebss are allowed (encouraged!) to refer to other nowebs via `block` tags. If there are cycles, this will hang.
 
 
@@ -1078,7 +1086,7 @@ The Tangledown kernel is ***OPTIONAL***, but nice. Everything I talked about so 
 The Tangledown Compiler writes the full path of the current Markdown file corresponding to the current notebook to fixed place in the home directory, and the Tangledown Kernel reads gets all the nowebs from there. 
 
 
-If you are running more than one instance of the Tangledown Kernel at one time on your machine, you must ***RESTART THE TANGLEDOWN KERNEL WHEN YOU SWITCH NOTEBOOKS*** because the name of the current file is a fixed, singleton. The Tangledown Kernel has no way to dynamically know what file you're working with. Sorry about that!
+> If you run more than one instance of the Tangledown Kernel at one time on your machine, you must ***RETANGLE THE FILE AND RESTART THE TANGLEDOWN KERNEL WHEN YOU SWITCH NOTEBOOKS*** because the name of the current file is a fixed singleton. The Tangledown Kernel has no way to dynamically know what file you're working with. Sorry about that!
 
 
 ## Installing the Tangledown Kernel
@@ -1101,7 +1109,9 @@ jupyter kernelspec install --user tangledown_kernel
 You must put the source for the Tangledown Kernel somewhere Python can find it before you start Jupyter Lab. One way is to modify the `PYTHONPATH` environment variable. The following works for me on the Mac:
 
 <!-- #raw -->
+```
 PYTHONPATH=".:/Users/brian/Library/Jupyter/kernels/tangledown_kernel" jupyter lab
+```
 <!-- #endraw -->
 
 Once the kernel is installed, there are multiple ways to run it in Jupyter Lab. When you first open a notebook, you get a menu. The default is the regular Python 3 kernel, and it works fine, but you won't be able to run cells that have `block` tags in them. If you choose the Tangledown Kernel, you can run such cells.

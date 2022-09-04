@@ -43,7 +43,7 @@ raw_line_re: re = re.compile(r'<!-- #(end)?raw -->')
 def get_lines(aFilename: str) -> Lines:
     """Get lines from a file denoted by aFilename. Strip 'raw'
     fenceposts. Write full path to a secret place for the 
-    kernel to pick it up."""
+    Tangledown kernel to pick it up."""
     save_aFile_path_for_kernel(aFilename)
     with open(aFilename) as aFile:
         in_lines: Lines = aFile.readlines ()
