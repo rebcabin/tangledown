@@ -1191,7 +1191,7 @@ Enumerate all the files in a directory tree. Pair each file name with a short, u
 ```
 
 <!-- #raw -->
-<tangle file="tangleup_experiment.py">
+<noweb name="tangleup-files-list">
 <!-- #endraw -->
 
 ```python
@@ -1217,7 +1217,7 @@ def files_list(dir_name: str) -> List[str]:
         return nym
     def gsnym_candidate(p: Path) -> str:
         """Generate a candidate short, unique name for a path."""
-        return p.stem[-9:] + '_' + uuid.uuid4().hex[:6].upper()
+        return p.stem + '_' + uuid.uuid4().hex[:6].upper()
     def find_first_gitignore() -> Path:
         nonlocal in_gitignore
         p = dir_path
@@ -1233,8 +1233,10 @@ def files_list(dir_name: str) -> List[str]:
             qs = str(q)
             try:  # don't skip files in dirs above .gitignore
                 ok = not in_gitignore(qs)
-            except ValueError as e:
+            except ValueError as e: # one absolute and one relative?
                 ok = True
+            if p.name == '.git':
+                ok = False
             if not ok:
                 pprint(f'... IGNORING file or dir {p}')
             if ok and q.is_file():
@@ -1250,7 +1252,7 @@ def files_list(dir_name: str) -> List[str]:
 ```
 
 <!-- #raw -->
-</tangle>
+</noweb>
 <!-- #endraw -->
 
 Now write the contents of each to a noweb block with its ginned-up name and a corresponding tangle block. Parenthetically, this just _screams_ for the Writer monad, but we'll just do it by hand in an obvious, kindergarten way.files_result
@@ -1259,7 +1261,7 @@ Now write the contents of each to a noweb block with its ginned-up name and a co
 **WARNING**: The explicit '\n' newlines probably won't work on Windows.
 
 <!-- #raw -->
-<tangle file="tangleup_experiment.py">
+<noweb name="tangleup-write-noweb-to-lines">
 <!-- #endraw -->
 
 ```python
@@ -1294,7 +1296,11 @@ def write_noweb_to_lines(lines: List[str],
     wrap_n_blank(lines, [f'## {path.name}\n'])
     wrap_1_raw(lines, f'<noweb name="{file_gsnym_pair[1]}">\n')
     with open(file_gsnym_pair[0]) as f:
-        inlines = f.readlines()
+        try:
+            inlines = f.readlines()
+        except UnicodeDecodeError as e:
+            pprint(f'... SKIPPING UNDECODABLE FILE {path}')
+            return
         pprint(f'DETANGLING file {path}')
     bound = []  ## Really want the monadic bind, here.
     if language == "markdown":
@@ -1307,11 +1313,11 @@ def write_noweb_to_lines(lines: List[str],
 ```
 
 <!-- #raw -->
-</tangle>
+</noweb>
 <!-- #endraw -->
 
 <!-- #raw -->
-<tangle file="tangleup_experiment.py">
+<noweb name="tangleup-write-tangle-to-lines">
 <!-- #endraw -->
 
 ```python
@@ -1328,16 +1334,19 @@ def write_tangle_to_lines(lines: List[str],
 ```
 
 <!-- #raw -->
-</tangle>
+</noweb>
 <!-- #endraw -->
 
 Test the whole magillah, the up direction. You may have to backpatch some 'language' names when you open the markdown, but 'language' only affects syntax coloring.
 
 <!-- #raw -->
-<tangle file="tangleup_experiment.py">
+<noweb name="tangleup-overwrite-markdown">
 <!-- #endraw -->
 
 ```python
+<block name="tangleup-files-list"></block>
+<block name="tangleup-write-noweb-to-lines"></block>
+<block name="tangleup-write-tangle-to-lines"></block>
 def tangleup_overwrite_markdown(
         output_markdown_filename: str,
         input_directory: str,
@@ -1364,7 +1373,7 @@ def tangleup_overwrite_markdown(
 ```
 
 <!-- #raw -->
-</tangle>
+</noweb>
 <!-- #endraw -->
 
 <!-- #raw -->
@@ -1372,11 +1381,29 @@ def tangleup_overwrite_markdown(
 <!-- #endraw -->
 
 ```python
+<block name="tangleup-overwrite-markdown"></block>
 if __name__ == "__main__":
     tangleup_overwrite_markdown(
         "asr_tangleup_test.md",
-        "./examples/asr",
-        title="This is a Test of the Emergency Tangleup System")
+        "./examples",
+        title="This is a First Test of the Emergency Tangleup System")
+```
+
+<!-- #raw -->
+</tangle>
+<!-- #endraw -->
+
+<!-- #raw -->
+<tangle file="tangleup_experiment_2.py">
+<!-- #endraw -->
+
+```python
+<block name="tangleup-overwrite-markdown"></block>
+if __name__ == "__main__":
+    tangleup_overwrite_markdown(
+        "tangleup-test.md",
+        ".",
+        title="This is a Second Test of the Emergency Tangleup System")
 ```
 
 <!-- #raw -->

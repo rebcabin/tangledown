@@ -106,7 +106,7 @@ def first_non_blank_line_is_triple_backtick (
     answer = triple_backtick_re.match (lines[i])
     if answer:
         language = answer.groups(1) or "python"
-        id_ = answer.groups(3)
+        id_ = answer.groups(3)  ## can be 'None'
     else:
         language = "python"
         id_ = None
