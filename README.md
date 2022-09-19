@@ -930,7 +930,10 @@ Experimental org-style fenceposts are disabled, for now, by passing `None` as th
 
 ```python
 <block name="normalize-file-path"></block>
+<block name="tracer"></block>
 def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
+    global tracer
+    tracer = Tracer()
     nowebs: Nowebs = {}
     tangles: Tangles = {}
     for i in range(len(lines)):
@@ -940,6 +943,7 @@ def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
             key: NowebName = noweb_start_match.group(1)
             (i, nowebs[key]) = \
                 accumulate_contents(lines, i + 1, noweb_end_re)
+            tracer.add_noweb(key, nowebs[key])
         elif (tangle_start_match):
             key: TangleFileName = \
                 str(normalize_file_path(tangle_start_match.group(1)))
@@ -947,6 +951,9 @@ def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
                 tangles[key]: Liness = []
             tangles[key] += \
                 [accumulate_contents(lines, i + 1, tangle_end_re)[1]]
+            tracer.add_tangle(key, tangles[key])
+        else:
+            tracer.add_between(lines[i])
                 # the [1] gets the lines, omits the line number
     return nowebs, tangles
 ```
@@ -972,18 +979,20 @@ from dataclasses import dataclass, field
 from typing import Union
 @dataclass
 class Tracer:
-    trace: List = field(default_factory=List)
-    current_betweens: Lines = field(default_factory=List)
-    def start_betweens(self):
-        pass
+    trace: List = field(default_factory=list)
+    current_betweens: Lines = field(default_factory=list)
     def add_between(self, between: Line):
-        pass
+        self.current_betweens.append(between)
     def end_betweens(self):
-        pass
-    def add_noweb(self):
-        pass
-    def add_tangle(self):
-        pass
+        if self.current_betweens:
+            self.trace.append(self.current_betweens)
+        self.current_betweens = []
+    def add_noweb(self, key, noweb_lines):
+        self.end_betweens()
+        self.trace.append({key: noweb_lines})
+    def add_tangle(self, key, tangle_liness):
+        self.end_betweens()
+        self.trace.append({key: tangle_liness})
 ```
 
 <!-- #raw -->
