@@ -112,17 +112,8 @@ def first_non_blank_line_is_triple_backtick (
         id_ = None
     return answer, language, id_
 
-def language_sensitive_comment_mark(language: str) -> str:
-    result = '## '  ## default
-    if language == "python":
-        result = "## "
-    elif language == "clojure":
-        result = ";; "
-    return result
-
 def accumulate_contents (
-        lines: Lines, i: LineNumber, end_re: re,
-        fencenym: str, fenceguts: str) -> LinesTuple:
+        lines: Lines, i: LineNumber, end_re: re) -> LinesTuple:
     r"""Harvest contents of a noweb or tangle tag. The start
     taglet was consumed by caller; we consume the end taglet."""
     yes, language, id_ = first_non_blank_line_is_triple_backtick(i, lines)
@@ -131,19 +122,10 @@ def accumulate_contents (
         snip = 0
     else:
         snip = 4
-    if fencenym:
-        comment_mark = language_sensitive_comment_mark(language)
-        fenceopen = f"{comment_mark} #+BEGIN_{fenceguts} {fencenym}\n"
-        fenceclose = f"{comment_mark} #+END_{fenceguts} {fencenym}\n"
-        contents_lines: Lines = [fenceopen]
-    else:
-        contents_lines: Lines = []
+    contents_lines: Lines = []
     for j in range (i, len(lines)):
         end_match = end_re.match(lines[j])
         if (end_match):  # This is the only place we return!
-            if fencenym:
-                contents_lines.append(fenceclose)
-                j += 1
             return j + 1, contents_lines
         else:
             if (snip == 0 and triple_backtick_re.match (lines[j])):
@@ -170,18 +152,14 @@ def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
         if (noweb_start_match):
             key: NowebName = noweb_start_match.group(1)
             (i, nowebs[key]) = \
-                accumulate_contents(lines, i + 1, noweb_end_re, 
-                                    fencenym=None, ## f'"{key}"',
-                                    fenceguts="NOWEB name:")
+                accumulate_contents(lines, i + 1, noweb_end_re)
         elif (tangle_start_match):
             key: TangleFileName = \
                 str(normalize_file_path(tangle_start_match.group(1)))
             if not (key in tangles):
                 tangles[key]: Liness = []
             tangles[key] += \
-                [accumulate_contents(lines, i + 1, tangle_end_re, 
-                                     fencenym=None, ## f'"{key}"',
-                                     fenceguts="TANGLE file:")[1]]
+                [accumulate_contents(lines, i + 1, tangle_end_re)[1]]
                 # the [1] gets the lines, omits the line number
     return nowebs, tangles
 
@@ -204,19 +182,16 @@ def eat_block_tag (i: LineNumber, lines: Lines) -> LineNumber:
 def expand_blocks (nowebs: Nowebs, lines: Lines,
                    language: str = "python") -> Lines:
     out_lines = []
-    comment_mark = language_sensitive_comment_mark(language)
     block_key: NowebName = ""
     for i in range (len (lines)):
         block_start_match = block_start_re.match (lines[i])
         if (block_start_match):
             leading_whitespace: str = block_start_match.group (1)
             block_key: NowebName = block_start_match.group (2)
-            # out_lines.append(f'{comment_mark} #+BEGIN_BLOCK :name "{block_key}"\n')
             block_lines: Lines = nowebs [block_key]  # DUDE!
             i: LineNumber = eat_block_tag (i, lines)
             for block_line in block_lines:
                 out_lines.append (leading_whitespace + block_line)
-            # out_lines.append(f'{comment_mark} #+END_BLOCK :name "{block_key}"\n')
         else:
             out_lines.append (lines[i])
     return out_lines

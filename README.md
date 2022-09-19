@@ -415,7 +415,7 @@ You can evaluate the cell with the new, optional [Tangledown Kernel](#section-ta
 This code tangles to the file `/dev/null`. That's a nifty trick for temporary `tangle` blocks. You can talk about them, validate them by executing their cells in the [Tangledown Kernel](#section-tangledown-kernel), and throw them away.
 
 
-# HUMAN! READ THE `block` TAGS!
+## HUMAN! READ THE `block` TAGS!
 
 
 Markdown renders `block` tags verbatim inside nowebs or tangles. This is good for humans, who will think
@@ -429,7 +429,7 @@ Markdown renders `block` tags verbatim inside nowebs or tangles. This is good fo
 See, I'll prove it to you. Below is the code for all of `tangledown.py` itself. You can understand this without understanding the _implementations_ of the sub-pieces, just getting an idea of _what_ they do from the names of the `block` tags. **READ THE NAMES IN THE BLOCK TAGS**. Later, if you want to, you can read all the details in the `noweb` tags named by the `block` tags.
 
 
-## TANGLE ALL<a id="tangle-listing-tangle-all"></a>
+# TANGLE ALL<a id="tangle-listing-tangle-all"></a>
 
 
 If you're running the new, optional [Tangledown Kernel](#section-tangledown-kernel), you can evaluate this next cell and run Tangledown on Tangledown itself, right here in a Jupyter notebook. ***How Cool is That?***
@@ -478,7 +478,7 @@ All we do in `tangle_all` is loop over all the line lists in the tangles (`for f
 The code will create the subdirectories needed. For example, if you tangle to file `foo/bar/baz/qux.py,` the code creates the directory chain `./foo/br/baz/` if it doesn't exist.
 
 
-## TYPES
+## TYPES<a id="types"></a>
 
 
 Let us now explain the implementation. The first block in the tangle above is _types_. What is its noweb? It's here.
@@ -533,6 +533,9 @@ The Tangledown Kernel doesn't support the Jupytext debugger, yet. Sorry about th
 
 ## EXPAND TANGLES<a id="expand-tangles"></a>
 
+
+We separated out the inner loop over Liness into another function, `expand_tangles`, so that the [Tangledown Kernel](#section-tangledown-kernel) can import it and apply it to `block` tags. `tangle_all` calls `expand_tangles`; `expand_tangles` calls `expand_blocks`. Read about `expand_blocks` [here](#expand-blocks).
+
 ```python
 from graphviz import Digraph
 g = Digraph(graph_attr={'size': '8,5'}, node_attr={'fontname': 'courier'})
@@ -541,8 +544,6 @@ g.edge('tangle_all', 'expand_tangles')
 g.edge('expand_tangles', 'expand_blocks')
 g
 ```
-
-We separated out the inner loop over Liness into another function, `expand_tangles`, so that the [Tangledown Kernel](#section-tangledown-kernel) can import it and apply it to `block` tags. `tangle_all` calls `expand_tangles`; `expand_tangles` calls `expand_blocks`. Read about `expand_blocks` [here](#expand-blocks).
 
 <!-- #raw -->
 <noweb name="expand-tangles">
@@ -889,10 +890,8 @@ This also, optionally, modifies nowebs and tangles with fenceposts in language-s
 <!-- #endraw -->
 
 ```python
-<block name="language-sensitive-line-comment-mark"></block>
 def accumulate_contents (
-        lines: Lines, i: LineNumber, end_re: re,
-        fencenym: str, fenceguts: str) -> LinesTuple:
+        lines: Lines, i: LineNumber, end_re: re) -> LinesTuple:
     r"""Harvest contents of a noweb or tangle tag. The start
     taglet was consumed by caller; we consume the end taglet."""
     yes, language, id_ = first_non_blank_line_is_triple_backtick(i, lines)
@@ -901,43 +900,16 @@ def accumulate_contents (
         snip = 0
     else:
         snip = 4
-    if fencenym:
-        comment_mark = language_sensitive_comment_mark(language)
-        fenceopen = f"{comment_mark} #+BEGIN_{fenceguts} {fencenym}\n"
-        fenceclose = f"{comment_mark} #+END_{fenceguts} {fencenym}\n"
-        contents_lines: Lines = [fenceopen]
-    else:
-        contents_lines: Lines = []
+    contents_lines: Lines = []
     for j in range (i, len(lines)):
         end_match = end_re.match(lines[j])
         if (end_match):  # This is the only place we return!
-            if fencenym:
-                contents_lines.append(fenceclose)
-                j += 1
             return j + 1, contents_lines
         else:
             if (snip == 0 and triple_backtick_re.match (lines[j])):
                 pass  # don't do nothin nohow
             else:
                 contents_lines.append (lines[j][snip:])
-```
-
-<!-- #raw -->
-</noweb>
-<!-- #endraw -->
-
-<!-- #raw -->
-<noweb name="language-sensitive-line-comment-mark">
-<!-- #endraw -->
-
-```python
-def language_sensitive_comment_mark(language: str) -> str:
-    result = '## '  ## default
-    if language == "python":
-        result = "## "
-    elif language == "clojure":
-        result = ";; "
-    return result
 ```
 
 <!-- #raw -->
@@ -967,20 +939,51 @@ def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
         if (noweb_start_match):
             key: NowebName = noweb_start_match.group(1)
             (i, nowebs[key]) = \
-                accumulate_contents(lines, i + 1, noweb_end_re, 
-                                    fencenym=None, ## f'"{key}"',
-                                    fenceguts="NOWEB name:")
+                accumulate_contents(lines, i + 1, noweb_end_re)
         elif (tangle_start_match):
             key: TangleFileName = \
                 str(normalize_file_path(tangle_start_match.group(1)))
             if not (key in tangles):
                 tangles[key]: Liness = []
             tangles[key] += \
-                [accumulate_contents(lines, i + 1, tangle_end_re, 
-                                     fencenym=None, ## f'"{key}"',
-                                     fenceguts="TANGLE file:")[1]]
+                [accumulate_contents(lines, i + 1, tangle_end_re)[1]]
                 # the [1] gets the lines, omits the line number
     return nowebs, tangles
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+#### TRACER
+
+
+For [TangleUp](#tangleup), we'll need to trace the entire operation of Tangledown. TangleUp reverses Tangledown, so we will want a best-effor reconstruction of the original Markdown file.
+
+
+Our first approach will be a sequential list of `betweenss: Liness` \[sic\], `nowebs: Noweb`, and `tangles: Tangle`. We'll add to [Types](#types) locally, here, as needed. We already have code for accumulating lines in nowebs and tangles. We'll add code for accumulating betweenss here in the `Tracer` class. 
+
+<!-- #raw -->
+<noweb name="tracer">
+<!-- #endraw -->
+
+```python
+from dataclasses import dataclass, field
+from typing import Union
+@dataclass
+class Tracer:
+    trace: List = field(default_factory=List)
+    current_betweens: Lines = field(default_factory=List)
+    def start_betweens(self):
+        pass
+    def add_between(self, between: Line):
+        pass
+    def end_betweens(self):
+        pass
+    def add_noweb(self):
+        pass
+    def add_tangle(self):
+        pass
 ```
 
 <!-- #raw -->
@@ -1103,19 +1106,16 @@ The following function does one round of block expansion. The caller must test w
 def expand_blocks (nowebs: Nowebs, lines: Lines,
                    language: str = "python") -> Lines:
     out_lines = []
-    comment_mark = language_sensitive_comment_mark(language)
     block_key: NowebName = ""
     for i in range (len (lines)):
         block_start_match = block_start_re.match (lines[i])
         if (block_start_match):
             leading_whitespace: str = block_start_match.group (1)
             block_key: NowebName = block_start_match.group (2)
-            # out_lines.append(f'{comment_mark} #+BEGIN_BLOCK :name "{block_key}"\n')
             block_lines: Lines = nowebs [block_key]  # DUDE!
             i: LineNumber = eat_block_tag (i, lines)
             for block_line in block_lines:
                 out_lines.append (leading_whitespace + block_line)
-            # out_lines.append(f'{comment_mark} #+END_BLOCK :name "{block_key}"\n')
         else:
             out_lines.append (lines[i])
     return out_lines
