@@ -19,6 +19,7 @@ from pathlib import Path
 def get_aFile() -> str:
     """Get a file name from the command-line arguments."""
     print({f'len(sys.argv)': len(sys.argv), f'sys.argv': sys.argv})
+    
     aFile = 'README.md'
     if len(sys.argv) > 1:
         file_names = [p for p in sys.argv
@@ -29,21 +30,21 @@ def get_aFile() -> str:
             aFile = sys.argv[1]
     return aFile
 
-def save_aFile_path_for_kernel(aFile: FileName) -> FileName:
-  xpath: Path = Path.cwd() / Path(aFile).name
-  victim_file_name = str(xpath.absolute())
-  safepath: Path = Path.home() / '.tangledown/current_victim_file.txt'
-  Path(safepath).parents[0].mkdir(parents=True, exist_ok=True)
-  print(f"SAVING {victim_file_name} in secret place {str(safepath)}")
-  with open(safepath, "w") as t:
-      t.write(victim_file_name)
-  return aFile
-
 raw_line_re: re = re.compile(r'<!-- #(end)?raw -->')
 def get_lines(aFilename: str) -> Lines:
     """Get lines from a file denoted by aFilename. Strip 'raw'
     fenceposts. Write full path to a secret place for the 
     Tangledown kernel to pick it up."""
+    def save_aFile_path_for_kernel(aFile: FileName) -> FileName:
+        xpath: Path = Path.cwd() / Path(aFile).name
+        victim_file_name = str(xpath.absolute())
+        safepath: Path = Path.home() / '.tangledown/current_victim_file.txt'
+        Path(safepath).parents[0].mkdir(parents=True, exist_ok=True)
+        print(f"SAVING {victim_file_name} in secret place {str(safepath)}")
+        with open(safepath, "w") as t:
+            t.write(victim_file_name)
+        return aFile
+    
     save_aFile_path_for_kernel(aFilename)
     with open(aFilename) as aFile:
         in_lines: Lines = aFile.readlines ()
@@ -53,10 +54,10 @@ def get_lines(aFilename: str) -> Lines:
                 out_lines.append(in_line)
         return out_lines
 
-noweb_start_re = re.compile (r'^<noweb name="(\w[\w\s\-.]*)">$')
+noweb_start_re = re.compile (r'^<noweb name="(\w[\w\s\-.]*)".*>$')
 noweb_end_re = re.compile (r'^</noweb>$')
 
-tangle_start_re = re.compile (r'^<tangle file="(.+/\\[^/]+|.+)">$')
+tangle_start_re = re.compile (r'^<tangle file="(.+/\\[^/]+|.+)".*>$')
 tangle_end_re = re.compile (r'^</tangle>$')
 
 block_start_re = re.compile (r'^(\s*)<block name="(\w[\w\s\-.]*)">')
@@ -95,28 +96,54 @@ def test_re_matching(lines: Lines) -> None:
         else:
             pass
 
-triple_backtick_re = re.compile (r'^`[`]`')
+triple_backtick_re = re.compile (r'^`[`]`((\w+)?\s*(id=([0-9a-fA-F-]+))?)')
 blank_line_re      = re.compile (r'^\s*$')
 
 def first_non_blank_line_is_triple_backtick (
         i: LineNumber, lines: Lines) -> Match[Line]:
     while (blank_line_re.match (lines[i])):
         i = i + 1
-    return triple_backtick_re.match (lines[i])
+    answer = triple_backtick_re.match (lines[i])
+    if answer:
+        language = answer.groups(1) or "python"
+        id_ = answer.groups(3)
+    else:
+        language = "python"
+        id_ = None
+    return answer, language, id_
+
+def language_sensitive_comment_mark(language: str) -> str:
+    result = '## '  ## default
+    if language == "python":
+        result = "## "
+    elif language == "clojure":
+        result = ";; "
+    return result
 
 def accumulate_contents (
-        lines: Lines, i: LineNumber, end_re: re) -> LinesTuple:
+        lines: Lines, i: LineNumber, end_re: re,
+        fencenym: str, fenceguts: str) -> LinesTuple:
     r"""Harvest contents of a noweb or tangle tag. The start
     taglet was consumed by caller; we consume the end taglet."""
-    if (first_non_blank_line_is_triple_backtick (i, lines)):
+    yes, language, id_ = first_non_blank_line_is_triple_backtick(i, lines)
+    if (yes):
         i = i + 1 # eat the line containing triple backticks
         snip = 0
     else:
         snip = 4
-    contents_lines: Lines = []
+    if fencenym:
+        comment_mark = language_sensitive_comment_mark(language)
+        fenceopen = f"{comment_mark} #+BEGIN_{fenceguts} {fencenym}\n"
+        fenceclose = f"{comment_mark} #+END_{fenceguts} {fencenym}\n"
+        contents_lines: Lines = [fenceopen]
+    else:
+        contents_lines: Lines = []
     for j in range (i, len(lines)):
         end_match = end_re.match(lines[j])
         if (end_match):  # This is the only place we return!
+            if fencenym:
+                contents_lines.append(fenceclose)
+                j += 1
             return j + 1, contents_lines
         else:
             if (snip == 0 and triple_backtick_re.match (lines[j])):
@@ -141,16 +168,20 @@ def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
         noweb_start_match = noweb_start_re.match (lines[i])
         tangle_start_match = tangle_start_re.match (lines[i])
         if (noweb_start_match):
-            key: NowebName = noweb_start_match.group (1)
+            key: NowebName = noweb_start_match.group(1)
             (i, nowebs[key]) = \
-                accumulate_contents(lines, i + 1, noweb_end_re)
+                accumulate_contents(lines, i + 1, noweb_end_re, 
+                                    fencenym=None, ## f'"{key}"',
+                                    fenceguts="NOWEB name:")
         elif (tangle_start_match):
             key: TangleFileName = \
                 str(normalize_file_path(tangle_start_match.group(1)))
             if not (key in tangles):
                 tangles[key]: Liness = []
             tangles[key] += \
-                [accumulate_contents(lines, i + 1, tangle_end_re)[1]]
+                [accumulate_contents(lines, i + 1, tangle_end_re, 
+                                     fencenym=None, ## f'"{key}"',
+                                     fenceguts="TANGLE file:")[1]]
                 # the [1] gets the lines, omits the line number
     return nowebs, tangles
 
@@ -170,17 +201,22 @@ def eat_block_tag (i: LineNumber, lines: Lines) -> LineNumber:
         else:  # DUDE!
             pass
 
-def expand_blocks (nowebs: Nowebs, lines: Lines) -> Lines:
+def expand_blocks (nowebs: Nowebs, lines: Lines,
+                   language: str = "python") -> Lines:
     out_lines = []
+    comment_mark = language_sensitive_comment_mark(language)
+    block_key: NowebName = ""
     for i in range (len (lines)):
         block_start_match = block_start_re.match (lines[i])
         if (block_start_match):
             leading_whitespace: str = block_start_match.group (1)
             block_key: NowebName = block_start_match.group (2)
+            # out_lines.append(f'{comment_mark} #+BEGIN_BLOCK :name "{block_key}"\n')
             block_lines: Lines = nowebs [block_key]  # DUDE!
             i: LineNumber = eat_block_tag (i, lines)
             for block_line in block_lines:
                 out_lines.append (leading_whitespace + block_line)
+            # out_lines.append(f'{comment_mark} #+END_BLOCK :name "{block_key}"\n')
         else:
             out_lines.append (lines[i])
     return out_lines
@@ -194,7 +230,6 @@ def expand_tangles(liness: Liness, nowebs: Nowebs) -> str:
     return ''.join(contents)
 
 
-
 def tangle_all(nowebs: Nowebs, tangles: Tangles) -> None:
     for filename, liness in tangles.items ():
         Path(filename).parents[0].mkdir(parents=True, exist_ok=True)
@@ -203,7 +238,6 @@ def tangle_all(nowebs: Nowebs, tangles: Tangles) -> None:
             print(f"WRITING FILE: {filename}")
             outfile.write (contents)
 
-            
 if __name__ == "__main__":
     file_from_sys_argv = get_aFile()
     lines = get_lines(file_from_sys_argv)

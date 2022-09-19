@@ -2,8 +2,8 @@
 
 
 #### Brian Beckman
-#### Sun, 4 Sep 2022
-#### v0.0.6
+#### Sun, 18 Sep 2022
+#### v0.0.7
 
 
 ## OVERVIEW
@@ -18,16 +18,22 @@ Leslie Lamport, Turing-Award Winner, 2013, said, approximately:
 > Writing is Nature's Way of showing you how sloppy your thinking is. Coding is Nature's Way of showing you how sloppy your writing is. Testing is Nature's Way of showing you how sloppy your coding is.
 
 
+In here, we will show you how to write about code in a natural way and have tested code embedded in your writing. Your documentation can be a narrative, a story, something crafted to help your readers understand _both_ what you're doing _and_ how you're doing it. Your code will be tested because you (and your readers) can run it, right here and now, inside a Jupytext notebook. Your documentation and your code will _never_ get out of sync because you will be working with both of them all the time.
+
+
+Without something like this, you're condemned to explaining _how_ your code works before you can say much about _what_ your code is doing. Indulge us in a little _theory of literature_ in the following sections, will you?
+
+
 ### CREATIVE WRITING 101
 
 
 You're writing a murder mystery. METHOD 1: Start with a data sheet: all the characters and their relationships. Francis stands to inherit, but Evelyn has a life-insurance policy on Victor. Bobbie is strong enough to swing an axe. Alice has poisonous plants in her garden. Charlie has a gun collection. Danielle is a chef and owns sharp knives. Lay out their schedules and whereabouts for several weeks. Finally, write down the murder and the solution. 
 
 
-METHOD 2: There's a murder. Your romantic detective asks "Who knew whom? Who benefitted? Who could have been at the scene of the crime? What was the murder weapon? Who could have done it?"
+METHOD 2: There's a murder. Your romantic detective asks "Who knew whom? Who benefitted? Who could have been at the scene of the crime? Who had opportunity? What was the murder weapon? Who could have done it?"
 
 
-If your objective is to _engage_ the audience, to motivate them to unravel the mystery and learn the twists and turns along the way, which is the better method? If your objective is to have them spend several hours trying to guess where this is all going, which is the better method?
+If your objective is to _engage_ the audience, to motivate them to unravel the mystery and learn the twists and turns along the way, which is the better method? If your objective is to have them spend several hours wading through reference material, trying to guess where this is all going, which is the better method?
 
 
 Now, you're writing about some software. METHOD 1: Present all the functions and interfaces, cross dependencies, asynchronous versus synchronous, global and local state variables, possibilities for side effects. Finally, present unit tests and a main program.
@@ -36,7 +42,7 @@ Now, you're writing about some software. METHOD 1: Present all the functions and
 METHOD 2: Present the unit tests and main program. Explain the program's rationale and concept of operation, the solution it delivers, its modes and methods. Finally, present all the functions, interfaces, and procedures, all the bits and bobs that could effect the solution.
 
 
-If your objective is to _engage_ your audience, to have them understand the software deeply, as if they had written it themselves, which is the better method? If your objective is to have them spend several hours in fits and starts trying to guess what you mean, which is the better method?
+If your objective is to _engage_ your audience, to have them understand the software deeply, as if they wrote it themselves, which is the better method? If your objective is to have them spend several hours wading through reference material trying to guess what you mean to do, which is the better method?
 
 
 ### SOFTWARE AS DOCUMENTATION
@@ -81,10 +87,10 @@ Who is your audience?
 Ok, that's just ordinary Jupyter-notebook practice, right? Code inside your documentation, right?
 
 
-With ordinary Jupyter-notebook practice, you write everything in ***executable order***, because a Jupyter notebook is just a fancy interface to an execution kernel. Executable order usually forces you to define all details before you use them. With Literate Programming, you write in ***human-understandable order***.
+With ordinary Jupyter-notebook practice, you write everything in ***executable order***, because a Jupyter notebook is just a fancy interface to an execution kernel. The notebook inherits the sequential constraints of the underlying kernel. Executable order usually forces you to define all details before you use them. With Literate Programming, you write in ***human-understandable order***.
 
 
-Executable order is usually the reverse of human-understandable order. Humans want to understrand the big picture *first*, then the details. They want to see the box-top of the jigsaw puzzle _before_ looking at all the pieces. Executable order is ***upside-down and inside-out***. 
+Executable order is usually the reverse of human-understandable order. Humans want to understrand the big picture *first*, then the details. They want to see the box-top of the jigsaw puzzle _before_ looking at all the pieces. Executable order is ***upside-down and inside-out*** to the human's point-of-view.
 
 
 We've all had the experience of reading code and notebooks backwards so we don't get overwhelmed by details before understanding the big picture. That observation leads us to another imperative.
@@ -94,12 +100,6 @@ We've all had the experience of reading code and notebooks backwards so we don't
 
 
 [Donald Knuth](http://amturing.acm.org/award_winners/knuth_1013846.cfm) invented Literate Programming so that he could both write _about_ [MetaFont](https://en.wikipedia.org/wiki/Metafont) and [TeX](https://texfaq.org/FAQ-lit) and _implement_ them in the same place. These are two of the most important computer programs ever written. Their longevity and quality speak to the viability of Literate Programming.
-
-
-## What to do with Existing Code
-
-
-When rewriting old code base in literate style, ***detangle*** the existing code into understandable small pieces, rearrange it, and write about it in human-understandable order. To run the code, use a tool like Tangledown to re-tangle the code out to executable order on disk where compilers and interpreters can pick it up and run it, even inside notebook cells.
 
 
 ## Tangledown is Inside This Here Document, README.md
@@ -120,7 +120,36 @@ If we need something _more_ powerful than Tangledown, we'll go back to [org-babe
 You can _also_ run Tangledown inside a Jupyter notebook, specifically one that is linked to this here document, README.md, the one you're reading right now. See [this section](#oh-my-jupytext) for more.
 
 
-## OH MY! JUPYTEXT<a id="oh-my-jupytext"></a>
+# TangleUp Intro<a id="tangleup"></a>
+
+
+Tangledown, as a distribution format, is great. You get a single Markdown file and all the tested source for your project is included. Run tangledown and the project is sprayed out on disk, ready for running, further testing, and deploying.
+
+
+As a development format, it's not quite enough. With only Tangledown, when you modify the source tree, your README.md is _instantly_ out of date. We can't have that. 
+
+
+A fix is ***TangleUp***. When you modify your source tree, TangleUp puts the modified code back into the Markdown file with a reminder to tell you to _write_. There are two cases: 
+1. You modified some source that corresponds to an existing noweb block in the Markdown.
+2. You added some source that doesn't yet correspond to a noweb block in the Markdown.
+
+
+To enable TangleUp, Tangledown must record unique names for existing noweb blocks along with the tangled source. Tangledown must also record robust starting and ending boundary locations for existing blocks. _Robust_ means that the boundary locations are flexible: starting and ending line and character positions in a source file are not enough because changing an early one invalidates all the later ones. 
+
+
+## Tangling Up Existing Code
+
+
+TangleUp can also generate unique names, as GUIDs, say, for new source files and blocks. You should be able to TangleUp an existing source tree into a new, fresh, non-pre-existing Markdown file and, then round-trip TangleUp and TangleDown.
+
+
+## Design and Implementation
+
+
+Let's do Tangledown, first, and TangleUp [later](#tangleup).
+
+
+# OH MY! JUPYTEXT<a id="oh-my-jupytext"></a>
 
 
 ***Jupytext*** \[sic\] automatically syncs a Markdown file with a Jupyter notebook. Read about it [here](https://github.com/mwouts/jupytext). It works well in ***JupyterLab***. Read abou that [here](https://github.com/jupyterlab/jupyterlab). Specifically, it lets you open this here Markdown file, README.md, that you're reading right now, as a Jupyter notebook, and you can evaluate some cells in the notebook.
@@ -213,7 +242,10 @@ from tangledown import get_lines, accumulate_lines, tangle_all
 tangle_all(*accumulate_lines(get_lines("README.md")))
 ```
 
-After you have tangled at least once, as above, and if you switch the notebook kernel to  the new, optional [Tangledown Kernel](#section-tangledown-kernel), you can evaluate the source code for the whole program in the [cell i'm linking right here in this notebook](#tangle-listing-tangle-all). ***How Cool is That?***
+After you have tangled at least once, as above, and if you switch the notebook kernel to  the new, optional [Tangledown Kernel](#section-tangledown-kernel), you can evaluate the source code for the whole program in the [cell i'm linking right here, later in this notebook](#tangle-listing-tangle-all). ***How Cool is That?***
+
+
+You'll also need to re-tangle and restoart the Tangledown Kernel when you add new nowebs to your files. Sorry about that. This is still just a toy.
 
 
 Because Tangledown is a Python module, you can also run Tangledown from inside a standalone Python program, say in PyCharm or VS Code or whatever;
@@ -293,7 +325,7 @@ The term _contents_ is ordinary jargon from HTML, XML, SGML, etc., and applies t
 The Tangledown dictionary key for contents of a `noweb` tag is the string value of the `name` attribute. For example, in `<noweb name="foo">`, `name` is an _attribute_, and its string value is `"foo"`. 
 
 
-> Noweb names must be unique in a document.
+> Noweb names must be unique in a document. TangleUp ensures that when it writes a new Markdown file from existing source, or you may do it by hand.
 
 
 **NOTE**: the `name` attribute of a `noweb` opener must be on the same line, like this:
@@ -311,7 +343,7 @@ Ditto for our other tags. That's a limitation of the regular expressions that de
 You can create the fencepost cells, `<noweb ...>` and `</noweb>`, either in the Markdown file, or you can create them in the synchronized Jupytext notebook. 
 
 
-If you create fencepost cells in Markdown, leave a blank line after the opening `<noweb ...>` and a blank line before the closing `</noweb>`. If you don't, the Markdown renderer won't color and indent the contents. Tangledown will still work, but your code will look like text. 
+If you create fencepost cells in Markdown, leave a blank line after the opening `<noweb ...>` and a blank line before the closing `</noweb>`. If you don't, the Markdown renderer won't color and indent the contents. Tangledown will still work, but your code will look like text in a Markdown renderer like a Jupytext notebook.
 
 
 If you write fencepost cells in Markdown instead of in the notebook, they appear as tiny, invisible Markdown cells because the renderer treats them as empty markdown cells. ***DON'T DELETE THEM***, but you can open (Enter) and close (Shift-Enter) them. 
@@ -377,7 +409,7 @@ if __name__ == '__main__':
 See the tiny, invisible Markdown cells above and below the code? Play around with opening and closing them with Enter and Shift-Enter, respectively, and marking them RAW (Press "R") and Markdown ("M"). Don't mark them CODE ("Y").
 
 
-You can evaluate the cell with the new, optional [Tangledown Kernel](#section-tangledown-kernel). Don't evaluate the code cell in the Python Kernel, you'll get a syntax error because the `block` tag is not valid Python. 
+You can evaluate the cell with the new, optional [Tangledown Kernel](#section-tangledown-kernel). If you evaluate the code cell in the Python Kernel, you'll get a syntax error because the `block` tag is not valid Python. The syntax error is harmless to Tangledown.
 
 
 This code tangles to the file `/dev/null`. That's a nifty trick for temporary `tangle` blocks. You can talk about them, validate them by executing their cells in the [Tangledown Kernel](#section-tangledown-kernel), and throw them away.
@@ -417,7 +449,6 @@ If you're running the new, optional [Tangledown Kernel](#section-tangledown-kern
 <block name="expandBlocks"></block>
 <block name="expand-tangles"></block>
 
-
 def tangle_all(nowebs: Nowebs, tangles: Tangles) -> None:
     for filename, liness in tangles.items ():
         Path(filename).parents[0].mkdir(parents=True, exist_ok=True)
@@ -426,7 +457,6 @@ def tangle_all(nowebs: Nowebs, tangles: Tangles) -> None:
             print(f"WRITING FILE: {filename}")
             outfile.write (contents)
 
-            
 if __name__ == "__main__":
     file_from_sys_argv = get_aFile()
     lines = get_lines(file_from_sys_argv)
@@ -495,7 +525,10 @@ We'll implement all the noweb blocks, like `accumulate_contents` and `eatBlockTa
 ## DEBUGGING AND REFACTORING
 
 
-The Tangledown Kernel doesn't support the Jupytext debugger, yet. Sorry about that. Tangle the code out to disk and debug it with pudb or whatever. [Tangledown is still a toy](#disclaimer). Ditto refactoring. PyCharm is great for that, but you'll have to do it on tangled files and detangle (paste) back into the Markdown.
+The Tangledown Kernel doesn't support the Jupytext debugger, yet. Sorry about that. Tangle the code out to disk and debug it with pudb or whatever, then tangle it back up into your Literate Markdown file via [TangleUp](#tangleup). 
+
+
+[Tangledown is still a toy](#disclaimer). Ditto refactoring. PyCharm is great for that, but you'll have to do it on tangled files and detangle (paste) back into the Markdown.
 
 
 ## EXPAND TANGLES<a id="expand-tangles"></a>
@@ -557,15 +590,18 @@ The names of `noweb` tags must be globally unique within the Markdown file. Mult
 
 ### LEFT-JUSTIIED REGEXES
 
+
+There is a `.*` at the end to catch attributes beyon `name`. A bit of future-proofing.
+
 <!-- #raw -->
 <noweb name="left_justified_regexes">
 <!-- #endraw -->
 
 ```python
-noweb_start_re = re.compile (r'^<noweb name="(\w[\w\s\-.]*)">$')
+noweb_start_re = re.compile (r'^<noweb name="(\w[\w\s\-.]*)".*>$')
 noweb_end_re = re.compile (r'^</noweb>$')
 
-tangle_start_re = re.compile (r'^<tangle file="(.+/\\[^/]+|.+)">$')
+tangle_start_re = re.compile (r'^<tangle file="(.+/\\[^/]+|.+)".*>$')
 tangle_end_re = re.compile (r'^</tangle>$')
 ```
 
@@ -600,7 +636,7 @@ block_end_re = re.compile (r'^(\s)*</bl[o]ck>')
 ### OPENERS
 
 
-The code in noweb `openers` has two `block` tags that refer to the nowebs of the regexes defined above, namely `left_justified_regexes` and `anywhere_regexes`. After Tangledown substitutes the contents of the nowebs for the blocks, the code becomes valid Python and you can call `test_re_matching` in the [Tangledown Kernel](#section-tangledown-kernel) or at the command line. When you call it, it proves that we can recognize all the various kinds of tags. We leave the regexes themselves as global pseudo-constants so that they're both easy to test and to use in the body of the code ([Demeter weeps](https://en.wikipedia.org/wiki/Law_of_Demeter)).
+The code in noweb `openers` has two `block` tags that refer to the nowebs of the regexes defined above, namely `left_justified_regexes` and `anywhere_regexes`. After Tangledown substitutes the contents of the nowebs for the blocks, the code becomes valid Python and you can call `test_re_matching` in the [Tangledown Kernel](#section-tangledown-kernel) or at the command line. When you call it, it proves that we can recognize all the various kinds of tags. We leave the regexes themselves as global pseudo-constants so that they're both easy to test and to use in the body of the code ([Demeter weeps](https://en.wikipedia.org/wiki/Law_of_Demeter) because of globals).
 
 
 The code in `hello_world.ipynb` (after you have Paired a Notebook with the Markdown File `hello_world.md`) runs this test as its last act to check that `tangledown.py` was correctly tangled from this here `README.md`. That code works in the ordinary Python kernel and in the [Tangledown Kernel](#section-tangledown-kernel).
@@ -664,7 +700,7 @@ def test_re_matching(lines: Lines) -> None:
 Tangledown passes once over the file to collect contents of `noweb` and `tangle` tags, and again over the `tangle` tags to expand `block` tags. In the second pass, Tangledown substitutes noweb contents for corresponding `block` tags until there are no more `block` tags, creating valid Python.
 
 
-### Getting a File Name
+### GETTING A FILE NAME
 
 
 `tangledown.py` is both a script and a module. As a script, you run it from the command line, so it gets its input file name from command-line arguments. As a module, called from another Python program, you probably want to give the file as an argument to a function, specifically, to `get_lines`.
@@ -688,6 +724,21 @@ Let's write two functions,
 
 ### GETTING A FILE AND ITS LINES
 
+
+This method for getting a file name from the argument list will eat all options. It works for the Tangledown Kernel and for tangling down from a script or a notebook, but it's not future-proofed.
+
+<!-- #raw -->
+<noweb name="print-sys-argv">
+<!-- #endraw -->
+
+```python
+print({f'len(sys.argv)': len(sys.argv), f'sys.argv': sys.argv})
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
 <!-- #raw -->
 <noweb name="getting a file and its lines">
 <!-- #endraw -->
@@ -695,7 +746,7 @@ Let's write two functions,
 ```python
 def get_aFile() -> str:
     """Get a file name from the command-line arguments."""
-    print({f'len(sys.argv)': len(sys.argv), f'sys.argv': sys.argv})
+    <block name="print-sys-argv"></block>
     aFile = 'README.md'
     if len(sys.argv) > 1:
         file_names = [p for p in sys.argv
@@ -706,12 +757,12 @@ def get_aFile() -> str:
             aFile = sys.argv[1]
     return aFile
 
-<block name="save-afile-path-for-kernel"></block>
 raw_line_re: re = re.compile(r'<!-- #(end)?raw -->')
 def get_lines(aFilename: str) -> Lines:
     """Get lines from a file denoted by aFilename. Strip 'raw'
     fenceposts. Write full path to a secret place for the 
     Tangledown kernel to pick it up."""
+    <block name="save-afile-path-for-kernel"></block>
     save_aFile_path_for_kernel(aFilename)
     with open(aFilename) as aFile:
         in_lines: Lines = aFile.readlines ()
@@ -737,14 +788,14 @@ Returns its input file name after expanding its full path and saving the full pa
 
 ```python
 def save_aFile_path_for_kernel(aFile: FileName) -> FileName:
-  xpath: Path = Path.cwd() / Path(aFile).name
-  victim_file_name = str(xpath.absolute())
-  safepath: Path = Path.home() / '.tangledown/current_victim_file.txt'
-  Path(safepath).parents[0].mkdir(parents=True, exist_ok=True)
-  print(f"SAVING {victim_file_name} in secret place {str(safepath)}")
-  with open(safepath, "w") as t:
-      t.write(victim_file_name)
-  return aFile
+    xpath: Path = Path.cwd() / Path(aFile).name
+    victim_file_name = str(xpath.absolute())
+    safepath: Path = Path.home() / '.tangledown/current_victim_file.txt'
+    Path(safepath).parents[0].mkdir(parents=True, exist_ok=True)
+    print(f"SAVING {victim_file_name} in secret place {str(safepath)}")
+    with open(safepath, "w") as t:
+        t.write(victim_file_name)
+    return aFile
 ```
 
 <!-- #raw -->
@@ -762,7 +813,7 @@ In the first pass over the file, we'll just save the contents of noweb and tangl
 
 Turns out there are two ways to write literal blocks in Markdown:
 
-1. indented by four spaces and
+1. indented by four spaces, useful for quoted Markdown and quoted triple-backtick blocks
 
 2. surrounded by triple backticks and _not_ indented.
 
@@ -779,24 +830,34 @@ The function `first_non_blank_line_is_triple_backtick`, in noweb `oh-no-there-ar
 Remember the _use-mention_ dichotomy from Philosophy class? No problem if you don't.
 
 
-When we're _talking about_ `noweb` and `tangle` tags, but don't want to process them, we indent the tags and use indented code blocks, not triple-backticked. Tangledown won't process indented `noweb` and `tangle` tags because the regexes in noweb `left_justified_regexes` won't match them. 
+When we're _talking about_ `noweb` and `tangle` tags, but don't want to process them, we indent the tags and use indented code blocks, not triple-backticked. Tangledown won't process indented `noweb` and `tangle` tags because the regexes in noweb `left_justified_regexes` won't match them. We can also talk about triple-backticked blocks by indenting them. Tangledown won't mess with indented triple-backticked blocks, because the regex needs them left-justified. Markdown also wont get confused, so we can quote whole markdown files by indenting them. Yes, your Literate Markdown can _also_, recursively, tangle out more Markdown files. How cool is that? Will the recursive jokes never end?
 
 
-We also see, here, why the code tracks line numbers. We might do this in some super-cool, sophomoric but still bitchin' list comprehension, but this is more obvious-at-a-glance. That's a good thing.
+[TangleUp](#tangleup) has a heuristic for placing language and id information on triple-backtick fence openers. Our function will retrieve those if present.
+
+
+We also see, below, why the code tracks line numbers. We might do this in some super-bitchin', sophomoric list comprehension, but this is more obvious-at-a-glance. That's a good thing.
 
 <!-- #raw -->
 <noweb name="oh-no-there-are-two-ways">
 <!-- #endraw -->
 
 ```python
-triple_backtick_re = re.compile (r'^`[`]`')
+triple_backtick_re = re.compile (r'^`[`]`((\w+)?\s*(id=([0-9a-fA-F-]+))?)')
 blank_line_re      = re.compile (r'^\s*$')
 
 def first_non_blank_line_is_triple_backtick (
         i: LineNumber, lines: Lines) -> Match[Line]:
     while (blank_line_re.match (lines[i])):
         i = i + 1
-    return triple_backtick_re.match (lines[i])
+    answer = triple_backtick_re.match (lines[i])
+    if answer:
+        language = answer.groups(1) or "python"
+        id_ = answer.groups(3)  ## can be 'None'
+    else:
+        language = "python"
+        id_ = None
+    return answer, language, id_
 ```
 
 <!-- #raw -->
@@ -806,11 +867,11 @@ def first_non_blank_line_is_triple_backtick (
 #### ACCUMULATE CONTENTS<a id="accumulate-contents"></a>
 
 
-Tangledown is a funny little compiler. It converts Literate Markdown to Python. We could go nuts and write it in highfalutin' style, and then it would be much bigger, more elaborate if not more elegant, and easier to explain to a Haskell programmer. It might also be less of a toy. However, we want this toy Tangledown for now to be:
+Tangledown is a funny little compiler. It converts Literate Markdown to Python or other languages (Clojure and Markdown are supported, now). We could go nuts and write it in highfalutin' style, and then it would be much bigger, more elaborate if not more elegant, and easier to explain to a Haskell programmer. It might also be less of a toy. However, we want this toy Tangledown for now to be:
 
 - very short
 
-- independent of rich libraries like parser combinators
+- independent of rich libraries like beautiful soup and parser combinators
 
 - completely obvious to anyone
 
@@ -820,24 +881,39 @@ We'll just use iteration and array indices, but in a tasteful way so our functio
 
 The function `accumulate_contents` accumulates the contents of left-justified `noweb` or `tangle` tags. The function starts at line `i` of the input, then figures out whether a tag's first non-blank line is triple backtick, in which case it _won't_ snip four spaces from the beginning of every line, and finally keeps going until it sees the closing fencepost, `</noweb>` or `</tangle>`. It returns a tuple of the line index _after_ the closing fencepost, and the contents, possibly de-dented. The function manipulates line numbers to skip over triple backticks.
 
+
+This also, optionally, modifies nowebs and tangles with fenceposts in language-sensitive comments and org-mode syntax containing the unique names of the nowebs so that [TangleUp](#tangleup) can put changed contents back in the right places.
+
 <!-- #raw -->
 <noweb name="accumulate-contents">
 <!-- #endraw -->
 
 ```python
+<block name="language-sensitive-line-comment-mark"></block>
 def accumulate_contents (
-        lines: Lines, i: LineNumber, end_re: re) -> LinesTuple:
+        lines: Lines, i: LineNumber, end_re: re,
+        fencenym: str, fenceguts: str) -> LinesTuple:
     r"""Harvest contents of a noweb or tangle tag. The start
     taglet was consumed by caller; we consume the end taglet."""
-    if (first_non_blank_line_is_triple_backtick (i, lines)):
+    yes, language, id_ = first_non_blank_line_is_triple_backtick(i, lines)
+    if (yes):
         i = i + 1 # eat the line containing triple backticks
         snip = 0
     else:
         snip = 4
-    contents_lines: Lines = []
+    if fencenym:
+        comment_mark = language_sensitive_comment_mark(language)
+        fenceopen = f"{comment_mark} #+BEGIN_{fenceguts} {fencenym}\n"
+        fenceclose = f"{comment_mark} #+END_{fenceguts} {fencenym}\n"
+        contents_lines: Lines = [fenceopen]
+    else:
+        contents_lines: Lines = []
     for j in range (i, len(lines)):
         end_match = end_re.match(lines[j])
         if (end_match):  # This is the only place we return!
+            if fencenym:
+                contents_lines.append(fenceclose)
+                j += 1
             return j + 1, contents_lines
         else:
             if (snip == 0 and triple_backtick_re.match (lines[j])):
@@ -850,10 +926,31 @@ def accumulate_contents (
 </noweb>
 <!-- #endraw -->
 
+<!-- #raw -->
+<noweb name="language-sensitive-line-comment-mark">
+<!-- #endraw -->
+
+```python
+def language_sensitive_comment_mark(language: str) -> str:
+    result = '## '  ## default
+    if language == "python":
+        result = "## "
+    elif language == "clojure":
+        result = ";; "
+    return result
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
 #### ACCUMULATE LINES
 
 
 The function `accumulate_lines` sucks the contents of all the left-justified `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries, `noweb_blocks` and `tangle_files`, keyed by `name` or `file` attributes it finds inside `noweb` or `tangle` tags.
+
+
+Experimental org-style fenceposts are disabled, for now, by passing `None` as the `fencenym`.
 
 <!-- #raw -->
 <noweb name="accumulate-lines">
@@ -868,16 +965,20 @@ def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
         noweb_start_match = noweb_start_re.match (lines[i])
         tangle_start_match = tangle_start_re.match (lines[i])
         if (noweb_start_match):
-            key: NowebName = noweb_start_match.group (1)
+            key: NowebName = noweb_start_match.group(1)
             (i, nowebs[key]) = \
-                accumulate_contents(lines, i + 1, noweb_end_re)
+                accumulate_contents(lines, i + 1, noweb_end_re, 
+                                    fencenym=None, ## f'"{key}"',
+                                    fenceguts="NOWEB name:")
         elif (tangle_start_match):
             key: TangleFileName = \
                 str(normalize_file_path(tangle_start_match.group(1)))
             if not (key in tangles):
                 tangles[key]: Liness = []
             tangles[key] += \
-                [accumulate_contents(lines, i + 1, tangle_end_re)[1]]
+                [accumulate_contents(lines, i + 1, tangle_end_re, 
+                                     fencenym=None, ## f'"{key}"',
+                                     fenceguts="TANGLE file:")[1]]
                 # the [1] gets the lines, omits the line number
     return nowebs, tangles
 ```
@@ -999,17 +1100,22 @@ The following function does one round of block expansion. The caller must test w
 <!-- #endraw -->
 
 ```python
-def expand_blocks (nowebs: Nowebs, lines: Lines) -> Lines:
+def expand_blocks (nowebs: Nowebs, lines: Lines,
+                   language: str = "python") -> Lines:
     out_lines = []
+    comment_mark = language_sensitive_comment_mark(language)
+    block_key: NowebName = ""
     for i in range (len (lines)):
         block_start_match = block_start_re.match (lines[i])
         if (block_start_match):
             leading_whitespace: str = block_start_match.group (1)
             block_key: NowebName = block_start_match.group (2)
+            # out_lines.append(f'{comment_mark} #+BEGIN_BLOCK :name "{block_key}"\n')
             block_lines: Lines = nowebs [block_key]  # DUDE!
             i: LineNumber = eat_block_tag (i, lines)
             for block_line in block_lines:
                 out_lines.append (leading_whitespace + block_line)
+            # out_lines.append(f'{comment_mark} #+END_BLOCK :name "{block_key}"\n')
         else:
             out_lines.append (lines[i])
     return out_lines
@@ -1056,9 +1162,10 @@ I must apologize once again, but this is just a toy at this point! Recall the [D
 # TODO<a id="todo"></a>
 
 
+- IN-PROGRESS: more examples, specifically, a test-generator in Clojure in subdirectory `examples/asr`.
+- IN-PROGRESS: TangleUp
 - NOT-STARTED: Have the Tangledown Kernel, when evaluating tangle-able cells, write them out one at a time. Without this feature, the only way to write out files is to tangle the entire notebook. Possibly do these as cell magics.
 - NOT-STARTED: Research cell magics for `noweb` and `tangle` cells.
-- NOT-STARTED: more examples
 - NOT-STARTED: error handling (big job)
 - NOT-STARTED: type annotations for the kernel
 - DONE: convert relative file paths to absolute
@@ -1070,6 +1177,211 @@ I must apologize once again, but this is just a toy at this point! Recall the [D
 - DONE: find out whether pickle is a better alternative to json for dumping dictionaries for the kernel
 - DONE: Jupytext kernel for `tangledown` so we can run `noweb` and `block` tags that have `block` tags in them.
 
+
+# TangleUp Design and Implementation<a id="tangleup"></a>
+
+
+## When There Is No Existing Markdown File
+
+
+Enumerate all the files in a directory tree. Pair each file name with a short, unique name for the nowebs. TODO: ignore files and directories listed in the `.gitignore`.
+
+```python
+%pip install gitignore-parser
+```
+
+<!-- #raw -->
+<tangle file="tangleup_experiment.py">
+<!-- #endraw -->
+
+```python
+from pathlib import Path
+from typing import List
+import uuid
+from gitignore_parser import parse_gitignore
+from pprint import pprint
+
+def files_list(dir_name: str) -> List[str]:
+    dir_path = Path(dir_name)
+    files_result = []
+    nyms_result = []
+    nyms_collision_check = set()
+    file_count = 0
+    in_gitignore = lambda _: False
+    def gsnym(p: Path) -> str:
+        """Generate a short, unique name for a path."""
+        nym = gsnym_candidate(p)
+        while nym in nyms_collision_check:
+            nym = gsnym_candidate(p)
+        nyms_collision_check.add(nym)
+        return nym
+    def gsnym_candidate(p: Path) -> str:
+        """Generate a candidate short, unique name for a path."""
+        return p.stem[-9:] + '_' + uuid.uuid4().hex[:6].upper()
+    def find_first_gitignore() -> Path:
+        nonlocal in_gitignore
+        p = dir_path
+        for p in dir_path.rglob('*'):
+            if p.name == '.gitignore':
+                in_gitignore = parse_gitignore(str(p.absolute()))
+                break;
+        return p
+    def recurse_a_dir(dir_path: Path) -> None:
+        nonlocal file_count, nyms_result, files_result, in_gitignore
+        for p in dir_path.glob('*'):
+            q = p.absolute()
+            qs = str(q)
+            try:  # don't skip files in dirs above .gitignore
+                ok = not in_gitignore(qs)
+            except ValueError as e:
+                ok = True
+            if not ok:
+                pprint(f'... IGNORING file or dir {p}')
+            if ok and q.is_file():
+                file_count += 1
+                nyms_result.append(gsnym(q))
+                files_result.append(qs)
+            elif ok and p.is_dir:
+                recurse_a_dir(p)
+    find_first_gitignore()
+    recurse_a_dir(dir_path)
+    assert file_count == len(nyms_collision_check)
+    return list(zip(files_result, nyms_result))
+```
+
+<!-- #raw -->
+</tangle>
+<!-- #endraw -->
+
+Now write the contents of each to a noweb block with its ginned-up name and a corresponding tangle block. Parenthetically, this just _screams_ for the Writer monad, but we'll just do it by hand in an obvious, kindergarten way.files_result
+
+
+**WARNING**: The explicit '\n' newlines probably won't work on Windows.
+
+<!-- #raw -->
+<tangle file="tangleup_experiment.py">
+<!-- #endraw -->
+
+```python
+from typing import Tuple
+from pprint import pprint
+BEGIN_RAW = '<!-- #raw -->\n'
+END_RAW = '<!-- #endraw -->\n'
+BLANK_LINE = '\n'
+def wrap_1_raw(lines: List[str], s: str) -> None:
+    lines.append(BEGIN_RAW)
+    lines.append(s)
+    lines.append(END_RAW)
+def wrap_n_blank(lines: List[str], ss: List[str]) -> None:
+    lines.append(BLANK_LINE)
+    for s in ss:
+        lines.append(s)
+    lines.append(BLANK_LINE)
+def wrap_triple_backtick(lines: List[str], 
+                         ss: List[str], 
+                         language: str) -> None:
+    lines.append(f'```{language}\n')
+    for s in ss:
+        lines.append(s)
+    lines.append(f'```\n')
+def indent_4(lines: List[str], ss: List[str]):
+    for s in ss:
+        lines.append('    ' + s)
+def write_noweb_to_lines(lines: List[str], 
+                         file_gsnym_pair: Tuple[str],
+                         language: str) -> None:
+    path = Path(file_gsnym_pair[0])
+    wrap_n_blank(lines, [f'## {path.name}\n'])
+    wrap_1_raw(lines, f'<noweb name="{file_gsnym_pair[1]}">\n')
+    with open(file_gsnym_pair[0]) as f:
+        inlines = f.readlines()
+        pprint(f'DETANGLING file {path}')
+    bound = []  ## Really want the monadic bind, here.
+    if language == "markdown":
+        indent_4(bound, inlines)
+    else:
+        wrap_triple_backtick(bound, inlines, language)
+    wrap_n_blank(lines, bound)
+    wrap_1_raw(lines, '</noweb>\n')
+    lines.append(BLANK_LINE)
+```
+
+<!-- #raw -->
+</tangle>
+<!-- #endraw -->
+
+<!-- #raw -->
+<tangle file="tangleup_experiment.py">
+<!-- #endraw -->
+
+```python
+def write_tangle_to_lines(lines: List[str], 
+                          file_gsnym_pair: Tuple[str],
+                          language: str) -> List[str]:
+    wrap_1_raw(lines, f'<tangle file="{file_gsnym_pair[0]}">\n')
+    bound = []
+    wrap_triple_backtick(bound, 
+                         [f'<block name="{file_gsnym_pair[1]}"></block>\n'], 
+                         language)
+    wrap_n_blank(lines, bound)
+    wrap_1_raw(lines, f'</tangle>\n')
+```
+
+<!-- #raw -->
+</tangle>
+<!-- #endraw -->
+
+Test the whole magillah, the up direction. You may have to backpatch some 'language' names when you open the markdown, but 'language' only affects syntax coloring.
+
+<!-- #raw -->
+<tangle file="tangleup_experiment.py">
+<!-- #endraw -->
+
+```python
+def tangleup_overwrite_markdown(
+        output_markdown_filename: str,
+        input_directory: str,
+        title: str = "Untitled") -> None:
+    pprint(f'WRITING LITERATE MARKDOWN to file {output_markdown_filename}')
+    file_gsnym_pairs = files_list(input_directory)
+    lines: List[str] = [f'# {title}\n\n']
+    for pair in file_gsnym_pairs:
+        p = Path(pair[0])
+        if p.suffix == '.clj':
+            language = f'clojure id={uuid.uuid4()}'
+        elif p.suffix == '.py':
+            language = f'python id={uuid.uuid4()}'
+        elif p.suffix == '.md':
+            language = 'markdown'
+        else:
+            language = ''
+        write_noweb_to_lines(lines, pair, language)
+        write_tangle_to_lines(lines, pair, language)
+    with open(output_markdown_filename, "w") as f:
+        for line in lines:
+            f.write(line)
+    pass
+```
+
+<!-- #raw -->
+</tangle>
+<!-- #endraw -->
+
+<!-- #raw -->
+<tangle file="tangleup_experiment.py">
+<!-- #endraw -->
+
+```python
+if __name__ == "__main__":
+    tangleup_overwrite_markdown(
+        "asr_tangleup_test.md",
+        "./examples/asr",
+        title="This is a Test of the Emergency Tangleup System")
+```
+
+<!-- #raw -->
+</tangle>
+<!-- #endraw -->
 
 # APPENDIX: Developer Notes
 
