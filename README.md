@@ -239,7 +239,7 @@ Tangledown is both a script and a module. You can run Tangledown in a [Jupytext]
 
 ```python
 from tangledown import get_lines, accumulate_lines, tangle_all
-tangle_all(*accumulate_lines(get_lines("README.md")))
+tangle_all(*accumulate_lines(*get_lines("README.md")))
 ```
 
 After you have tangled at least once, as above, and if you switch the notebook kernel to  the new, optional [Tangledown Kernel](#section-tangledown-kernel), you can evaluate the source code for the whole program in the [cell i'm linking right here, later in this notebook](#tangle-listing-tangle-all). ***How Cool is That?***
@@ -458,10 +458,9 @@ def tangle_all(nowebs: Nowebs, tangles: Tangles) -> None:
             outfile.write (contents)
 
 if __name__ == "__main__":
-    file_from_sys_argv = get_aFile()
-    lines = get_lines(file_from_sys_argv)
+    fn, lines = get_lines(get_aFile())
     # test_re_matching(lines)
-    nowebs, tangles = accumulate_lines(lines)
+    nowebs, tangles = accumulate_lines(fn, lines)
     tangle_all(nowebs, tangles)
 ```
 
@@ -701,7 +700,7 @@ def test_re_matching(lines: Lines) -> None:
 Tangledown passes once over the file to collect contents of `noweb` and `tangle` tags, and again over the `tangle` tags to expand `block` tags. In the second pass, Tangledown substitutes noweb contents for corresponding `block` tags until there are no more `block` tags, creating valid Python.
 
 
-### GETTING A FILE NAME
+### GET A FILE NAME
 
 
 `tangledown.py` is both a script and a module. As a script, you run it from the command line, so it gets its input file name from command-line arguments. As a module, called from another Python program, you probably want to give the file as an argument to a function, specifically, to `get_lines`.
@@ -715,7 +714,7 @@ Let's write two functions,
 
   - gets lines, without processing `noweb`, `tangle`, or `block` tags, from its argument, `aFilename`
   
-  - strips out `#raw` and `#endraw` fenceposts 
+  - replaces `#raw` and `#endraw` fenceposts with blank lines
   
   - writes out the full file path to a secret place where the [Tangledown Kernel](#section-tangledown-kernel) can pick it up
 
@@ -723,7 +722,7 @@ Let's write two functions,
 `get_aFile` can parse command-line arguments that come from either `python` on the command line or from a `Jupitext` notebook, which has a few kinds of command-line arguments we must ignore, namely command-line arguments that end in `.py` or in `.json`.
 
 
-### GETTING A FILE AND ITS LINES
+### GET LINES
 
 
 This method for getting a file name from the argument list will eat all options. It works for the Tangledown Kernel and for tangling down from a script or a notebook, but it's not future-proofed.
@@ -748,7 +747,7 @@ print({f'len(sys.argv)': len(sys.argv), f'sys.argv': sys.argv})
 def get_aFile() -> str:
     """Get a file name from the command-line arguments."""
     <block name="print-sys-argv"></block>
-    aFile = 'README.md'
+    aFile = 'README.md'  # default
     if len(sys.argv) > 1:
         file_names = [p for p in sys.argv
                         if (p[0] != '-')  # option
@@ -759,19 +758,20 @@ def get_aFile() -> str:
     return aFile
 
 raw_line_re: re = re.compile(r'<!-- #(end)?raw -->')
-def get_lines(aFilename: str) -> Lines:
-    """Get lines from a file denoted by aFilename. Strip 'raw'
-    fenceposts. Write full path to a secret place for the 
-    Tangledown kernel to pick it up."""
+def get_lines(fn: FileName) -> Lines:
+    """Get lines from a file named fn. Replace 
+    'raw' fenceposts with blank lines. Write full path to 
+    a secret place for the Tangledown kernel to pick it up.
+    Return tuple of file name (for Tracer) and lines """
     <block name="save-afile-path-for-kernel"></block>
-    save_aFile_path_for_kernel(aFilename)
-    with open(aFilename) as aFile:
-        in_lines: Lines = aFile.readlines ()
+    save_aFile_path_for_kernel(fn)
+    with open(fn) as f:
+        in_lines: Lines = f.readlines ()
         out_lines: Lines = []
         for in_line in in_lines:
-            if not raw_line_re.match(in_line):
-                out_lines.append(in_line)
-        return out_lines
+            out_lines.append(
+                in_line if not raw_line_re.match(in_line) else "\n")
+        return fn, out_lines
 ```
 
 <!-- #raw -->
@@ -788,15 +788,15 @@ Returns its input file name after expanding its full path and saving the full pa
 <!-- #endraw -->
 
 ```python
-def save_aFile_path_for_kernel(aFile: FileName) -> FileName:
-    xpath: Path = Path.cwd() / Path(aFile).name
+def save_aFile_path_for_kernel(fn: FileName) -> FileName:
+    xpath: Path = Path.cwd() / Path(fn).name
     victim_file_name = str(xpath.absolute())
     safepath: Path = Path.home() / '.tangledown/current_victim_file.txt'
     Path(safepath).parents[0].mkdir(parents=True, exist_ok=True)
     print(f"SAVING {victim_file_name} in secret place {str(safepath)}")
     with open(safepath, "w") as t:
         t.write(victim_file_name)
-    return aFile
+    return fn
 ```
 
 <!-- #raw -->
@@ -839,6 +839,9 @@ When we're _talking about_ `noweb` and `tangle` tags, but don't want to process 
 
 We also see, below, why the code tracks line numbers. We might do this in some super-bitchin', sophomoric list comprehension, but this is more obvious-at-a-glance. That's a good thing.
 
+
+#### FIRST NON-BLANK LINE IS TRIPLE BACKTICK
+
 <!-- #raw -->
 <noweb name="oh-no-there-are-two-ways">
 <!-- #endraw -->
@@ -851,14 +854,13 @@ def first_non_blank_line_is_triple_backtick (
         i: LineNumber, lines: Lines) -> Match[Line]:
     while (blank_line_re.match (lines[i])):
         i = i + 1
-    answer = triple_backtick_re.match (lines[i])
-    if answer:
-        language = answer.groups(1) or "python"
-        id_ = answer.groups(3)  ## can be 'None'
-    else:
-        language = "python"
-        id_ = None
-    return answer, language, id_
+    yes = triple_backtick_re.match (lines[i])
+    language = "python"  # default
+    id_ = None           # default
+    if yes:
+        language = yes.groups()[1] or language
+        id_ = yes.groups()[3]  ## can be 'None'
+    return i, yes, language, id_
 ```
 
 <!-- #raw -->
@@ -893,23 +895,15 @@ This also, optionally, modifies nowebs and tangles with fenceposts in language-s
 def accumulate_contents (
         lines: Lines, i: LineNumber, end_re: re) -> LinesTuple:
     r"""Harvest contents of a noweb or tangle tag. The start
-    taglet was consumed by caller; we consume the end taglet."""
-    yes, language, id_ = first_non_blank_line_is_triple_backtick(i, lines)
-    if (yes):
-        i = i + 1 # eat the line containing triple backticks
-        snip = 0
-    else:
-        snip = 4
+    taglet was consumed by caller. Consume the end taglet."""
+    i, yes, language, id_ = first_non_blank_line_is_triple_backtick(i, lines)
+    snip = 0 if yes else 4
     contents_lines: Lines = []
     for j in range (i, len(lines)):
-        end_match = end_re.match(lines[j])
-        if (end_match):  # This is the only place we return!
-            return j + 1, contents_lines
-        else:
-            if (snip == 0 and triple_backtick_re.match (lines[j])):
-                pass  # don't do nothin nohow
-            else:
-                contents_lines.append (lines[j][snip:])
+        if (end_re.match(lines[j])):
+            return j + 1, language, id_, contents_lines  # the only return
+        if not triple_backtick_re.match (lines[j]):
+            contents_lines.append (lines[j][snip:])
 ```
 
 <!-- #raw -->
@@ -931,30 +925,32 @@ Experimental org-style fenceposts are disabled, for now, by passing `None` as th
 ```python
 <block name="normalize-file-path"></block>
 <block name="tracer"></block>
-def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
-    global tracer
+from pprint import pprint
+def accumulate_lines(fn: FileName, lines: Lines) -> Tuple[Nowebs, Tangles]:
     tracer = Tracer()
     nowebs: Nowebs = {}
     tangles: Tangles = {}
-    for i in range(len(lines)):
+    i = 0
+    while i < len(lines):
         noweb_start_match = noweb_start_re.match (lines[i])
         tangle_start_match = tangle_start_re.match (lines[i])
         if (noweb_start_match):
             key: NowebName = noweb_start_match.group(1)
-            (i, nowebs[key]) = \
+            (i, language, id_, nowebs[key]) = \
                 accumulate_contents(lines, i + 1, noweb_end_re)
-            tracer.add_noweb(key, nowebs[key])
+            tracer.add_noweb(i, language, id_, key, nowebs[key])
         elif (tangle_start_match):
             key: TangleFileName = \
                 str(normalize_file_path(tangle_start_match.group(1)))
             if not (key in tangles):
                 tangles[key]: Liness = []
-            tangles[key] += \
-                [accumulate_contents(lines, i + 1, tangle_end_re)[1]]
-            tracer.add_tangle(key, tangles[key])
+            (i, language, id_, things) = accumulate_contents(lines, i + 1, tangle_end_re)
+            tangles[key] += [things]
+            tracer.add_tangle(i, language, id_, key, tangles[key])
         else:
-            tracer.add_between(lines[i])
-                # the [1] gets the lines, omits the line number
+            tracer.add_markdown(i, lines[i])
+            i += 1
+    tracer.dump(fn)
     return nowebs, tangles
 ```
 
@@ -965,10 +961,10 @@ def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
 #### TRACER
 
 
-For [TangleUp](#tangleup), we'll need to trace the entire operation of Tangledown. TangleUp reverses Tangledown, so we will want a best-effor reconstruction of the original Markdown file.
+For [TangleUp](#tangleup), we'll need to trace the entire operation of Tangledown. TangleUp reverses Tangledown, so we will want a best-effort reconstruction of the original Markdown file.
 
 
-Our first approach will be a sequential list of `betweenss: Liness` \[sic\], `nowebs: Noweb`, and `tangles: Tangle`. We'll add to [Types](#types) locally, here, as needed. We already have code for accumulating lines in nowebs and tangles. We'll add code for accumulating betweenss here in the `Tracer` class. 
+Our first approach will be a sequential list of `betweenss: Liness` \[sic\], `nowebs: Noweb`, and `tangles: Tangle`. 
 
 <!-- #raw -->
 <noweb name="tracer">
@@ -976,23 +972,39 @@ Our first approach will be a sequential list of `betweenss: Liness` \[sic\], `no
 
 ```python
 from dataclasses import dataclass, field
-from typing import Union
+from typing import Union  ## TODO
 @dataclass
 class Tracer:
-    trace: List = field(default_factory=list)
+    trace: List[Dict] = field(default_factory=list)
+    line_no = 0
     current_betweens: Lines = field(default_factory=list)
-    def add_between(self, between: Line):
-        self.current_betweens.append(between)
-    def end_betweens(self):
+    def add_markdown(self, i, between: Line):
+        self.line_no += 1
+        self.current_betweens.append((self.line_no, between))
+    def _end_betweens(self, i):
         if self.current_betweens:
-            self.trace.append(self.current_betweens)
+            self.trace.append({"ending_line_number": self.line_no, "i": i,
+                               "language": "markdown", "kind": 'between', 
+                               "text": self.current_betweens})
         self.current_betweens = []
-    def add_noweb(self, key, noweb_lines):
-        self.end_betweens()
-        self.trace.append({key: noweb_lines})
-    def add_tangle(self, key, tangle_liness):
-        self.end_betweens()
-        self.trace.append({key: tangle_liness})
+    def add_noweb(self, i, language, id_, key, noweb_lines):
+        self._end_betweens(i)
+        self.line_no = i
+        self.trace.append({"ending_line_number": self.line_no, "i": i,
+                           "language": language, "id_": id_, 
+                           "kind": 'noweb', key: noweb_lines})
+    def add_tangle(self, i, language, id_, key, tangle_liness):
+        self._end_betweens(i)
+        self.line_no = i
+        self.trace.append({"ending_line_number": self.line_no, "i": i,
+                           "language": language, "id_": id_,
+                           "kind": 'tangle', key: tangle_liness})
+    def dump(self, fn: FileName):
+        fn.translate(str.maketrans('.', '_'))
+        with open(f".tangledown-trace-{fn}.py", "w") as fs:
+            print(f'tangledown_trace_{fn} = (', file=fs)
+            pprint(self.trace, stream=fs)
+            pprint(')')
 ```
 
 <!-- #raw -->
@@ -1149,7 +1161,7 @@ But if you have the chicken (`tangledown.py`), you can import it as a module and
 
 ```python
 from tangledown import get_lines, accumulate_lines, tangle_all
-tangle_all(*accumulate_lines(get_lines("README.md")))
+tangle_all(*accumulate_lines(*get_lines("README.md")))
 ```
 
 ## DUDE!
@@ -1556,8 +1568,8 @@ Notice this kernel runs Tangledown on the full file path that's stored in `curre
 ```python
 current_victim_filepath = ""
 with open(Path.home() / '.tangledown/current_victim_file.txt') as v:
-    current_victim_filepath = v.read()
-nowebs, tangles_ = accumulate_lines(get_lines(current_victim_filepath))
+    fp = v.read()
+nowebs, tangles_ = accumulate_lines(*get_lines(fp))
 implementation = 'Tangledown'
 implementation_version = '1.0'
 language = 'no-op'

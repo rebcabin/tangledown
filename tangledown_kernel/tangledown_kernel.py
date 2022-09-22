@@ -7,11 +7,12 @@ from tangledown import \
         get_lines, \
         expand_tangles
 
+
 class TangledownKernel(IPythonKernel):
     current_victim_filepath = ""
     with open(Path.home() / '.tangledown/current_victim_file.txt') as v:
-        current_victim_filepath = v.read()
-    nowebs, tangles_ = accumulate_lines(get_lines(current_victim_filepath))
+        fp = v.read()
+    nowebs, tangles_ = accumulate_lines(*get_lines(fp))
     implementation = 'Tangledown'
     implementation_version = '1.0'
     language = 'no-op'
@@ -26,6 +27,7 @@ class TangledownKernel(IPythonKernel):
         "file_extension": ".py",
     }
     banner = "Tangledown kernel - expanding 'block' tags"
+    
     
     async def do_execute(self, code, silent, store_history=True, user_expressions=None,
                    allow_stdin=False):
@@ -49,4 +51,5 @@ class TangledownKernel(IPythonKernel):
 if __name__ == '__main__':
     from ipykernel.kernelapp import IPKernelApp
     IPKernelApp.launch_instance(kernel_class=TangledownKernel)
+
 

@@ -12,6 +12,7 @@ LinesTuple = Tuple[LineNumber, Lines]
 Nowebs = Dict[NowebName, Lines]
 Tangles = Dict[TangleFileName, Liness]
 
+
 import re
 import sys
 from pathlib import Path
@@ -20,7 +21,8 @@ def get_aFile() -> str:
     """Get a file name from the command-line arguments."""
     print({f'len(sys.argv)': len(sys.argv), f'sys.argv': sys.argv})
     
-    aFile = 'README.md'
+    
+    aFile = 'README.md'  # default
     if len(sys.argv) > 1:
         file_names = [p for p in sys.argv
                         if (p[0] != '-')  # option
@@ -31,28 +33,31 @@ def get_aFile() -> str:
     return aFile
 
 raw_line_re: re = re.compile(r'<!-- #(end)?raw -->')
-def get_lines(aFilename: str) -> Lines:
-    """Get lines from a file denoted by aFilename. Strip 'raw'
-    fenceposts. Write full path to a secret place for the 
-    Tangledown kernel to pick it up."""
-    def save_aFile_path_for_kernel(aFile: FileName) -> FileName:
-        xpath: Path = Path.cwd() / Path(aFile).name
+def get_lines(fn: FileName) -> Lines:
+    """Get lines from a file named fn. Replace 
+    'raw' fenceposts with blank lines. Write full path to 
+    a secret place for the Tangledown kernel to pick it up.
+    Return tuple of file name (for Tracer) and lines """
+    def save_aFile_path_for_kernel(fn: FileName) -> FileName:
+        xpath: Path = Path.cwd() / Path(fn).name
         victim_file_name = str(xpath.absolute())
         safepath: Path = Path.home() / '.tangledown/current_victim_file.txt'
         Path(safepath).parents[0].mkdir(parents=True, exist_ok=True)
         print(f"SAVING {victim_file_name} in secret place {str(safepath)}")
         with open(safepath, "w") as t:
             t.write(victim_file_name)
-        return aFile
+        return fn
     
-    save_aFile_path_for_kernel(aFilename)
-    with open(aFilename) as aFile:
-        in_lines: Lines = aFile.readlines ()
+    
+    save_aFile_path_for_kernel(fn)
+    with open(fn) as f:
+        in_lines: Lines = f.readlines ()
         out_lines: Lines = []
         for in_line in in_lines:
-            if not raw_line_re.match(in_line):
-                out_lines.append(in_line)
-        return out_lines
+            out_lines.append(
+                in_line if not raw_line_re.match(in_line) else "\n")
+        return fn, out_lines
+
 
 noweb_start_re = re.compile (r'^<noweb name="(\w[\w\s\-.]*)".*>$')
 noweb_end_re = re.compile (r'^</noweb>$')
@@ -60,8 +65,10 @@ noweb_end_re = re.compile (r'^</noweb>$')
 tangle_start_re = re.compile (r'^<tangle file="(.+/\\[^/]+|.+)".*>$')
 tangle_end_re = re.compile (r'^</tangle>$')
 
+
 block_start_re = re.compile (r'^(\s*)<block name="(\w[\w\s\-.]*)">')
 block_end_re = re.compile (r'^(\s)*</bl[o]ck>')
+
 
 
 def test_re_matching(lines: Lines) -> None:
@@ -96,6 +103,7 @@ def test_re_matching(lines: Lines) -> None:
         else:
             pass
 
+
 triple_backtick_re = re.compile (r'^`[`]`((\w+)?\s*(id=([0-9a-fA-F-]+))?)')
 blank_line_re      = re.compile (r'^\s*$')
 
@@ -103,35 +111,28 @@ def first_non_blank_line_is_triple_backtick (
         i: LineNumber, lines: Lines) -> Match[Line]:
     while (blank_line_re.match (lines[i])):
         i = i + 1
-    answer = triple_backtick_re.match (lines[i])
-    if answer:
-        language = answer.groups(1) or "python"
-        id_ = answer.groups(3)  ## can be 'None'
-    else:
-        language = "python"
-        id_ = None
-    return answer, language, id_
+    yes = triple_backtick_re.match (lines[i])
+    language = "python"  # default
+    id_ = None           # default
+    if yes:
+        language = yes.groups()[1] or language
+        id_ = yes.groups()[3]  ## can be 'None'
+    return i, yes, language, id_
+
 
 def accumulate_contents (
         lines: Lines, i: LineNumber, end_re: re) -> LinesTuple:
     r"""Harvest contents of a noweb or tangle tag. The start
-    taglet was consumed by caller; we consume the end taglet."""
-    yes, language, id_ = first_non_blank_line_is_triple_backtick(i, lines)
-    if (yes):
-        i = i + 1 # eat the line containing triple backticks
-        snip = 0
-    else:
-        snip = 4
+    taglet was consumed by caller. Consume the end taglet."""
+    i, yes, language, id_ = first_non_blank_line_is_triple_backtick(i, lines)
+    snip = 0 if yes else 4
     contents_lines: Lines = []
     for j in range (i, len(lines)):
-        end_match = end_re.match(lines[j])
-        if (end_match):  # This is the only place we return!
-            return j + 1, contents_lines
-        else:
-            if (snip == 0 and triple_backtick_re.match (lines[j])):
-                pass  # don't do nothin nohow
-            else:
-                contents_lines.append (lines[j][snip:])
+        if (end_re.match(lines[j])):
+            return j + 1, language, id_, contents_lines  # the only return
+        if not triple_backtick_re.match (lines[j]):
+            contents_lines.append (lines[j][snip:])
+
 
 def anchor_is_tilde(path_str: str) -> bool:
     result = (path_str[0:2] == "~/") and (Path(path_str).anchor == '')
@@ -143,50 +144,71 @@ def normalize_file_path(tangle_file_attribute: str) -> Path:
         result = (Path.home() / tangle_file_attribute[2:])
     return result.absolute()
 
+
 from dataclasses import dataclass, field
-from typing import Union
+from typing import Union  ## TODO
 @dataclass
 class Tracer:
-    trace: List = field(default_factory=list)
+    trace: List[Dict] = field(default_factory=list)
+    line_no = 0
     current_betweens: Lines = field(default_factory=list)
-    def add_between(self, between: Line):
-        self.current_betweens.append(between)
-    def end_betweens(self):
+    def add_markdown(self, i, between: Line):
+        self.line_no += 1
+        self.current_betweens.append((self.line_no, between))
+    def _end_betweens(self, i):
         if self.current_betweens:
-            self.trace.append(self.current_betweens)
+            self.trace.append({"ending_line_number": self.line_no, "i": i,
+                               "language": "markdown", "kind": 'between', 
+                               "text": self.current_betweens})
         self.current_betweens = []
-    def add_noweb(self, key, noweb_lines):
-        self.end_betweens()
-        self.trace.append({key: noweb_lines})
-    def add_tangle(self, key, tangle_liness):
-        self.end_betweens()
-        self.trace.append({key: tangle_liness})
+    def add_noweb(self, i, language, id_, key, noweb_lines):
+        self._end_betweens(i)
+        self.line_no = i
+        self.trace.append({"ending_line_number": self.line_no, "i": i,
+                           "language": language, "id_": id_, 
+                           "kind": 'noweb', key: noweb_lines})
+    def add_tangle(self, i, language, id_, key, tangle_liness):
+        self._end_betweens(i)
+        self.line_no = i
+        self.trace.append({"ending_line_number": self.line_no, "i": i,
+                           "language": language, "id_": id_,
+                           "kind": 'tangle', key: tangle_liness})
+    def dump(self, fn: FileName):
+        fn.translate(str.maketrans('.', '_'))
+        with open(f".tangledown-trace-{fn}.py", "w") as fs:
+            print(f'tangledown_trace_{fn} = (', file=fs)
+            pprint(self.trace, stream=fs)
+            pprint(')')
 
-def accumulate_lines(lines: Lines) -> Tuple[Nowebs, Tangles]:
-    global tracer
+
+from pprint import pprint
+def accumulate_lines(fn: FileName, lines: Lines) -> Tuple[Nowebs, Tangles]:
     tracer = Tracer()
     nowebs: Nowebs = {}
     tangles: Tangles = {}
-    for i in range(len(lines)):
+    i = 0
+    while i < len(lines):
         noweb_start_match = noweb_start_re.match (lines[i])
         tangle_start_match = tangle_start_re.match (lines[i])
         if (noweb_start_match):
             key: NowebName = noweb_start_match.group(1)
-            (i, nowebs[key]) = \
+            (i, language, id_, nowebs[key]) = \
                 accumulate_contents(lines, i + 1, noweb_end_re)
-            tracer.add_noweb(key, nowebs[key])
+            tracer.add_noweb(i, language, id_, key, nowebs[key])
         elif (tangle_start_match):
             key: TangleFileName = \
                 str(normalize_file_path(tangle_start_match.group(1)))
             if not (key in tangles):
                 tangles[key]: Liness = []
-            tangles[key] += \
-                [accumulate_contents(lines, i + 1, tangle_end_re)[1]]
-            tracer.add_tangle(key, tangles[key])
+            (i, language, id_, things) = accumulate_contents(lines, i + 1, tangle_end_re)
+            tangles[key] += [things]
+            tracer.add_tangle(i, language, id_, key, tangles[key])
         else:
-            tracer.add_between(lines[i])
-                # the [1] gets the lines, omits the line number
+            tracer.add_markdown(i, lines[i])
+            i += 1
+    tracer.dump(fn)
     return nowebs, tangles
+
 
 def there_is_a_block_tag (lines: Lines) -> bool:
     for line in lines:
@@ -194,6 +216,7 @@ def there_is_a_block_tag (lines: Lines) -> bool:
         if (block_start_match):
             return True
     return False
+
 
 def eat_block_tag (i: LineNumber, lines: Lines) -> LineNumber:
     for j in range (i, len(lines)):
@@ -203,6 +226,7 @@ def eat_block_tag (i: LineNumber, lines: Lines) -> LineNumber:
             return j + 1
         else:  # DUDE!
             pass
+
 
 def expand_blocks (nowebs: Nowebs, lines: Lines,
                    language: str = "python") -> Lines:
@@ -221,6 +245,7 @@ def expand_blocks (nowebs: Nowebs, lines: Lines,
             out_lines.append (lines[i])
     return out_lines
 
+
 def expand_tangles(liness: Liness, nowebs: Nowebs) -> str:
     contents: Lines = []
     for lines in liness:
@@ -228,6 +253,7 @@ def expand_tangles(liness: Liness, nowebs: Nowebs) -> str:
             lines = expand_blocks (nowebs, lines)
         contents += lines
     return ''.join(contents)
+
 
 
 def tangle_all(nowebs: Nowebs, tangles: Tangles) -> None:
@@ -239,9 +265,9 @@ def tangle_all(nowebs: Nowebs, tangles: Tangles) -> None:
             outfile.write (contents)
 
 if __name__ == "__main__":
-    file_from_sys_argv = get_aFile()
-    lines = get_lines(file_from_sys_argv)
+    fn, lines = get_lines(get_aFile())
     # test_re_matching(lines)
-    nowebs, tangles = accumulate_lines(lines)
+    nowebs, tangles = accumulate_lines(fn, lines)
     tangle_all(nowebs, tangles)
+
 
