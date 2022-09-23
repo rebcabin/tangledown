@@ -1013,12 +1013,12 @@ class Tracer:
         fn = fp.name
         fn2 = fn.translate(str.maketrans('.', '_'))
         # Store the trace in the dir where the input md file is:
-        np = pr / f".tangledown-trace-{fn2}.py"
         vr = f'tangledown_trace_{fn2}'
+        np = pr / (vr + ".py")
         with open(np, "w") as fs:
             print(f'{vr} = (', file=fs)
             pprint(self.trace, stream=fs)
-            pprint(')', stream=fs)
+            print(')', file=fs)
 ```
 
 <!-- #raw -->
@@ -1222,6 +1222,9 @@ I must apologize once again, but this is just a toy at this point! Recall the [D
 1. Keep source tree and Literate Markdown consistent.
 
 
+## NON-REAL-TIME
+
+
 We'll start with a non-real-time solution. You'll manually run `tangleup` to put modified source back into the Markdown. Later, we'll do something that can track changes on disk and update the Markdown in real time.
 
 
@@ -1238,67 +1241,31 @@ To assist TangleUp, Tangledown records unique names for existing noweb blocks al
 ## When There Is No Existing Markdown File
 
 
+We don't need the trace file for this case.
+
+
 Enumerate all the files in a directory tree. Pair each file name with a short, unique name for the nowebs. TODO: ignore files and directories listed in the `.gitignore`.
 
 ```python
 %pip install gitignore-parser
 ```
 
+### TANGLEUP FILES LIST
+
 <!-- #raw -->
 <noweb name="tangleup-files-list">
 <!-- #endraw -->
 
 ```python
-from pathlib import Path
-from typing import List
-import uuid
-from gitignore_parser import parse_gitignore
-from pprint import pprint
-
+<block name="tangleup imports"></block>
 def files_list(dir_name: str) -> List[str]:
     dir_path = Path(dir_name)
     files_result = []
     nyms_result = []
-    nyms_collision_check = set()
     file_count = 0
-    in_gitignore = lambda _: False
-    def gsnym(p: Path) -> str:
-        """Generate a short, unique name for a path."""
-        nym = gsnym_candidate(p)
-        while nym in nyms_collision_check:
-            nym = gsnym_candidate(p)
-        nyms_collision_check.add(nym)
-        return nym
-    def gsnym_candidate(p: Path) -> str:
-        """Generate a candidate short, unique name for a path."""
-        return p.stem + '_' + uuid.uuid4().hex[:6].upper()
-    def find_first_gitignore() -> Path:
-        nonlocal in_gitignore
-        p = dir_path
-        for p in dir_path.rglob('*'):
-            if p.name == '.gitignore':
-                in_gitignore = parse_gitignore(str(p.absolute()))
-                break;
-        return p
-    def recurse_a_dir(dir_path: Path) -> None:
-        nonlocal file_count, nyms_result, files_result, in_gitignore
-        for p in dir_path.glob('*'):
-            q = p.absolute()
-            qs = str(q)
-            try:  # don't skip files in dirs above .gitignore
-                ok = not in_gitignore(qs)
-            except ValueError as e: # one absolute and one relative?
-                ok = True
-            if p.name == '.git':
-                ok = False
-            if not ok:
-                pprint(f'... IGNORING file or dir {p}')
-            if ok and q.is_file():
-                file_count += 1
-                nyms_result.append(gsnym(q))
-                files_result.append(qs)
-            elif ok and p.is_dir:
-                recurse_a_dir(p)
+    <block name="unique-names"></block>
+    <block name="ignore files in .gitignore"></block>
+    <block name="recurse a dir"></block>
     find_first_gitignore()
     recurse_a_dir(dir_path)
     assert file_count == len(nyms_collision_check)
@@ -1309,7 +1276,118 @@ def files_list(dir_name: str) -> List[str]:
 </noweb>
 <!-- #endraw -->
 
-Now write the contents of each to a noweb block with its ginned-up name and a corresponding tangle block. Parenthetically, this just _screams_ for the Writer monad, but we'll just do it by hand in an obvious, kindergarten way.files_result
+#### RECURSE A DIR
+
+
+The only complexity, here, is ignoring `.git` and files in `.gitignore`
+
+<!-- #raw -->
+<noweb name="recurse a dir">
+<!-- #endraw -->
+
+```python
+def recurse_a_dir(dir_path: Path) -> None:
+    for p in dir_path.glob('*'):
+        q = p.absolute()
+        qs = str(q)
+        try:  # don't skip files in dirs above .gitignore
+            ok = not in_gitignore(qs)
+        except ValueError as e: # one absolute and one relative?
+            ok = True
+        if p.name == '.git':
+            ok = False
+        if not ok:
+            pprint(f'... IGNORING file or dir {p}')
+        if ok and q.is_file():
+            nonlocal file_count
+            file_count += 1
+            nyms_result.append(gsnym(q))
+            files_result.append(qs)
+        elif ok and p.is_dir:
+            recurse_a_dir(p)
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+#### UNIQUE NAMES
+
+
+Correct for collisions, which will be really rare, so there is a negligible effect on speed.
+
+<!-- #raw -->
+<noweb name="unique-names">
+<!-- #endraw -->
+
+```python
+nyms_collision_check = set()
+
+def gsnym(p: Path) -> str:
+    """Generate a short, unique name for a path."""
+    nym = gsnym_candidate(p)
+    while nym in nyms_collision_check:
+        nym = gsnym_candidate(p)
+    nyms_collision_check.add(nym)
+    return nym
+
+
+def gsnym_candidate(p: Path) -> str:
+    """Generate a candidate short, unique name for a path."""
+    return p.stem + '_' + uuid.uuid4().hex[:6].upper()
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+#### IGNORE FILES IN GITIGNORE
+
+
+Find the first `.gitignore` in a directory tree. Parse it to produce a function that tests whether a file must be ignored by TangleUp. 
+
+<!-- #raw -->
+<noweb name="ignore files in .gitignore">
+<!-- #endraw -->
+
+```python
+in_gitignore = lambda _: False
+
+def find_first_gitignore() -> Path:
+    p = dir_path
+    for p in dir_path.rglob('*'):
+        if p.name == '.gitignore':
+            in_gitignore = parse_gitignore(str(p.absolute()))
+            break;
+    return p
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+### TANGLEUP IMPORTS
+
+<!-- #raw -->
+<noweb name="tangleup imports">
+<!-- #endraw -->
+
+```python
+from pathlib import Path
+from typing import List
+import uuid
+from gitignore_parser import parse_gitignore
+from pprint import pprint
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+### WRITE NOWEB TO LINES
+
+
+Now write the contents of each Python or Clojure file to a noweb block with its ginned-up name and a corresponding tangle block. Parenthetically, this just _screams_ for the Writer monad, but we'll just do it by hand in an obvious, kindergarten way.files_result
 
 
 **WARNING**: The explicit '\n' newlines probably won't work on Windows.
@@ -1321,28 +1399,10 @@ Now write the contents of each to a noweb block with its ginned-up name and a co
 ```python
 from typing import Tuple
 from pprint import pprint
-BEGIN_RAW = '<!-- #raw -->\n'
-END_RAW = '<!-- #endraw -->\n'
-BLANK_LINE = '\n'
-def wrap_1_raw(lines: List[str], s: str) -> None:
-    lines.append(BEGIN_RAW)
-    lines.append(s)
-    lines.append(END_RAW)
-def wrap_n_blank(lines: List[str], ss: List[str]) -> None:
-    lines.append(BLANK_LINE)
-    for s in ss:
-        lines.append(s)
-    lines.append(BLANK_LINE)
-def wrap_triple_backtick(lines: List[str],
-                         ss: List[str],
-                         language: str) -> None:
-    lines.append(f'```{language}\n')
-    for s in ss:
-        lines.append(s)
-    lines.append(f'```\n')
-def indent_4(lines: List[str], ss: List[str]):
-    for s in ss:
-        lines.append('    ' + s)
+<block name="wrap one as raw"></block>
+<block name="wrap several with blank lines"></block>
+<block name="wrap lines with triple backticks"></block>
+<block name="indent four spaces"></block>
 def write_noweb_to_lines(lines: List[str],
                          file_gsnym_pair: Tuple[str],
                          language: str) -> None:
@@ -1370,6 +1430,82 @@ def write_noweb_to_lines(lines: List[str],
 </noweb>
 <!-- #endraw -->
 
+#### WRAP ONE LINE AS RAW
+
+<!-- #raw -->
+<noweb name="wrap one as raw">
+<!-- #endraw -->
+
+```python
+BEGIN_RAW = '<!-- #raw -->\n'
+END_RAW = '<!-- #endraw -->\n'
+def wrap_1_raw(lines: List[str], s: str) -> None:
+    lines.append(BEGIN_RAW)
+    lines.append(s)
+    lines.append(END_RAW)
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+#### WRAP SEVERAL LINES IN BLANK LINES
+
+<!-- #raw -->
+<noweb name="wrap several with blank lines">
+<!-- #endraw -->
+
+```python
+BLANK_LINE = '\n'
+def wrap_n_blank(lines: List[str], ss: List[str]) -> None:
+    lines.append(BLANK_LINE)
+    for s in ss:
+        lines.append(s)
+    lines.append(BLANK_LINE)
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+#### WRAP LINES IN TRIPLE BACKTICKS
+
+<!-- #raw -->
+<noweb name="wrap lines with triple backticks">
+<!-- #endraw -->
+
+```python
+def wrap_triple_backtick(lines: List[str],
+                         ss: List[str],
+                         language: str) -> None:
+    lines.append(f'```{language}\n')
+    for s in ss:
+        lines.append(s)
+    lines.append(f'```\n')
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+#### INDENT ALL LINES FOUR SPACES
+
+<!-- #raw -->
+<noweb name="indent four spaces">
+<!-- #endraw -->
+
+```python
+def indent_4(lines: List[str], ss: List[str]):
+    for s in ss:
+        lines.append('    ' + s)
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+### WRITE TANGLE TO LINES
+
 <!-- #raw -->
 <noweb name="tangleup-write-tangle-to-lines">
 <!-- #endraw -->
@@ -1390,6 +1526,9 @@ def write_tangle_to_lines(lines: List[str],
 <!-- #raw -->
 </noweb>
 <!-- #endraw -->
+
+### TANGLEUP OVERWRITE MARKDOWN
+
 
 Test the whole magillah, the up direction. You may have to backpatch some 'language' names when you open the markdown, but 'language' only affects syntax coloring.
 
@@ -1420,6 +1559,8 @@ def tangleup_overwrite_markdown(
             language = ''
         write_noweb_to_lines(lines, pair, language)
         write_tangle_to_lines(lines, pair, language)
+    import json
+    
     with open(output_markdown_filename, "w") as f:
         for line in lines:
             f.write(line)
@@ -1429,6 +1570,25 @@ def tangleup_overwrite_markdown(
 <!-- #raw -->
 </noweb>
 <!-- #endraw -->
+
+## When there is a Pre-Existing Markdown File
+
+
+### FIRST SHOT
+
+```python
+with open("./.tangledown-trace-foobar_md.py") as f:
+    contents = f.read()
+contents
+```
+
+## UNIT TESTS
+
+
+### NO PRE-EXISTING MARKDOWN FILE
+
+
+Run these at the console for now.
 
 <!-- #raw -->
 <tangle file="tangleup_experiment.py">

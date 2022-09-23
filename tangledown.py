@@ -180,12 +180,12 @@ class Tracer:
         fn = fp.name
         fn2 = fn.translate(str.maketrans('.', '_'))
         # Store the trace in the dir where the input md file is:
-        np = pr / f".tangledown-trace-{fn2}.py"
         vr = f'tangledown_trace_{fn2}'
+        np = pr / (vr + ".py")
         with open(np, "w") as fs:
             print(f'{vr} = (', file=fs)
             pprint(self.trace, stream=fs)
-            pprint(')', stream=fs)
+            print(')', file=fs)
 
 
 from pprint import pprint
