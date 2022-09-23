@@ -6,10 +6,10 @@
 #### v0.0.8
 
 
-## OVERVIEW
+# OVERVIEW
 
 
-### WRITING MATTERS
+## WRITING MATTERS
 
 
 Leslie Lamport, Turing-Award Winner, 2013, said, approximately:
@@ -27,7 +27,7 @@ Narrative order is the natural order for a story, but it's not the natural order
 Without something like this, you're condemned to explaining _how_ your code works before you can say much about _what_ your code is doing. Indulge us in a little _theory of writing_, will you?
 
 
-### CREATIVE WRITING 101
+## CREATIVE WRITING 101
 
 
 You're writing a murder mystery. 
@@ -54,7 +54,7 @@ Now, you're writing about some software.
 If your objective is to _engage_ your audience, to have them understand the software deeply, as if they wrote it themselves, which is the better method? If your objective is to have them spend several hours wading through reference material trying to guess what you mean to do, which is the better method?
 
 
-### SOFTWARE AS DOCUMENTATION
+## SOFTWARE AS DOCUMENTATION
 
 
 Phaedrus says:
@@ -71,7 +71,7 @@ And Socrates says:
 > You condemn me to reverse-engineering your software: to run it in a debugger or to trace printouts.
 
 
-### LITERATE PROGRAMMING
+## LITERATE PROGRAMMING
 
 
 [Literate Programming](https://en.wikipedia.org/wiki/Literate_programming) is the best known way to save your _audience_ the work of reverse engineering your code, of giving them the box top with the jigsaw puzzle.
@@ -90,7 +90,7 @@ Who is your audience?
 > First, write a paper about your code, explaining, at least to yourself, what you want to do and how you plan to do it. Flesh out your actual code inside the paper. RUN your code inside the paper, capturing printouts and charts and diagrams and what not, so others, including, first, your future self, can see the code at work. Iterate the process, rewriting prose and code as you invent and simplify, in a loop.
 
 
-### Executable Order Versus Narrative Order
+## Executable Order Versus Narrative Order
 
 
 > Ok, that's just ordinary Jupyter-notebook practice, right? Code inside your documentation, right? Doxygen and Sphinx inside-out, right?
@@ -132,7 +132,7 @@ If we need something _more_ powerful than Tangledown, we can go back to [org-bab
 You can _also_ run Tangledown inside a Jupyter notebook, specifically one that is linked to this here document, README.md, the one you're reading right now. See [this section](#oh-my-jupytext) for more.
 
 
-# TangleUp Intro<a id="tangleup"></a>
+## TangleUp Intro<a id="tangleup"></a>
 
 
 Tangledown, as a distribution format, is a complete solution to Literate Programming. You get a single Markdown file and all the tested source for your project is included. Run Tangledown and the project is sprayed out on disk, ready for running, further testing, and deploying.
@@ -317,7 +317,7 @@ Markdown ignores `<noweb ...>` and `</noweb>` tags, but `tangledown.py` _doesn't
 #### CONTENTS OF A TAG
 
 
-The contents of a `noweb` tag is (are?) the material between the opening `<noweb ...>` and closing `</noweb>` fenceposts. Markdown renders code contents with syntax coloring and indentation. That's why we want code cells to be CODE cells and not RAW cells.
+The contents of a `noweb` tag are between the opening `<noweb ...>` and closing `</noweb>` fenceposts. Markdown renders code contents with syntax coloring and indentation. That's why we want code cells to be CODE cells and not RAW cells.
 
 
 The term _contents_ is ordinary jargon from HTML, XML, SGML, etc., and applies to any opening `<foo ...>` and closing `</foo>` pair.
@@ -347,7 +347,7 @@ Ditto for our other tags. That's a limitation of the regular expressions that de
 You can create the fencepost cells, `<noweb ...>` and `</noweb>`, either in the Markdown file, or you can create them in the synchronized Jupytext notebook.
 
 
-If you create fencepost cells in Markdown, leave a blank line after the opening `<noweb ...>` and a blank line before the closing `</noweb>`. If you don't, the Markdown renderer won't color and indent the contents. Tangledown will still work, but your code will look like text in a Markdown renderer like a Jupytext notebook.
+If you create fencepost cells in Markdown, leave a blank line after the opening `<noweb ...>` and a blank line before the closing `</noweb>`. If you don't, the Markdown renderer won't color and indent the contents. Tangledown will still work, but the Markdown renderer will format your code like text without syntax coloring and indentatino.
 
 
 If you write fencepost cells in Markdown instead of in the notebook, they appear as tiny, invisible Markdown cells because the renderer treats them as empty markdown cells. ***DON'T DELETE THEM***, but you can open (Enter) and close (Shift-Enter) them.
@@ -362,7 +362,7 @@ If you create `noweb` and `tangle` tags in the notebook and you want them _visib
 Later, in the [second pass](#second-pass), Tangledown blows the contents of `noweb` tags back out wherever it sees `block` tags with matching `name` attributes. That's how you can define code anywhere in your document and use it in any other place, later or earlier, more than once if you like.
 
 
-`block` tags may appear in the contents of `noweb` tags and in the in the contets of `tangle` tags, too.
+`block` tags can and should appear in the contents of `noweb` tags and in the in the contets of `tangle` tags, too. That's how you structure your narrative!
 
 
 Tangledown discards the contents of `block` tags. Only the `name` attribute of a `block` tag matters.
@@ -419,18 +419,21 @@ You can evaluate the cell with the new, optional [Tangledown Kernel](#section-ta
 This code tangles to the file `/dev/null`. That's a nifty trick for temporary `tangle` blocks. You can talk about them, validate them by executing their cells in the [Tangledown Kernel](#section-tangledown-kernel), and throw them away.
 
 
-## HUMAN! READ THE `block` TAGS!
+[TangleUp](#tangleup) knows where Tangledown puts all the blocks and tangles. That's how, when you change code on disk, TangleUp can put it all back in the single file of Literate Markdown.
+
+
+# HUMAN! READ THE `block` TAGS!
 
 
 Markdown renders `block` tags verbatim inside nowebs or tangles. This is good for humans, who will think
 
 
-> AHA!, this `block` refers to some code in a `noweb` tag somewhere else in this Markdown document. I can read all the details of that code later, when it will make more sense. I can look at the pieces of the jigsaw puzzle (the `noweb` tags) after I've looked at the completed puzzle on the box top (the `tangle` tags).
+> AHA!, this `block` refers to some code in a `noweb` tag somewhere else in this Markdown document. I can read all the details of that code later, when it will make more sense. I can look at the picture on the box before the pieces of the jigsaw puzzle.
 
 > Thank you, kindly, author! Without you, I'd be awash in details. I'd get tired and cranky before understanding the big picture!
 
 
-See, I'll prove it to you. Below is the code for all of `tangledown.py` itself. You can understand this without understanding the _implementations_ of the sub-pieces, just getting an idea of _what_ they do from the names of the `block` tags. **READ THE NAMES IN THE BLOCK TAGS**. Later, if you want to, you can read all the details in the `noweb` tags named by the `block` tags.
+See, I'll prove it to you. Below is the code for all of `tangledown.py` itself. You can understand this without understanding the _implementations_ of the sub-pieces, just getting a rought idea of _what_ they do from the names of the `block` tags. **READ THE NAMES IN THE BLOCK TAGS**. Later, if you want to, you can read all the details in the `noweb` tags named by the `block` tags.
 
 
 # TANGLE ALL<a id="tangle-listing-tangle-all"></a>
@@ -475,7 +478,7 @@ if __name__ == "__main__":
 The whole program is in the function `tangle_all`. We get hybrid vigor by testing `__name__` against `"__main__"`: `tangledown.py` is both a script and module.
 
 
-All we do in `tangle_all` is loop over all the line lists in the tangles (`for filename, liness in tangles.items()`) and [expand them](#expand-tangles) to replace blocks with nowebs.
+All we do in `tangle_all` is loop over all the line lists in the tangles (`for filename, liness in tangles.items()`) and [expand them](#expand-tangles) to replace blocks with nowebs. Yes, "liness" has an extra "s". Remember [Smeagol](https://lotr.fandom.com/wiki/Gollum) Pronounce it like "my preciouses, my lineses!"
 
 
 The code will create the subdirectories needed. For example, if you tangle to file `foo/bar/baz/qux.py,` the code creates the directory chain `./foo/br/baz/` if it doesn't exist.
@@ -484,10 +487,10 @@ The code will create the subdirectories needed. For example, if you tangle to fi
 ## TYPES<a id="types"></a>
 
 
-Let us now explain the implementation. The first block in the tangle above is _types_. What is its noweb? It's here.
+Let us now explain the implementation. The first block in the tangle above is _types_. What is the noweb of _types_? It's here.
 
 
-A `Line` is a string, Python base type `str`. `Lines` is the type of a list of lines. `Liness` is the type of a list of list of lines, in a pluralizing shorthand borrowed from Haskell practice. Pronounce `liness` the way [Smeagol](https://lotr.fandom.com/wiki/Gollum) would do: "my precious lineses!"
+A `Line` is a string, Python base type `str`. `Lines` is the type of a list of lines. `Liness` is the type of a list of list of lines, in a pluralizing shorthand borrowed from Haskell practice. Pronounce `liness` the way [Smeagol](https://lotr.fandom.com/wiki/Gollum) would do: "my preciouses, my lineses!"
 
 
 A noweb name is a string, and a tangle file name is a string. A line number is an `int`, a Python base type.
@@ -496,7 +499,7 @@ A noweb name is a string, and a tangle file name is a string. A line number is a
 Nowebs are dictionaries from noweb names to lines.
 
 
-Tangles are dictionaries from file names to Liness --- lists of lists of lines. Tangledown accumulates output for `tangle` files mentioned more than once. If you tangle to `qux.py` in one place and then also tangle to `qux.py` somewhere else, the second tangle won't overwrite the first, but append to it. That's why tangles are lists of lists of lines, one list of lines for each mentioning of a given file. Read more about that in [expand-tangles](#expand-tangles).
+Tangles are dictionaries from file names to Liness --- lists of lists of lines. Tangledown accumulates output for `tangle` files mentioned more than once. If you tangle to `qux.py` in one place and then also tangle to `qux.py` somewhere else, the second tangle won't overwrite the first, but append to it. That's why tangles are lists of lists of lines, one list of lines for each mentioning of a tangle file. Read more about that in [expand-tangles](#expand-tangles).
 
 <!-- #raw -->
 <noweb name="types">
@@ -522,7 +525,7 @@ Tangles = Dict[TangleFileName, Liness]
 </noweb>
 <!-- #endraw -->
 
-We'll implement all the noweb blocks, like `accumulate_contents` and `eatBlockTag`, later. You can read about them, or not, after you've gotten the big picture.
+We'll implement all the noweb blocks, like `accumulate_contents` and `eatBlockTag`, later. You can read about them, or not, after you've gotten more of the big picture.
 
 
 ## DEBUGGING AND REFACTORING
@@ -537,7 +540,7 @@ The Tangledown Kernel doesn't support the Jupytext debugger, yet. Sorry about th
 ## EXPAND TANGLES<a id="expand-tangles"></a>
 
 
-We separated out the inner loop over Liness into another function, `expand_tangles`, so that the [Tangledown Kernel](#section-tangledown-kernel) can import it and apply it to `block` tags. `tangle_all` calls `expand_tangles`; `expand_tangles` calls `expand_blocks`. Read about `expand_blocks` [here](#expand-blocks).
+We separated out the inner loop over Liness \[sic\] into another function, `expand_tangles`, so that the [Tangledown Kernel](#section-tangledown-kernel) can import it and apply it to `block` tags. `tangle_all` calls `expand_tangles`; `expand_tangles` calls `expand_blocks`. Read about `expand_blocks` [here](#expand-blocks).
 
 ```python
 from graphviz import Digraph
@@ -569,7 +572,7 @@ def expand_tangles(liness: Liness, nowebs: Nowebs) -> str:
 ## Tangledown Tangles Itself?
 
 
-Tangledown uses two kinds of regular expressions (regexes) for matching tags in a Markdown file:
+Tangledown has two kinds of regular expressions (regexes) for matching tags in a Markdown file:
 
 - regexes for `noweb` and `tangle` tags that appear on lines by themselves, left-justified
 
@@ -577,19 +580,19 @@ Tangledown uses two kinds of regular expressions (regexes) for matching tags in 
 
 
 Both kinds of regex are ___safe___: they do not match themselves. That means it's safe to run
-`tangledown.py` on this here `READMD.md`, which contains source for `tangledown.py`.
+`tangledown.py` on this here `READMD.md`, which contains tangled source for `tangledown.py`.
 
 
 The two regexes in noweb `left_justified_regexes` match `noweb` and`tangle` tags that appear on lines by themselves, left-justified.
 
 
-> They also wont match `noweb` and `tangle` tags that are indented. That lets us _talk about_ `noweb` and `tangle` tags without processing them: just put the examples you're talking about in an _indented_ Markdown code cell instead of in a triple-backticked code cell.
+> They also wont match `noweb` and `tangle` tags that are indented. That lets us _talk about_ `noweb` and `tangle` tags without processing them: just put the examples you're talking about in an _indented_ Markdown code cell instead of in a triple-backticked Markdown code cell.
 
 
 The names in the attributes of `noweb` and `tangle` tags must start with a letter, and they can contain letters, numbers, hyphens, underscores, whitespace, and dots.
 
 
-The names of `noweb` tags must be globally unique within the Markdown file. Multiple `tangle` tags may refer to the same output file, in which cases, the contents of the second and subsequent `tangle` tags will be appended to a list of lines.
+The names of `noweb` tags must be globally unique within the Markdown file. Multiple `tangle` tags may refer to the same output file, in which cases, Tangledown appends the contents of the second and subsequent `tangle` tags to a list of list of lines, to a `Liness`.
 
 
 ### LEFT-JUSTIIED REGEXES
@@ -616,7 +619,7 @@ tangle_end_re = re.compile (r'^</tangle>$')
 ### ANYWHERE REGEXES
 
 
-The regexes in this noweb, `anywhere_regexes`, match `block` tags that may be indented,  preserving indentation. The `block_end_re` regex also preserves indentation.
+The regexes in this noweb, `anywhere_regexes`, match `block` tags that may be indented,  preserving indentation. The `block_end_re` regex also preserves indentation. Indentation is critical for Python, Haskell, and other languages.
 
 
 I converted the 'o' in 'block' to a harmless regex group `[o]` so that `block_end_re` won't match itself. That makes it safe to run this code on this here document itself.
@@ -712,7 +715,7 @@ Tangledown passes once over the file to collect contents of `noweb` and `tangle`
 
 Let's write two functions,
 
-- `get_aFile`, which parses command-line arguments and produces a file name
+- `get_aFile`, which parses command-line arguments and produces a file name; the default file name is `README.md`
 
 - `get_lines`, which
 
@@ -729,7 +732,7 @@ Let's write two functions,
 ### GET LINES
 
 
-This method for getting a file name from the argument list will eat all options. It works for the Tangledown Kernel and for tangling down from a script or a notebook, but it's not future-proofed.
+This method for getting a file name from the argument list will eat all options. It works for the Tangledown Kernel and for tangling down from a script or a notebook, but it's not future-proofed. Tangledown is still a toy.
 
 <!-- #raw -->
 <noweb name="print-sys-argv">
@@ -749,7 +752,8 @@ print({f'len(sys.argv)': len(sys.argv), f'sys.argv': sys.argv})
 
 ```python
 def get_aFile() -> str:
-    """Get a file name from the command-line arguments."""
+    """Get a file name from the command-line arguments
+    or 'README.md' as a default."""
     <block name="print-sys-argv"></block>
     aFile = 'README.md'  # default
     if len(sys.argv) > 1:
@@ -766,7 +770,8 @@ def get_lines(fn: FileName) -> Lines:
     """Get lines from a file named fn. Replace
     'raw' fenceposts with blank lines. Write full path to
     a secret place for the Tangledown kernel to pick it up.
-    Return tuple of file name (for Tracer) and lines """
+    Return tuple of file path (for TangleUp's Tracer) and
+    lines."""
     <block name="save-afile-path-for-kernel"></block>
     xpath = save_aFile_path_for_kernel(fn)
     with open(fn) as f:
@@ -816,7 +821,7 @@ In the first pass over the file, we'll just save the contents of noweb and tangl
 #### OH NO! THERE ARE TWO WAYS
 
 
-Turns out there are two ways to write literal blocks in Markdown:
+Turns out there are two ways to write code blocks in Markdown:
 
 1. indented by four spaces, useful for quoted Markdown and quoted triple-backtick blocks
 
@@ -835,13 +840,16 @@ The function `first_non_blank_line_is_triple_backtick`, in noweb `oh-no-there-ar
 Remember the _use-mention_ dichotomy from Philosophy class? No problem if you don't.
 
 
-When we're _talking about_ `noweb` and `tangle` tags, but don't want to process them, we indent the tags and use indented code blocks, not triple-backticked. Tangledown won't process indented `noweb` and `tangle` tags because the regexes in noweb `left_justified_regexes` won't match them. We can also talk about triple-backticked blocks by indenting them. Tangledown won't mess with indented triple-backticked blocks, because the regex needs them left-justified. Markdown also wont get confused, so we can quote whole markdown files by indenting them. Yes, your Literate Markdown can _also_, recursively, tangle out more Markdown files. How cool is that? Will the recursive jokes never end?
+When we're _talking about_ `noweb` and `tangle` tags, but don't want to process them, we indent the tags and the code blocks. Tangledown won't process indented `noweb` and `tangle` tags because the regexes in noweb `left_justified_regexes` won't match them. 
+
+
+We can also talk about triple-backticked blocks by indenting them. Tangledown won't mess with indented triple-backticked blocks, because the regex needs them left-justified. Markdown also wont get confused, so we can quote whole markdown files by indenting them. Yes, your Literate Markdown can _also_, recursively, tangle out more Markdown files. How cool is that? Will the recursive jokes never end?
 
 
 [TangleUp](#tangleup) has a heuristic for placing language and id information on triple-backtick fence openers. Our function will retrieve those if present.
 
 
-We also see, below, why the code tracks line numbers. We might do this in some super-bitchin', sophomoric list comprehension, but this is more obvious-at-a-glance. That's a good thing.
+We see, below, why the code tracks line numbers. We might do all this in some super-bitchin', sophomoric list comprehension, but this is more obvious-at-a-glance. That's a good thing.
 
 
 #### FIRST NON-BLANK LINE IS TRIPLE BACKTICK
@@ -874,7 +882,7 @@ def first_non_blank_line_is_triple_backtick (
 #### ACCUMULATE CONTENTS<a id="accumulate-contents"></a>
 
 
-Tangledown is a funny little compiler. It converts Literate Markdown to Python or other languages (Clojure and Markdown are supported, now). We could go nuts and write it in highfalutin' style, and then it would be much bigger, more elaborate if not more elegant, and easier to explain to a Haskell programmer. It might also be less of a toy. However, we want this toy Tangledown for now to be:
+Tangledown is a funny little compiler. It converts Literate Markdown to Python or other languages (Tangledown supports Clojure and Markdown, too). We could go nuts and write it in highfalutin' style, and then it would be much bigger, more elaborate, and easier to explain to a Haskell programmer. It might also be less of a toy. However, we want this toy Tangledown for now to be:
 
 - very short
 
@@ -887,9 +895,6 @@ We'll just use iteration and array indices, but in a tasteful way so our functio
 
 
 The function `accumulate_contents` accumulates the contents of left-justified `noweb` or `tangle` tags. The function starts at line `i` of the input, then figures out whether a tag's first non-blank line is triple backtick, in which case it _won't_ snip four spaces from the beginning of every line, and finally keeps going until it sees the closing fencepost, `</noweb>` or `</tangle>`. It returns a tuple of the line index _after_ the closing fencepost, and the contents, possibly de-dented. The function manipulates line numbers to skip over triple backticks.
-
-
-This also, optionally, modifies nowebs and tangles with fenceposts in language-sensitive comments and org-mode syntax containing the unique names of the nowebs so that [TangleUp](#tangleup) can put changed contents back in the right places.
 
 <!-- #raw -->
 <noweb name="accumulate-contents">
@@ -917,10 +922,10 @@ def accumulate_contents (
 #### ACCUMULATE LINES
 
 
-The function `accumulate_lines` sucks the contents of all the left-justified `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries, `noweb_blocks` and `tangle_files`, keyed by `name` or `file` attributes it finds inside `noweb` or `tangle` tags.
+The function `accumulate_lines` calls `accumulate_contents` to suck up the contents of all the left-justified `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries, `noweb_blocks` and `tangle_files`, keyed by `name` or `file` attributes it finds inside `noweb` or `tangle` tags.
 
 
-Experimental org-style fenceposts are disabled, for now, by passing `None` as the `fencenym`.
+`accumulate_lines` also writes out a trace file for [TangleUp](#tangleup). 
 
 <!-- #raw -->
 <noweb name="accumulate-lines">
@@ -968,7 +973,7 @@ def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Nowebs, Tangles]:
 For [TangleUp](#tangleup), we'll need to trace the entire operation of Tangledown. TangleUp reverses Tangledown, so we will want a best-effort reconstruction of the original Markdown file.
 
 
-Our first approach will be a sequential list of `betweenss: Liness` \[sic\], `nowebs: Noweb`, and `tangles: Tangle`.
+Our first approach will be a sequential list of dictionaries with all the needed information.
 
 <!-- #raw -->
 <noweb name="tracer">
@@ -1155,7 +1160,7 @@ def expand_blocks (nowebs: Nowebs, lines: Lines,
 </noweb>
 <!-- #endraw -->
 
-## Tangle It, Already!<a id="tangle-already"></a>
+# Tangle It, Already!<a id="tangle-already"></a>
 
 
 Ok, you saw [at the top](#how-to-run) that the code in this here Markdown document, README.md, when run as a script, will read in all the lines in ... this here Markdown document, `README.md`. Bootstrapping!
@@ -1172,22 +1177,6 @@ But if you have the chicken (`tangledown.py`), you can import it as a module and
 from tangledown import get_lines, accumulate_lines, tangle_all
 tangle_all(*accumulate_lines(*get_lines("README.md")))
 ```
-
-## DUDE!
-
-
-Some people write "TODO" in their code so they can find all the spots where they thought they might have trouble but didn't have time to write the error-handling (prophylactic) code at the time. I like to write "DUDE" because it sounds like both "TODO" but is more RUDE (also sounds like "DUDE") and funny. This story is supposed to be amusing.
-
-
-## Known Bugs to Fix<a id="section-known-bugs"></a>
-
-
-I must apologize once again, but this is just a toy at this point! Recall the [DISCLAIMER](#disclaimer). The following are stackranked from highest to lowest priority.
-
-
-1. FIXED: writing to "tangledown.py" and to "./tangledown.py" clobbers the file rather than appending. Use pathlib to compare filenames rather than string comparison.
-2. FIXED: tangling to files in the home directory via `~` does not work. We know one dirty way to fix it, but proper practice with pathlib is a better answer.
-
 
 # TODO<a id="todo"></a>
 
@@ -1206,6 +1195,22 @@ I must apologize once again, but this is just a toy at this point! Recall the [D
     - DONE: investigate [Papermill](https://papermill.readthedocs.io/en/latest/) as a solution
 - DONE: find out whether pickle is a better alternative to json for dumping dictionaries for the kernel
 - DONE: Jupytext kernel for `tangledown` so we can run `noweb` and `block` tags that have `block` tags in them.
+
+
+## DUDE!
+
+
+Some people write "TODO" in their code so they can find all the spots where they thought they might have trouble but didn't have time to write the error-handling (prophylactic) code at the time. I like to write "DUDE" because it sounds like both "TODO" but is more RUDE (also sounds like "DUDE") and funny. This story is supposed to be amusing.
+
+
+## Known Bugs to Fix<a id="section-known-bugs"></a>
+
+
+I must apologize once again, but this is just a toy at this point! Recall the [DISCLAIMER](#disclaimer). The following are stackranked from highest to lowest priority.
+
+
+1. FIXED: writing to "tangledown.py" and to "./tangledown.py" clobbers the file rather than appending. Use pathlib to compare filenames rather than string comparison.
+2. FIXED: tangling to files in the home directory via `~` does not work. We know one dirty way to fix it, but proper practice with pathlib is a better answer.
 
 
 # TangleUp Design and Implementation<a id="tangleup"></a>
@@ -1581,7 +1586,7 @@ from tangledown import \
 </noweb>
 <!-- #endraw -->
 
-#### KERNEL INSTANCE VARIABLES
+## KERNEL INSTANCE VARIABLES
 
 
 These get indented on expansion because the `block` tag is indented. You could do it the other way: indent the code here and DON'T indent the block tag, but that would be ugly, wouldn't it?
@@ -1618,7 +1623,7 @@ banner = "Tangledown kernel - expanding 'block' tags"
 </noweb>
 <!-- #endraw -->
 
-### Kernel JSON Installation Helper
+## Kernel JSON Installation Helper
 
 <!-- #raw -->
 <tangle file="./tangledown_kernel/kernel.json">

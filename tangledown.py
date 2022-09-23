@@ -18,7 +18,8 @@ import sys
 from pathlib import Path
 
 def get_aFile() -> str:
-    """Get a file name from the command-line arguments."""
+    """Get a file name from the command-line arguments
+    or 'README.md' as a default."""
     print({f'len(sys.argv)': len(sys.argv), f'sys.argv': sys.argv})
     
     
@@ -37,7 +38,8 @@ def get_lines(fn: FileName) -> Lines:
     """Get lines from a file named fn. Replace
     'raw' fenceposts with blank lines. Write full path to
     a secret place for the Tangledown kernel to pick it up.
-    Return tuple of file name (for Tracer) and lines """
+    Return tuple of file path (for TangleUp's Tracer) and
+    lines."""
     def save_aFile_path_for_kernel(fn: FileName) -> FileName:
         xpath: Path = Path.cwd() / Path(fn).name
         victim_file_name = str(xpath.absolute())
