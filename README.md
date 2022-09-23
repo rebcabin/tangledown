@@ -448,6 +448,7 @@ If you're running the new, optional [Tangledown Kernel](#section-tangledown-kern
 ```python
 <block name="types"></block>
 <block name="openers"></block>
+<block name="tracer"></block>
 <block name="oh-no-there-are-two-ways"></block>
 <block name="accumulate-contents"></block>
 <block name="accumulate-lines"></block>
@@ -456,19 +457,20 @@ If you're running the new, optional [Tangledown Kernel](#section-tangledown-kern
 <block name="expandBlocks"></block>
 <block name="expand-tangles"></block>
 
-def tangle_all(nowebs: Nowebs, tangles: Tangles) -> None:
+def tangle_all(tracer: Tracer, nowebs: Nowebs, tangles: Tangles) -> None:
     for filename, liness in tangles.items ():
         Path(filename).parents[0].mkdir(parents=True, exist_ok=True)
         contents: str = expand_tangles(liness, nowebs)
         with open (filename, 'w') as outfile:
             print(f"WRITING FILE: {filename}")
             outfile.write (contents)
+    tracer.dump()
 
 if __name__ == "__main__":
     fn, lines = get_lines(get_aFile())
     # test_re_matching(lines)
-    nowebs, tangles = accumulate_lines(fn, lines)
-    tangle_all(nowebs, tangles)
+    tracer, nowebs, tangles = accumulate_lines(fn, lines)
+    tangle_all(tracer, nowebs, tangles)
 ```
 
 <!-- #raw -->
@@ -924,19 +926,16 @@ def accumulate_contents (
 
 The function `accumulate_lines` calls `accumulate_contents` to suck up the contents of all the left-justified `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries, `noweb_blocks` and `tangle_files`, keyed by `name` or `file` attributes it finds inside `noweb` or `tangle` tags.
 
-
-`accumulate_lines` also writes out a trace file for [TangleUp](#tangleup). 
-
 <!-- #raw -->
 <noweb name="accumulate-lines">
 <!-- #endraw -->
 
 ```python
 <block name="normalize-file-path"></block>
-<block name="tracer"></block>
 from pprint import pprint
-def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Nowebs, Tangles]:
+def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Tracer, Nowebs, Tangles]:
     tracer = Tracer()
+    tracer.fp = fp
     nowebs: Nowebs = {}
     tangles: Tangles = {}
     i = 0
@@ -959,8 +958,7 @@ def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Nowebs, Tangles]:
         else:
             tracer.add_markdown(i, lines[i])
             i += 1
-    tracer.dump(fp)
-    return nowebs, tangles
+    return tracer, nowebs, tangles
 ```
 
 <!-- #raw -->
@@ -987,6 +985,7 @@ class Tracer:
     trace: List[Dict] = field(default_factory=list)
     line_no = 0
     current_betweens: Lines = field(default_factory=list)
+    fp: Path = None
     def add_markdown(self, i, between: Line):
         self.line_no += 1
         self.current_betweens.append((self.line_no, between))
@@ -1008,9 +1007,9 @@ class Tracer:
         self.trace.append({"ending_line_number": self.line_no, "i": i,
                            "language": language, "id_": id_,
                            "kind": 'tangle', key: tangle_liness})
-    def dump(self, fp: Path):
-        pr = fp.parent
-        fn = fp.name
+    def dump(self):
+        pr = self.fp.parent
+        fn = self.fp.name
         fn2 = fn.translate(str.maketrans('.', '_'))
         # Store the trace in the dir where the input md file is:
         vr = f'tangledown_trace_{fn2}'
@@ -1299,10 +1298,10 @@ def recurse_a_dir(dir_path: Path) -> None:
         if not ok:
             pprint(f'... IGNORING file or dir {p}')
         if ok and q.is_file():
-            nonlocal file_count
+            nonlocal file_count  # Assignment requires 'nonlocal'
             file_count += 1
-            nyms_result.append(gsnym(q))
-            files_result.append(qs)
+            nyms_result.append(gsnym(q))  # 'nonlocal' not required
+            files_result.append(qs)       # because not ass'gt but mutation
         elif ok and p.is_dir:
             recurse_a_dir(p)
 ```
@@ -1762,7 +1761,7 @@ Notice this kernel runs Tangledown on the full file path that's stored in `curre
 current_victim_filepath = ""
 with open(Path.home() / '.tangledown/current_victim_file.txt') as v:
     fp = v.read()
-nowebs, tangles_ = accumulate_lines(*get_lines(fp))
+tracer_, nowebs, tangles_ = accumulate_lines(*get_lines(fp))
 implementation = 'Tangledown'
 implementation_version = '1.0'
 language = 'no-op'

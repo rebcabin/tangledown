@@ -12,7 +12,7 @@ class TangledownKernel(IPythonKernel):
     current_victim_filepath = ""
     with open(Path.home() / '.tangledown/current_victim_file.txt') as v:
         fp = v.read()
-    nowebs, tangles_ = accumulate_lines(*get_lines(fp))
+    tracer_, nowebs, tangles_ = accumulate_lines(*get_lines(fp))
     implementation = 'Tangledown'
     implementation_version = '1.0'
     language = 'no-op'

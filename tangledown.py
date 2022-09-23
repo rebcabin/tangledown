@@ -106,6 +106,48 @@ def test_re_matching(fp: Path, lines: Lines) -> None:
             pass
 
 
+from dataclasses import dataclass, field
+from typing import Union  ## TODO
+@dataclass
+class Tracer:
+    trace: List[Dict] = field(default_factory=list)
+    line_no = 0
+    current_betweens: Lines = field(default_factory=list)
+    fp: Path = None
+    def add_markdown(self, i, between: Line):
+        self.line_no += 1
+        self.current_betweens.append((self.line_no, between))
+    def _end_betweens(self, i):
+        if self.current_betweens:
+            self.trace.append({"ending_line_number": self.line_no, "i": i,
+                               "language": "markdown", "kind": 'between',
+                               "text": self.current_betweens})
+        self.current_betweens = []
+    def add_noweb(self, i, language, id_, key, noweb_lines):
+        self._end_betweens(i)
+        self.line_no = i
+        self.trace.append({"ending_line_number": self.line_no, "i": i,
+                           "language": language, "id_": id_,
+                           "kind": 'noweb', key: noweb_lines})
+    def add_tangle(self, i, language, id_, key, tangle_liness):
+        self._end_betweens(i)
+        self.line_no = i
+        self.trace.append({"ending_line_number": self.line_no, "i": i,
+                           "language": language, "id_": id_,
+                           "kind": 'tangle', key: tangle_liness})
+    def dump(self):
+        pr = self.fp.parent
+        fn = self.fp.name
+        fn2 = fn.translate(str.maketrans('.', '_'))
+        # Store the trace in the dir where the input md file is:
+        vr = f'tangledown_trace_{fn2}'
+        np = pr / (vr + ".py")
+        with open(np, "w") as fs:
+            print(f'{vr} = (', file=fs)
+            pprint(self.trace, stream=fs)
+            print(')', file=fs)
+
+
 triple_backtick_re = re.compile (r'^`[`]`((\w+)?\s*(id=([0-9a-fA-F-]+))?)')
 blank_line_re      = re.compile (r'^\s*$')
 
@@ -147,50 +189,10 @@ def normalize_file_path(tangle_file_attribute: str) -> Path:
     return result.absolute()
 
 
-from dataclasses import dataclass, field
-from typing import Union  ## TODO
-@dataclass
-class Tracer:
-    trace: List[Dict] = field(default_factory=list)
-    line_no = 0
-    current_betweens: Lines = field(default_factory=list)
-    def add_markdown(self, i, between: Line):
-        self.line_no += 1
-        self.current_betweens.append((self.line_no, between))
-    def _end_betweens(self, i):
-        if self.current_betweens:
-            self.trace.append({"ending_line_number": self.line_no, "i": i,
-                               "language": "markdown", "kind": 'between',
-                               "text": self.current_betweens})
-        self.current_betweens = []
-    def add_noweb(self, i, language, id_, key, noweb_lines):
-        self._end_betweens(i)
-        self.line_no = i
-        self.trace.append({"ending_line_number": self.line_no, "i": i,
-                           "language": language, "id_": id_,
-                           "kind": 'noweb', key: noweb_lines})
-    def add_tangle(self, i, language, id_, key, tangle_liness):
-        self._end_betweens(i)
-        self.line_no = i
-        self.trace.append({"ending_line_number": self.line_no, "i": i,
-                           "language": language, "id_": id_,
-                           "kind": 'tangle', key: tangle_liness})
-    def dump(self, fp: Path):
-        pr = fp.parent
-        fn = fp.name
-        fn2 = fn.translate(str.maketrans('.', '_'))
-        # Store the trace in the dir where the input md file is:
-        vr = f'tangledown_trace_{fn2}'
-        np = pr / (vr + ".py")
-        with open(np, "w") as fs:
-            print(f'{vr} = (', file=fs)
-            pprint(self.trace, stream=fs)
-            print(')', file=fs)
-
-
 from pprint import pprint
-def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Nowebs, Tangles]:
+def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Tracer, Nowebs, Tangles]:
     tracer = Tracer()
+    tracer.fp = fp
     nowebs: Nowebs = {}
     tangles: Tangles = {}
     i = 0
@@ -213,8 +215,7 @@ def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Nowebs, Tangles]:
         else:
             tracer.add_markdown(i, lines[i])
             i += 1
-    tracer.dump(fp)
-    return nowebs, tangles
+    return tracer, nowebs, tangles
 
 
 def there_is_a_block_tag (lines: Lines) -> bool:
@@ -263,18 +264,19 @@ def expand_tangles(liness: Liness, nowebs: Nowebs) -> str:
 
 
 
-def tangle_all(nowebs: Nowebs, tangles: Tangles) -> None:
+def tangle_all(tracer: Tracer, nowebs: Nowebs, tangles: Tangles) -> None:
     for filename, liness in tangles.items ():
         Path(filename).parents[0].mkdir(parents=True, exist_ok=True)
         contents: str = expand_tangles(liness, nowebs)
         with open (filename, 'w') as outfile:
             print(f"WRITING FILE: {filename}")
             outfile.write (contents)
+    tracer.dump()
 
 if __name__ == "__main__":
     fn, lines = get_lines(get_aFile())
     # test_re_matching(lines)
-    nowebs, tangles = accumulate_lines(fn, lines)
-    tangle_all(nowebs, tangles)
+    tracer, nowebs, tangles = accumulate_lines(fn, lines)
+    tangle_all(tracer, nowebs, tangles)
 
 
