@@ -882,7 +882,10 @@ We see, below, why the code tracks line numbers. We might do all this in some su
 ### FIRST NON-BLANK LINE IS TRIPLE BACKTICK
 
 
-We must trace `raw` fenceposts, but not copy them to the output.
+Match lines with left-justified triple-backtick. Pass through lines with indented triple-backtick.
+
+
+We must trace `raw` fenceposts, but not copy them to 
 
 <!-- #raw -->
 <noweb name="oh-no-there-are-two-ways">
@@ -960,6 +963,8 @@ The function `accumulate_lines` calls `accumulate_contents` to suck up the conte
 
 ```python
 <block name="normalize-file-path"></block>
+raw_start_re = re.compile("<!-- #raw -->")
+raw_end_re = re.compile("<!-- #endraw -->")
 from pprint import pprint
 def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Tracer, Nowebs, Tangles]:
     tracer = Tracer()
@@ -970,28 +975,86 @@ def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Tracer, Nowebs, Tangles]:
     while i < len(lines):
         noweb_start_match = noweb_start_re.match (lines[i])
         tangle_start_match = tangle_start_re.match (lines[i])
-        if (noweb_start_match):
-            in_between = False
-            key: NowebName = noweb_start_match.group(1)
-            (i, language, id_, nowebs[key]) = \
-                accumulate_contents(lines, i + 1, noweb_end_re)
-            tracer.add_noweb(i, language, id_, key, nowebs[key])
-        elif (tangle_start_match):
-            in_between = False
-            key: TangleFileName = \
-                str(normalize_file_path(tangle_start_match.group(1)))
-            if not (key in tangles):
-                tangles[key]: Liness = []
-            (i, language, id_, things) = accumulate_contents(lines, i + 1, tangle_end_re)
-            tangles[key] += [things]
-            tracer.add_tangle(i, language, id_, key, tangles[key])
+        if noweb_start_match:
+            <block name="acclines_handle_noweb"></block>
+        elif tangle_start_match:
+            <block name="acclines_handle_tangle"></block>
+        elif raw_start_re.match (lines[i]):
+            <block name="acclines_handle_raw"></block>
         else:
-            in_between = True
-            tracer.add_markdown(i, lines[i])
-            i += 1
+            <block name="acclines_handle_markdown"></block>
     if in_between:  # Close out final markdown.
         tracer._end_betweens(i)
     return tracer, nowebs, tangles
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+#### ACCUMULATE LINES: HANDLE RAW
+
+<!-- #raw -->
+<noweb name="acclines_handle_raw">
+<!-- #endraw -->
+
+```python
+pass
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+#### ACCUMULATE LINES: HANDLE MARKDOWN
+
+<!-- #raw -->
+<noweb name="acclines_handle_markdown">
+<!-- #endraw -->
+
+```python
+in_between = True
+tracer.add_markdown(i, lines[i])
+i += 1
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+#### ACCUMULATE LINES: HANDLE NOWEB
+
+<!-- #raw -->
+<noweb name="acclines_handle_noweb">
+<!-- #endraw -->
+
+```python
+in_between = False
+key: NowebName = noweb_start_match.group(1)
+(i, language, id_, nowebs[key]) = \
+    accumulate_contents(lines, i + 1, noweb_end_re)
+tracer.add_noweb(i, language, id_, key, nowebs[key])
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+#### ACCUMULATE LINES: HANDLE TANGLE
+
+<!-- #raw -->
+<noweb name="acclines_handle_tangle">
+<!-- #endraw -->
+
+```python
+in_between = False
+key: TangleFileName = \
+    str(normalize_file_path(tangle_start_match.group(1)))
+if not (key in tangles):
+    tangles[key]: Liness = []
+(i, language, id_, things) = accumulate_contents(lines, i + 1, tangle_end_re)
+tangles[key] += [things]
+tracer.add_tangle(i, language, id_, key, tangles[key])
 ```
 
 <!-- #raw -->
@@ -1131,6 +1194,7 @@ class Tracer:
     fp: Path = None
     # First Pass
     <block name="tracer.add_markdown"></block>
+    <block name="tracer.add_raw"></block>
     <block name="tracer._end_betweens"></block>
     <block name="tracer.add_noweb"></block>
     <block name="tracer.add_tangle"></block>
@@ -1138,6 +1202,22 @@ class Tracer:
     # Second Pass
     <block name="tracer.add_expanded_noweb"></block>
     <block name="tracer.add_expanded_tangle"><block>
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+### TRACER.ADD_RAW
+
+<!-- #raw -->
+<noweb name="tracer.add_raw">
+<!-- #endraw -->
+
+```python
+def add_raw(self, i, between: Line):
+    self.line_no += 1
+    self.current_betweens.append((self.line_no, between))
 ```
 
 <!-- #raw -->
