@@ -703,10 +703,16 @@ def test_re_matching(fp: Path, lines: Lines) -> None:
 </noweb>
 <!-- #endraw -->
 
-## TANGLEDOWN: Two Passes
+# TANGLEDOWN: Two Passes
 
 
 Tangledown passes once over the file to collect contents of `noweb` and `tangle` tags, and again over the `tangle` tags to expand `block` tags. In the second pass, Tangledown substitutes noweb contents for corresponding `block` tags until there are no more `block` tags, creating valid Python.
+
+
+## First Pass: Saving Noweb and Tangle Blocks
+
+
+In the first pass over the file, we'll just save the contents of noweb and tangle into dictionaries, without expanding nested `block` tags.
 
 
 ### GET A FILE NAME
@@ -789,6 +795,31 @@ def get_lines(fn: FileName) -> Lines:
 </noweb>
 <!-- #endraw -->
 
+### NORMALIZE FILE PATH
+
+
+We must normalize file names so that, for example, "foo.txt" and "./foo.txt" indicate the same file and so that `~/` denotes the home directory on Mac and Linux. I didn't test this on Windows.
+
+<!-- #raw -->
+<noweb name="normalize-file-path">
+<!-- #endraw -->
+
+```python
+def anchor_is_tilde(path_str: str) -> bool:
+    result = (path_str[0:2] == "~/") and (Path(path_str).anchor == '')
+    return result
+
+def normalize_file_path(tangle_file_attribute: str) -> Path:
+    result: Path = Path(tangle_file_attribute)
+    if (anchor_is_tilde(tangle_file_attribute)):
+        result = (Path.home() / tangle_file_attribute[2:])
+    return result.absolute()
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
 ### SAVE A FILE PATH FOR THE KERNEL<a id="save-afile-path-for-kernel"></a>
 
 
@@ -814,13 +845,7 @@ def save_aFile_path_for_kernel(fn: FileName) -> FileName:
 </noweb>
 <!-- #endraw -->
 
-### First Pass: Saving Noweb and Tangle Blocks
-
-
-In the first pass over the file, we'll just save the contents of noweb and tangle into dictionaries, without expanding nested `block` tags.
-
-
-#### OH NO! THERE ARE TWO WAYS
+### OH NO! THERE ARE TWO WAYS
 
 
 Turns out there are two ways to write code blocks in Markdown:
@@ -854,7 +879,7 @@ We can also talk about triple-backticked blocks by indenting them. Tangledown wo
 We see, below, why the code tracks line numbers. We might do all this in some super-bitchin', sophomoric list comprehension, but this is more obvious-at-a-glance. That's a good thing.
 
 
-#### FIRST NON-BLANK LINE IS TRIPLE BACKTICK
+### FIRST NON-BLANK LINE IS TRIPLE BACKTICK
 
 <!-- #raw -->
 <noweb name="oh-no-there-are-two-ways">
@@ -881,7 +906,7 @@ def first_non_blank_line_is_triple_backtick (
 </noweb>
 <!-- #endraw -->
 
-#### ACCUMULATE CONTENTS<a id="accumulate-contents"></a>
+### ACCUMULATE CONTENTS<a id="accumulate-contents"></a>
 
 
 Tangledown is a funny little compiler. It converts Literate Markdown to Python or other languages (Tangledown supports Clojure and Markdown, too). We could go nuts and write it in highfalutin' style, and then it would be much bigger, more elaborate, and easier to explain to a Haskell programmer. It might also be less of a toy. However, we want this toy Tangledown for now to be:
@@ -921,7 +946,7 @@ def accumulate_contents (
 </noweb>
 <!-- #endraw -->
 
-#### ACCUMULATE LINES
+### ACCUMULATE LINES
 
 
 The function `accumulate_lines` calls `accumulate_contents` to suck up the contents of all the left-justified `noweb` tags and `tangle` tags out of a file, but doesn't expand any `block` tags that it finds. It just builds up dictionaries, `noweb_blocks` and `tangle_files`, keyed by `name` or `file` attributes it finds inside `noweb` or `tangle` tags.
@@ -965,91 +990,7 @@ def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Tracer, Nowebs, Tangles]:
 </noweb>
 <!-- #endraw -->
 
-#### TRACER
-
-
-For [TangleUp](#tangleup), we'll need to trace the entire operation of Tangledown. TangleUp reverses Tangledown, so we will want a best-effort reconstruction of the original Markdown file.
-
-
-Our first approach will be a sequential list of dictionaries with all the needed information.
-
-<!-- #raw -->
-<noweb name="tracer">
-<!-- #endraw -->
-
-```python
-from dataclasses import dataclass, field
-from typing import Union  ## TODO
-@dataclass
-class Tracer:
-    trace: List[Dict] = field(default_factory=list)
-    line_no = 0
-    current_betweens: Lines = field(default_factory=list)
-    fp: Path = None
-    def add_markdown(self, i, between: Line):
-        self.line_no += 1
-        self.current_betweens.append((self.line_no, between))
-    def _end_betweens(self, i):
-        if self.current_betweens:
-            self.trace.append({"ending_line_number": self.line_no, "i": i,
-                               "language": "markdown", "kind": 'between',
-                               "text": self.current_betweens})
-        self.current_betweens = []
-    def add_noweb(self, i, language, id_, key, noweb_lines):
-        self._end_betweens(i)
-        self.line_no = i
-        self.trace.append({"ending_line_number": self.line_no, "i": i,
-                           "language": language, "id_": id_,
-                           "kind": 'noweb', key: noweb_lines})
-    def add_tangle(self, i, language, id_, key, tangle_liness):
-        self._end_betweens(i)
-        self.line_no = i
-        self.trace.append({"ending_line_number": self.line_no, "i": i,
-                           "language": language, "id_": id_,
-                           "kind": 'tangle', key: tangle_liness})
-    def dump(self):
-        pr = self.fp.parent
-        fn = self.fp.name
-        fn2 = fn.translate(str.maketrans('.', '_'))
-        # Store the trace in the dir where the input md file is:
-        vr = f'tangledown_trace_{fn2}'
-        np = pr / (vr + ".py")
-        with open(np, "w") as fs:
-            print(f'{vr} = (', file=fs)
-            pprint(self.trace, stream=fs)
-            print(')', file=fs)
-```
-
-<!-- #raw -->
-</noweb>
-<!-- #endraw -->
-
-#### NORMALIZE FILE PATH
-
-
-We must normalize file names so that, for example, "foo.txt" and "./foo.txt" indicate the same file and so that `~/` denotes the home directory on Mac and Linux. I didn't test this on Windows.
-
-<!-- #raw -->
-<noweb name="normalize-file-path">
-<!-- #endraw -->
-
-```python
-def anchor_is_tilde(path_str: str) -> bool:
-    result = (path_str[0:2] == "~/") and (Path(path_str).anchor == '')
-    return result
-
-def normalize_file_path(tangle_file_attribute: str) -> Path:
-    result: Path = Path(tangle_file_attribute)
-    if (anchor_is_tilde(tangle_file_attribute)):
-        result = (Path.home() / tangle_file_attribute[2:])
-    return result.absolute()
-```
-
-<!-- #raw -->
-</noweb>
-<!-- #endraw -->
-
-### DUDE!
+## DUDE!
 
 
 There is a lot that can go wrong. We can have all kinds of mal-formed contents:
@@ -1068,20 +1009,20 @@ There is a lot that can go wrong. We can have all kinds of mal-formed contents:
 We'll get to error handling someday, maybe. Tangledown is [just a little toy at the moment](#disclaimer), but I thought it interesting to write about. If it's ever distributed to hostile users, then we will handle all the bad cases. But not now. Let's get the happy case right.
 
 
-### Second Pass: Expanding Blocks<a id="second-pass"></a>
+## Second Pass: Expanding Blocks<a id="second-pass"></a>
 
 
 Iterate over all the `noweb` or `tangle` tag contents and expand the
 `block` tags we find in there, recursively. That means keep going until there are no more `block` tags, because nowebss are allowed (encouraged!) to refer to other nowebs via `block` tags. If there are cycles, this will hang.
 
 
-#### DUDE! HANG?
+### DUDE! HANG?
 
 
 We're doing the happy cases first, and will get to cycle detection someday, maybe.
 
 
-#### THERE IS A BLOCK TAG
+### THERE IS A BLOCK TAG
 
 
 First, we need to detect that some list of lines contains a `block` tag, left-justified or not. That means we must keep running the expander on that list.
@@ -1103,7 +1044,7 @@ def there_is_a_block_tag (lines: Lines) -> bool:
 </noweb>
 <!-- #endraw -->
 
-#### EAT A BLOCK TAG
+### EAT A BLOCK TAG
 
 
 If there is a `block` tag, we must eat the tag and its meaningless contents:
@@ -1127,7 +1068,7 @@ def eat_block_tag (i: LineNumber, lines: Lines) -> LineNumber:
 </noweb>
 <!-- #endraw -->
 
-#### EXPAND BLOCKS<a id="expand-blocks"></a>
+### EXPAND BLOCKS<a id="expand-blocks"></a>
 
 
 The following function does one round of block expansion. The caller must test whether any `block` tags remain, and keep running the expander until there are no more `block` tags. Our functional fu grandmaster might be appalled, but sometimes it's just easier to iterate than to recurse.
@@ -1153,6 +1094,177 @@ def expand_blocks (nowebs: Nowebs, lines: Lines,
         else:
             out_lines.append (lines[i])
     return out_lines
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+## TRACER
+
+
+For [TangleUp](#tangleup), we'll need to trace the entire operation of Tangledown, first and second passes. TangleUp reverses Tangledown, so we will want a best-effort reconstruction of the original Markdown file.
+
+
+Our first approach will be a sequential list of dictionaries with all the needed information.
+
+<!-- #raw -->
+<noweb name="tracer">
+<!-- #endraw -->
+
+```python
+from dataclasses import dataclass, field
+from typing import Union  ## TODO
+@dataclass
+class Tracer:
+    trace: List[Dict] = field(default_factory=list)
+    line_no = 0
+    current_betweens: Lines = field(default_factory=list)
+    fp: Path = None
+    # First Pass
+    <block name="tracer.add_markdown"></block>
+    <block name="tracer._end_betweens"></block>
+    <block name="tracer.add_noweb"></block>
+    <block name="tracer.add_tangle"></block>
+    <block name="tracer.dump"></block>
+    # Second Pass
+    <block name="tracer.add_expanded_noweb"></block>
+    <block name="tracer.add_expanded_tangle"><block>
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+### TRACER.ADD_MARKDOWN
+
+<!-- #raw -->
+<noweb name="tracer.add_markdown">
+<!-- #endraw -->
+
+```python
+def add_markdown(self, i, between: Line):
+    self.line_no += 1
+    self.current_betweens.append((self.line_no, between))
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+### TRACER._END_BETWEENS
+
+<!-- #raw -->
+<noweb name="tracer._end_betweens">
+<!-- #endraw -->
+
+```python
+def _end_betweens(self, i):
+    if self.current_betweens:
+        self.trace.append({"ending_line_number": self.line_no, "i": i,
+                           "language": "markdown", "kind": 'between',
+                           "text": self.current_betweens})
+    self.current_betweens = []
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+### TRACER.ADD_NOWEB
+
+<!-- #raw -->
+<noweb name="tracer.add_noweb">
+<!-- #endraw -->
+
+```python
+def add_noweb(self, i, language, id_, key, noweb_lines):
+    self._end_betweens(i)
+    self.line_no = i
+    self.trace.append({"ending_line_number": self.line_no, "i": i,
+                       "language": language, "id_": id_,
+                       "kind": 'noweb', key: noweb_lines})
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+### TRACER.ADD_TANGLE
+
+<!-- #raw -->
+<noweb name="tracer.add_tangle">
+<!-- #endraw -->
+
+```python
+def add_tangle(self, i, language, id_, key, tangle_liness):
+    self._end_betweens(i)
+    self.line_no = i
+    self.trace.append({"ending_line_number": self.line_no, "i": i,
+                       "language": language, "id_": id_,
+                       "kind": 'tangle', key: tangle_liness})
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+### TRACER.ADD_EXPANDED_NOWEB
+
+<!-- #raw -->
+<noweb name="tracer.add_expanded_noweb">
+<!-- #endraw -->
+
+```python
+def add_expandedn_noweb(self, i, language, id_, key, noweb_lines):
+    self._end_betweens(i)
+    self.line_no = i
+    self.trace.append({"ending_line_number": self.line_no, "i": i,
+                       "language": language, "id_": id_,
+                       "kind": 'expanded_noweb', key: noweb_lines})
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+### TRACER.ADD_EXPANDED_TANGLE
+
+<!-- #raw -->
+<noweb name="tracer.add_expanded_tangle">
+<!-- #endraw -->
+
+```python
+def add_expanded_tangle(self, i, language, id_, key, tangle_liness):
+    self._end_betweens(i)
+    self.line_no = i
+    self.trace.append({"ending_line_number": self.line_no, "i": i,
+                       "language": language, "id_": id_,
+                       "kind": 'expanded_tangle', key: tangle_liness})
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+### TRACER.DUMP
+
+<!-- #raw -->
+<noweb name="tracer.dump">
+<!-- #endraw -->
+
+```python
+def dump(self):
+    pr = self.fp.parent
+    fn = self.fp.name
+    fn2 = fn.translate(str.maketrans('.', '_'))
+    # Store the trace in the dir where the input md file is:
+    vr = f'tangledown_trace_{fn2}'
+    np = pr / (vr + ".py")
+    with open(np, "w") as fs:
+        print(f'{vr} = (', file=fs)
+        pprint(self.trace, stream=fs)
+        print(')', file=fs)
 ```
 
 <!-- #raw -->
