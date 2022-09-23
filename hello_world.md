@@ -34,10 +34,7 @@ Tangle the code out of this here Markdown file using tangledown as a module.
 
 ```python
 from tangledown import get_lines, accumulate_lines, tangle_all
-```
-
-```python
-tangle_all(*accumulate_lines(get_lines("hello_world.md")))
+tangle_all(*accumulate_lines(*get_lines("hello_world.md")))
 ```
 
 Call the "hello_world" function imported from the "hello_world" module.
@@ -53,20 +50,20 @@ Isn't that cool?
 Well, hell, let's bootstrap tangledown itself from "README.md." This is how you bootstrap a compiler.
 
 ```python
-tangle_all(*accumulate_lines(get_lines("README.md")))
+tangle_all(*accumulate_lines(*get_lines("README.md")))
 ```
 
 Do it again to make sure it all worked!
 
 ```python
-tangle_all(*accumulate_lines(get_lines("README.md")))
+tangle_all(*accumulate_lines(*get_lines("README.md")))
 ```
 
 Hot Dayyum! Here is a deeper test that everything is ok:
 
 ```python
 from tangledown import test_re_matching
-test_re_matching(get_lines("README.md"))
+test_re_matching(*get_lines("README.md"))
 ```
 
 ```python
