@@ -460,7 +460,7 @@ If you're running the new, optional [Tangledown Kernel](#section-tangledown-kern
 def tangle_all(tracer: Tracer, nowebs: Nowebs, tangles: Tangles) -> None:
     for filename, liness in tangles.items ():
         Path(filename).parents[0].mkdir(parents=True, exist_ok=True)
-        contents: str = expand_tangles(liness, nowebs)
+        contents: str = expand_tangles(tracer, liness, nowebs)
         with open (filename, 'w') as outfile:
             print(f"WRITING FILE: {filename}")
             outfile.write (contents)
@@ -558,11 +558,11 @@ g
 <!-- #endraw -->
 
 ```python
-def expand_tangles(liness: Liness, nowebs: Nowebs) -> str:
+def expand_tangles(tracer: Tracer, liness: Liness, nowebs: Nowebs) -> str:
     contents: Lines = []
     for lines in liness:
         while there_is_a_block_tag (lines):
-            lines = expand_blocks (nowebs, lines)
+            lines = expand_blocks (tracer, nowebs, lines)
         contents += lines
     return ''.join(contents)
 ```
@@ -881,6 +881,9 @@ We see, below, why the code tracks line numbers. We might do all this in some su
 
 ### FIRST NON-BLANK LINE IS TRIPLE BACKTICK
 
+
+We must trace `raw` fenceposts, but not copy them to the output.
+
 <!-- #raw -->
 <noweb name="oh-no-there-are-two-ways">
 <!-- #endraw -->
@@ -968,11 +971,13 @@ def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Tracer, Nowebs, Tangles]:
         noweb_start_match = noweb_start_re.match (lines[i])
         tangle_start_match = tangle_start_re.match (lines[i])
         if (noweb_start_match):
+            in_between = False
             key: NowebName = noweb_start_match.group(1)
             (i, language, id_, nowebs[key]) = \
                 accumulate_contents(lines, i + 1, noweb_end_re)
             tracer.add_noweb(i, language, id_, key, nowebs[key])
         elif (tangle_start_match):
+            in_between = False
             key: TangleFileName = \
                 str(normalize_file_path(tangle_start_match.group(1)))
             if not (key in tangles):
@@ -981,8 +986,11 @@ def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Tracer, Nowebs, Tangles]:
             tangles[key] += [things]
             tracer.add_tangle(i, language, id_, key, tangles[key])
         else:
+            in_between = True
             tracer.add_markdown(i, lines[i])
             i += 1
+    if in_between:  # Close out final markdown.
+        tracer._end_betweens(i)
     return tracer, nowebs, tangles
 ```
 
@@ -1078,7 +1086,7 @@ The following function does one round of block expansion. The caller must test w
 <!-- #endraw -->
 
 ```python
-def expand_blocks (nowebs: Nowebs, lines: Lines,
+def expand_blocks (tracer: Tracer, nowebs: Nowebs, lines: Lines,
                    language: str = "python") -> Lines:
     out_lines = []
     block_key: NowebName = ""
@@ -1262,7 +1270,7 @@ def dump(self):
     vr = f'tangledown_trace_{fn2}'
     np = pr / (vr + ".py")
     with open(np, "w") as fs:
-        print(f'{vr} = (', file=fs)
+        print(f'sequential_structure = (', file=fs)
         pprint(self.trace, stream=fs)
         print(')', file=fs)
 ```
@@ -1349,7 +1357,7 @@ When you modify your source tree, `tangleup` puts the modified code back into th
 To assist TangleUp, Tangledown records unique names for existing noweb blocks along with the tangled source. Tangledown also records robust locations for existing blocks. _Robust_ means that the boundary locations are flexible: starting and ending line and character positions in a source file are not enough because changing an early one invalidates all later ones.
 
 
-## When There Is No Existing Markdown File
+## NO PRE-EXISTING MARKDOWN
 
 
 We don't need the trace file for this case.
@@ -1682,16 +1690,91 @@ def tangleup_overwrite_markdown(
 </noweb>
 <!-- #endraw -->
 
-## When there is a Pre-Existing Markdown File
+## YES PRE-EXISTING MARKDOWN
+
+
+### NO CHANGES ON DISK
+
+
+If there are no changes to the tangled files on disk, then we must merely reassemble the nowebs, tangles, and block tags from the files on disk. On its first pass, Tangledown recorded the structure of nowebs and tangles and of the Markdown that surrounds them. When detangling a file:
+
+1. look for every tangle that mentions that file
+
+
+### YES CHANGES ON DISK
+
+
+#### CHANGES TO EXISTING CONTENTS
+
+
+#### NEW CONTENTS
+
+
+#### DELETED CONTENTS
 
 
 ### FIRST SHOT
 
+
+**PRO TIP**: For the Tangldown Kernel, if your little scripts contain noweb tags, surround them with tangle to `/dev/null`, reload the kernel spec, restart the kernel, then you can run them in the notebook.
+
+
+<tangle file="/dev/null">
+
 ```python
-with open("./.tangledown-trace-foobar_md.py") as f:
-    contents = f.read()
-contents
+from pprint import pprint
+from tangledown_trace_foobar_md import sequential_structure as cells
+pprint(cells)
+fn = "tanglup_foobar.md"
+line_no = 0
+for cell in cells:
+    if cell["kind"] == "between":
+        <block name="tangleup_write_between"></block>
+    elif cell["kind"] == "noweb":
+        <block name="tangleup_write_noweb"></block>
+    elif cell["kind"] == "tangle":
+        <block name="tangleup_write_tangle"></block>
+    else:
+        assert False, f"unknown kind: {cell['kind']}"
 ```
+
+</tangle>
+
+<!-- #raw -->
+<noweb name="tangleup_write_between">
+<!-- #endraw -->
+
+```python
+pass
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+<!-- #raw -->
+<noweb name="tangleup_write_noweb">
+<!-- #endraw -->
+
+```python
+pass
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
+
+<!-- #raw -->
+<noweb name="tangleup_write_tangle">
+<!-- #endraw -->
+
+```python
+pass
+```
+
+<!-- #raw -->
+</noweb>
+<!-- #endraw -->
 
 ## UNIT TESTS
 
@@ -1802,6 +1885,9 @@ The kernel calls [`expand_tangles`](#expand-tangles) after reformatting the line
 
 > **NOTE**: You will get errors if you run this cell in the notebook.
 
+
+TODO: plumb a Tracer through here?
+
 <!-- #raw -->
 <tangle file="./tangledown_kernel/tangledown_kernel.py">
 <!-- #endraw -->
@@ -1815,7 +1901,7 @@ class TangledownKernel(IPythonKernel):
         if not silent:
             cleaned_lines = [line + '\n' for line in code.split('\n')]
             # HERE'S THE BEEF!
-            expanded_code = expand_tangles([cleaned_lines], self.nowebs)
+            expanded_code = expand_tangles(None, [cleaned_lines], self.nowebs)
             reply_content = await super().do_execute(
                 expanded_code, silent, store_history, user_expressions)
             stream_content = {

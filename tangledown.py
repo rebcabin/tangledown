@@ -152,7 +152,7 @@ class Tracer:
         vr = f'tangledown_trace_{fn2}'
         np = pr / (vr + ".py")
         with open(np, "w") as fs:
-            print(f'{vr} = (', file=fs)
+            print(f'sequential_structure = (', file=fs)
             pprint(self.trace, stream=fs)
             print(')', file=fs)
     
@@ -228,11 +228,13 @@ def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Tracer, Nowebs, Tangles]:
         noweb_start_match = noweb_start_re.match (lines[i])
         tangle_start_match = tangle_start_re.match (lines[i])
         if (noweb_start_match):
+            in_between = False
             key: NowebName = noweb_start_match.group(1)
             (i, language, id_, nowebs[key]) = \
                 accumulate_contents(lines, i + 1, noweb_end_re)
             tracer.add_noweb(i, language, id_, key, nowebs[key])
         elif (tangle_start_match):
+            in_between = False
             key: TangleFileName = \
                 str(normalize_file_path(tangle_start_match.group(1)))
             if not (key in tangles):
@@ -241,8 +243,11 @@ def accumulate_lines(fp: Path, lines: Lines) -> Tuple[Tracer, Nowebs, Tangles]:
             tangles[key] += [things]
             tracer.add_tangle(i, language, id_, key, tangles[key])
         else:
+            in_between = True
             tracer.add_markdown(i, lines[i])
             i += 1
+    if in_between:  # Close out final markdown.
+        tracer._end_betweens(i)
     return tracer, nowebs, tangles
 
 
@@ -264,7 +269,7 @@ def eat_block_tag (i: LineNumber, lines: Lines) -> LineNumber:
             pass
 
 
-def expand_blocks (nowebs: Nowebs, lines: Lines,
+def expand_blocks (tracer: Tracer, nowebs: Nowebs, lines: Lines,
                    language: str = "python") -> Lines:
     out_lines = []
     block_key: NowebName = ""
@@ -282,11 +287,11 @@ def expand_blocks (nowebs: Nowebs, lines: Lines,
     return out_lines
 
 
-def expand_tangles(liness: Liness, nowebs: Nowebs) -> str:
+def expand_tangles(tracer: Tracer, liness: Liness, nowebs: Nowebs) -> str:
     contents: Lines = []
     for lines in liness:
         while there_is_a_block_tag (lines):
-            lines = expand_blocks (nowebs, lines)
+            lines = expand_blocks (tracer, nowebs, lines)
         contents += lines
     return ''.join(contents)
 
@@ -295,7 +300,7 @@ def expand_tangles(liness: Liness, nowebs: Nowebs) -> str:
 def tangle_all(tracer: Tracer, nowebs: Nowebs, tangles: Tangles) -> None:
     for filename, liness in tangles.items ():
         Path(filename).parents[0].mkdir(parents=True, exist_ok=True)
-        contents: str = expand_tangles(liness, nowebs)
+        contents: str = expand_tangles(tracer, liness, nowebs)
         with open (filename, 'w') as outfile:
             print(f"WRITING FILE: {filename}")
             outfile.write (contents)

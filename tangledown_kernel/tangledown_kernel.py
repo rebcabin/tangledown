@@ -34,7 +34,7 @@ class TangledownKernel(IPythonKernel):
         if not silent:
             cleaned_lines = [line + '\n' for line in code.split('\n')]
             # HERE'S THE BEEF!
-            expanded_code = expand_tangles([cleaned_lines], self.nowebs)
+            expanded_code = expand_tangles(None, [cleaned_lines], self.nowebs)
             reply_content = await super().do_execute(
                 expanded_code, silent, store_history, user_expressions)
             stream_content = {
