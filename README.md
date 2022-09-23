@@ -657,7 +657,6 @@ import re
 import sys
 from pathlib import Path
 
-<block name="types"></block>
 <block name="getting a file and its lines"></block>
 <block name="left_justified_regexes"></block>
 <block name="anywhere_regexes"></block>
