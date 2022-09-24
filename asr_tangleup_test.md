@@ -4,7 +4,7 @@
 ## .lein-failures
 
 <!-- #raw -->
-<noweb name=".lein-failures_8F66A9">
+<noweb name=".lein-failures_085450">
 <!-- #endraw -->
 
 ```
@@ -19,7 +19,7 @@
 <!-- #endraw -->
 
 ```
-<block name=".lein-failures_8F66A9"></block>
+<block name=".lein-failures_085450"></block>
 ```
 
 <!-- #raw -->
@@ -29,10 +29,10 @@
 ## project.clj
 
 <!-- #raw -->
-<noweb name="project_0589EE">
+<noweb name="project_53FFF1">
 <!-- #endraw -->
 
-```clojure id=257579db-f829-42d6-8d2f-6c33b8539c65
+```clojure id=a9341f3e-5c07-4023-a2dc-458ea75a01df
 (defproject asr "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
@@ -99,6 +99,18 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 ```
 
 <!-- #raw -->
@@ -109,8 +121,8 @@
 <tangle file="/Users/brian/Dropbox/Mac/Documents/GitHub/tangledown/examples/asr/asr/project.clj">
 <!-- #endraw -->
 
-```clojure id=257579db-f829-42d6-8d2f-6c33b8539c65
-<block name="project_0589EE"></block>
+```clojure id=a9341f3e-5c07-4023-a2dc-458ea75a01df
+<block name="project_53FFF1"></block>
 ```
 
 <!-- #raw -->
@@ -120,7 +132,7 @@
 ## LICENSE
 
 <!-- #raw -->
-<noweb name="LICENSE_44DA00">
+<noweb name="LICENSE_EFDAFA">
 <!-- #endraw -->
 
 ```
@@ -470,6 +482,18 @@ https://www.gnu.org/software/classpath/license.html."
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 ```
 
 <!-- #raw -->
@@ -481,7 +505,7 @@ https://www.gnu.org/software/classpath/license.html."
 <!-- #endraw -->
 
 ```
-<block name="LICENSE_44DA00"></block>
+<block name="LICENSE_EFDAFA"></block>
 ```
 
 <!-- #raw -->
@@ -491,10 +515,10 @@ https://www.gnu.org/software/classpath/license.html."
 ## core_test.clj
 
 <!-- #raw -->
-<noweb name="core_test_8E7372">
+<noweb name="core_test_FEC9CA">
 <!-- #endraw -->
 
-```clojure id=4132b246-d320-4c57-b109-4380d0df9d83
+```clojure id=2b6c7b96-af88-4d97-92d7-f6818e4ed349
 (ns asr.core-test
   (:require [clojure.test :refer :all]
             [asr.core :refer :all]))
@@ -502,6 +526,18 @@ https://www.gnu.org/software/classpath/license.html."
 (deftest a-test
   (testing "FIXME, I fail."
     (is (= 0 1))))
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -578,8 +614,8 @@ https://www.gnu.org/software/classpath/license.html."
 <tangle file="/Users/brian/Dropbox/Mac/Documents/GitHub/tangledown/examples/asr/asr/test/asr/core_test.clj">
 <!-- #endraw -->
 
-```clojure id=4132b246-d320-4c57-b109-4380d0df9d83
-<block name="core_test_8E7372"></block>
+```clojure id=2b6c7b96-af88-4d97-92d7-f6818e4ed349
+<block name="core_test_FEC9CA"></block>
 ```
 
 <!-- #raw -->
@@ -589,7 +625,7 @@ https://www.gnu.org/software/classpath/license.html."
 ## CHANGELOG.md
 
 <!-- #raw -->
-<noweb name="CHANGELOG_F6F333">
+<noweb name="CHANGELOG_EE0942">
 <!-- #endraw -->
 
     # Change Log
@@ -655,6 +691,12 @@ https://www.gnu.org/software/classpath/license.html."
     
     
     
+    
+    
+    
+    
+    
+    
 
 <!-- #raw -->
 </noweb>
@@ -665,7 +707,7 @@ https://www.gnu.org/software/classpath/license.html."
 <!-- #endraw -->
 
 ```markdown
-<block name="CHANGELOG_F6F333"></block>
+<block name="CHANGELOG_EE0942"></block>
 ```
 
 <!-- #raw -->
@@ -675,7 +717,7 @@ https://www.gnu.org/software/classpath/license.html."
 ## pom.properties
 
 <!-- #raw -->
-<noweb name="pom_6A7A6F">
+<noweb name="pom_FB70F6">
 <!-- #endraw -->
 
 ```
@@ -693,7 +735,7 @@ version=0.1.0-SNAPSHOT
 <!-- #endraw -->
 
 ```
-<block name="pom_6A7A6F"></block>
+<block name="pom_FB70F6"></block>
 ```
 
 <!-- #raw -->
@@ -703,11 +745,23 @@ version=0.1.0-SNAPSHOT
 ## leiningen.core.classpath.extract-native-dependencies
 
 <!-- #raw -->
-<noweb name="leiningen.core.classpath_426D6D">
+<noweb name="leiningen.core.classpath_236BC7">
 <!-- #endraw -->
 
 ```
 [{:dependencies {org.clojure/clojure {:vsn "1.11.1", :native-prefix nil}, org.nrepl/incomplete {:vsn "0.1.0", :native-prefix nil}, org.clojure/core.specs.alpha {:vsn "0.2.62", :native-prefix nil}, compliment {:vsn "0.3.9", :native-prefix nil}, org.clojure/spec.alpha {:vsn "0.3.218", :native-prefix nil}, swiss-arrows {:vsn "0.6.0", :native-prefix nil}, camel-snake-kebab {:vsn "0.4.3", :native-prefix nil}, org.clojure/core.logic {:vsn "1.0.1", :native-prefix nil}, instaparse {:vsn "1.4.12", :native-prefix nil}, nrepl {:vsn "0.9.0", :native-prefix nil}, org.clojure/test.check {:vsn "1.1.1", :native-prefix nil}}, :native-path "target/default+test+test/native"} {:native-path "target/default+test+test/native", :dependencies {org.clojure/clojure {:vsn "1.11.1", :native-prefix nil, :native? false}, org.nrepl/incomplete {:vsn "0.1.0", :native-prefix nil, :native? false}, org.clojure/core.specs.alpha {:vsn "0.2.62", :native-prefix nil, :native? false}, compliment {:vsn "0.3.9", :native-prefix nil, :native? false}, org.clojure/spec.alpha {:vsn "0.3.218", :native-prefix nil, :native? false}, swiss-arrows {:vsn "0.6.0", :native-prefix nil, :native? false}, camel-snake-kebab {:vsn "0.4.3", :native-prefix nil, :native? false}, org.clojure/core.logic {:vsn "1.0.1", :native-prefix nil, :native? false}, instaparse {:vsn "1.4.12", :native-prefix nil, :native? false}, nrepl {:vsn "0.9.0", :native-prefix nil, :native? false}, org.clojure/test.check {:vsn "1.1.1", :native-prefix nil, :native? false}}}]```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -769,7 +823,7 @@ version=0.1.0-SNAPSHOT
 <!-- #endraw -->
 
 ```
-<block name="leiningen.core.classpath_426D6D"></block>
+<block name="leiningen.core.classpath_236BC7"></block>
 ```
 
 <!-- #raw -->
@@ -779,7 +833,7 @@ version=0.1.0-SNAPSHOT
 ## pom.properties
 
 <!-- #raw -->
-<noweb name="pom_469F9A">
+<noweb name="pom_8D3457">
 <!-- #endraw -->
 
 ```
@@ -797,7 +851,7 @@ version=0.1.0-SNAPSHOT
 <!-- #endraw -->
 
 ```
-<block name="pom_469F9A"></block>
+<block name="pom_8D3457"></block>
 ```
 
 <!-- #raw -->
@@ -807,11 +861,23 @@ version=0.1.0-SNAPSHOT
 ## leiningen.core.classpath.extract-native-dependencies
 
 <!-- #raw -->
-<noweb name="leiningen.core.classpath_EE637B">
+<noweb name="leiningen.core.classpath_E9962D">
 <!-- #endraw -->
 
 ```
 [{:dependencies {org.clojure/clojure {:vsn "1.11.1", :native-prefix nil}, org.nrepl/incomplete {:vsn "0.1.0", :native-prefix nil}, org.clojure/core.specs.alpha {:vsn "0.2.62", :native-prefix nil}, compliment {:vsn "0.3.9", :native-prefix nil}, org.clojure/spec.alpha {:vsn "0.3.218", :native-prefix nil}, swiss-arrows {:vsn "0.6.0", :native-prefix nil}, camel-snake-kebab {:vsn "0.4.3", :native-prefix nil}, org.clojure/core.logic {:vsn "1.0.1", :native-prefix nil}, instaparse {:vsn "1.4.12", :native-prefix nil}, nrepl {:vsn "0.9.0", :native-prefix nil}, org.clojure/test.check {:vsn "1.1.1", :native-prefix nil}}, :native-path "target/default/native"} {:native-path "target/default/native", :dependencies {org.clojure/clojure {:vsn "1.11.1", :native-prefix nil, :native? false}, org.nrepl/incomplete {:vsn "0.1.0", :native-prefix nil, :native? false}, org.clojure/core.specs.alpha {:vsn "0.2.62", :native-prefix nil, :native? false}, compliment {:vsn "0.3.9", :native-prefix nil, :native? false}, org.clojure/spec.alpha {:vsn "0.3.218", :native-prefix nil, :native? false}, swiss-arrows {:vsn "0.6.0", :native-prefix nil, :native? false}, camel-snake-kebab {:vsn "0.4.3", :native-prefix nil, :native? false}, org.clojure/core.logic {:vsn "1.0.1", :native-prefix nil, :native? false}, instaparse {:vsn "1.4.12", :native-prefix nil, :native? false}, nrepl {:vsn "0.9.0", :native-prefix nil, :native? false}, org.clojure/test.check {:vsn "1.1.1", :native-prefix nil, :native? false}}}]```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -873,7 +939,7 @@ version=0.1.0-SNAPSHOT
 <!-- #endraw -->
 
 ```
-<block name="leiningen.core.classpath_EE637B"></block>
+<block name="leiningen.core.classpath_E9962D"></block>
 ```
 
 <!-- #raw -->
@@ -883,11 +949,23 @@ version=0.1.0-SNAPSHOT
 ## repl-port
 
 <!-- #raw -->
-<noweb name="repl-port_446AFA">
+<noweb name="repl-port_6A15EC">
 <!-- #endraw -->
 
 ```
 63331```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -949,7 +1027,7 @@ version=0.1.0-SNAPSHOT
 <!-- #endraw -->
 
 ```
-<block name="repl-port_446AFA"></block>
+<block name="repl-port_6A15EC"></block>
 ```
 
 <!-- #raw -->
@@ -959,11 +1037,11 @@ version=0.1.0-SNAPSHOT
 ## .hgignore
 
 <!-- #raw -->
-<noweb name=".hgignore_44EF22">
+<noweb name=".hgignore_14DA39">
 <!-- #endraw -->
 
 ```
-<block name=".hgignore_353FE3"></block>
+<block name=".hgignore_F91F1E"></block>
 
 
 ```
@@ -977,7 +1055,7 @@ version=0.1.0-SNAPSHOT
 <!-- #endraw -->
 
 ```
-<block name=".hgignore_44EF22"></block>
+<block name=".hgignore_14DA39"></block>
 ```
 
 <!-- #raw -->
@@ -987,7 +1065,7 @@ version=0.1.0-SNAPSHOT
 ## README.md
 
 <!-- #raw -->
-<noweb name="README_D090C2">
+<noweb name="README_78018C">
 <!-- #endraw -->
 
     # asr
@@ -1067,6 +1145,12 @@ version=0.1.0-SNAPSHOT
     
     
     
+    
+    
+    
+    
+    
+    
 
 <!-- #raw -->
 </noweb>
@@ -1077,7 +1161,7 @@ version=0.1.0-SNAPSHOT
 <!-- #endraw -->
 
 ```markdown
-<block name="README_D090C2"></block>
+<block name="README_78018C"></block>
 ```
 
 <!-- #raw -->
@@ -1087,11 +1171,11 @@ version=0.1.0-SNAPSHOT
 ## .gitignore
 
 <!-- #raw -->
-<noweb name=".gitignore_99AD40">
+<noweb name=".gitignore_07E745">
 <!-- #endraw -->
 
 ```
-<block name=".gitignore_6C9E50"></block>
+<block name=".gitignore_5042DC"></block>
 
 
 ```
@@ -1105,7 +1189,7 @@ version=0.1.0-SNAPSHOT
 <!-- #endraw -->
 
 ```
-<block name=".gitignore_99AD40"></block>
+<block name=".gitignore_07E745"></block>
 ```
 
 <!-- #raw -->
@@ -1115,12 +1199,18 @@ version=0.1.0-SNAPSHOT
 ## intro.md
 
 <!-- #raw -->
-<noweb name="intro_0935EE">
+<noweb name="intro_C98463">
 <!-- #endraw -->
 
     # Introduction to asr
     
     TODO: write [great documentation](http://jacobian.org/writing/what-to-write/)
+    
+    
+    
+    
+    
+    
     
     
     
@@ -1164,7 +1254,7 @@ version=0.1.0-SNAPSHOT
 <!-- #endraw -->
 
 ```markdown
-<block name="intro_0935EE"></block>
+<block name="intro_C98463"></block>
 ```
 
 <!-- #raw -->
@@ -1174,10 +1264,10 @@ version=0.1.0-SNAPSHOT
 ## core.clj
 
 <!-- #raw -->
-<noweb name="core_4EB236">
+<noweb name="core_F5F43B">
 <!-- #endraw -->
 
-```clojure id=912739c7-a782-41e3-90c4-1f63f992caed
+```clojure id=11ba9d25-2ad6-4df8-b614-eab51105837e
 (ns asr.core
   (:gen-class))
 
@@ -1185,6 +1275,18 @@ version=0.1.0-SNAPSHOT
   "I don't do a whole lot ... yet."
   [& args]
   (println "Hello, World!"))
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1261,8 +1363,8 @@ version=0.1.0-SNAPSHOT
 <tangle file="/Users/brian/Dropbox/Mac/Documents/GitHub/tangledown/examples/asr/asr/src/asr/core.clj">
 <!-- #endraw -->
 
-```clojure id=912739c7-a782-41e3-90c4-1f63f992caed
-<block name="core_4EB236"></block>
+```clojure id=11ba9d25-2ad6-4df8-b614-eab51105837e
+<block name="core_F5F43B"></block>
 ```
 
 <!-- #raw -->
@@ -1272,7 +1374,7 @@ version=0.1.0-SNAPSHOT
 ## genetically-engineered-asr.nextjournal-checkpoint.md
 
 <!-- #raw -->
-<noweb name="genetically-engineered-asr.nextjournal-checkpoint_A51397">
+<noweb name="genetically-engineered-asr.nextjournal-checkpoint_05BF0E">
 <!-- #endraw -->
 
     # Genetically Engineered ASR
@@ -2845,6 +2947,12 @@ version=0.1.0-SNAPSHOT
     
     ```
     </details>
+    
+    
+    
+    
+    
+    
     
     
     
@@ -2888,7 +2996,7 @@ version=0.1.0-SNAPSHOT
 <!-- #endraw -->
 
 ```markdown
-<block name="genetically-engineered-asr.nextjournal-checkpoint_A51397"></block>
+<block name="genetically-engineered-asr.nextjournal-checkpoint_05BF0E"></block>
 ```
 
 <!-- #raw -->
@@ -2898,7 +3006,7 @@ version=0.1.0-SNAPSHOT
 ## genetically-engineered-asr.nextjournal.md
 
 <!-- #raw -->
-<noweb name="genetically-engineered-asr.nextjournal_B3AA16">
+<noweb name="genetically-engineered-asr.nextjournal_2FF0A2">
 <!-- #endraw -->
 
     # Genetically Engineered ASR
@@ -4504,6 +4612,12 @@ version=0.1.0-SNAPSHOT
     
     
     
+    
+    
+    
+    
+    
+    
 
 <!-- #raw -->
 </noweb>
@@ -4514,7 +4628,7 @@ version=0.1.0-SNAPSHOT
 <!-- #endraw -->
 
 ```markdown
-<block name="genetically-engineered-asr.nextjournal_B3AA16"></block>
+<block name="genetically-engineered-asr.nextjournal_2FF0A2"></block>
 ```
 
 <!-- #raw -->

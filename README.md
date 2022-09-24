@@ -952,6 +952,14 @@ def accumulate_contents (
 </noweb>
 <!-- #endraw -->
 
+### NEW ACCUMULATE LINES
+
+
+The old `accumulate_lines` has reached the end of its life. It ignores raw cells, except for some hacks for raw noweb and tangle tags. The `new_accumulate_lines` must parse several kinds of line-sequences explicitly. Let's be careful not to call line-sequences _blocks_ so we don't confuse line-sequences with block tags.
+
+1. Regular 
+
+
 ### ACCUMULATE LINES
 
 
