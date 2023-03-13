@@ -27,7 +27,7 @@ In here, we will show you how to combine thinking, writing, coding, and testing 
 ### NARRATIVE ORDER
 
 
-Narrative order is the natural order for a story, but it's not the natural order for interpreters and compilers, even for Jupyter kernels. Tangledown lets you write in narrative order, than, later, tangle the code out into executable order, where the definitions of the parts precede the story. That executable order is backwards and inside-out from the reader's point of view! TangleUp lets you maintain your code by rebuilding your story in narrative order from sources, in executable order, you may have changed on disk.
+Narrative order is the natural order for a story, but it's not the natural order for interpreters and compilers, even for Jupyter kernels. Tangledown lets you write in narrative order, then, later, tangle the code out into executable order, where the definitions of the parts precede the story. That executable order is backwards and inside-out from the reader's point of view! TangleUp lets you maintain your code by rebuilding your story in narrative order from sources, in executable order, you may have changed on disk.
 
 
 Without something like this, you're condemned to explaining _how_ your code works before you can say much or anything about _what_ your code is doing. Indulge us in a little _theory of writing_, will you?
